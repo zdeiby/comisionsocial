@@ -1,5 +1,5 @@
 import ExploreContainer from '../components/ExploreContainer';
-import './Tab3.css';
+import './Tab4.css';
 import React,{useState} from 'react';
 import {Person} from './../models/person.model';
 import EmployeeItem from './../components/EmployeeItem';
@@ -9,7 +9,7 @@ import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar,
   IonIcon} from '@ionic/react';
 import { useHistory, useParams } from 'react-router-dom';
 
-const Tab3: React.FC = () => {
+const Tab4: React.FC = () => {
   const params = useParams();
   const [showModal, setShowModal] = useState(false);
   const [date, setDate] = useState('');
@@ -17,7 +17,7 @@ const Tab3: React.FC = () => {
     <IonPage>
     <IonHeader>
       <IonToolbar>
-        <IonTitle slot="start">2 - LOCALIZACION DEL EVENTO </IonTitle>  
+        <IonTitle slot="start">4 - DATOS DE LA VIVIENDA</IonTitle>  
         <IonTitle slot="end">FICHA SOCIAL: <label style={{color:'#17a2b8'}}>{params.ficha}</label> </IonTitle>
       </IonToolbar>
     </IonHeader>
@@ -180,4 +180,4 @@ const Tab3: React.FC = () => {
   );
 };
 
-export default Tab3;
+export default Tab4;

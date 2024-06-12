@@ -12,6 +12,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@capacitor/android": "6.1.0",
     "@capacitor/app": "6.0.0",
     "@capacitor/core": "6.1.0",
     "@capacitor/haptics": "6.0.0",
@@ -21,11 +22,14 @@
     "@ionic/react-router": "^8.0.0",
     "@types/react-router": "^5.1.20",
     "@types/react-router-dom": "^5.3.3",
+    "axios": "^1.7.2",
+    "cordova-sqlite-storage": "^6.1.0",
     "ionicons": "^7.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router": "^5.3.4",
-    "react-router-dom": "^5.3.4"
+    "react-router-dom": "^5.3.4",
+    "sql.js": "^1.10.3"
   },
   "devDependencies": {
     "@capacitor/cli": "6.1.0",
@@ -35,6 +39,7 @@
     "@testing-library/user-event": "^14.4.3",
     "@types/react": "^18.0.27",
     "@types/react-dom": "^18.0.10",
+    "@types/sql.js": "^1.4.9",
     "@vitejs/plugin-legacy": "^5.0.0",
     "@vitejs/plugin-react": "^4.0.1",
     "cypress": "^13.5.0",
