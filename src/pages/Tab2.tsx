@@ -8,11 +8,38 @@ import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar,
   IonBadge,IonSelectOption, IonText, IonDatetimeButton,IonModal,IonDatetime,
   IonIcon} from '@ionic/react';
 import { useHistory, useParams } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 
 const Tab2: React.FC = () => {
   const params = useParams();
   const [showModal, setShowModal] = useState(false);
   const [date, setDate] = useState('');
+  const [tipovisita, settipovisita] = useState('');
+  const [motivovisita, setmotivovisita] = useState('');
+  const [bomberos, setbomberos] = useState('');
+
+
+  const tipovisitafun = (event) => {
+    settipovisita(event.target.value);
+
+  };
+
+  const motivovisitafun = (event) => {
+    setmotivovisita(event.target.value);
+   
+  };
+
+  const bomberosfun = (event) => {
+    setbomberos(event.target.value);
+  
+  };
+
+  function enviar(){
+    console.log(motivovisita) 
+    console.log(tipovisita)
+     console.log(bomberos)
+  }
   return (
     <IonPage>
     <IonHeader>
@@ -32,57 +59,58 @@ const Tab2: React.FC = () => {
       <span className="value2">Ficha tecnica encontrada en BITACORA de Emergencias. Las horas de Activacion y Llegada se llenaran automaticamente.</span>
     </div> */}
       <br />
-    <IonList>
+      
+      <div className=' shadow p-3 mb-5 bg-white rounded'>
+  <IonList>
+  <div className="row g-3 was-validated ">
+          <div className="col-sm-4">
+              <label  className="form-label">Fecha visita DAGRD:</label>
+              <input type="date" placeholder="" className="form-control form-control-sm  "  required/>
+            </div>
+            <div className="col-sm-4">
+            <label  className="form-label">Tipo de evento:</label>
+            <select value={tipovisita} onInput={tipovisitafun} className="form-control form-control-sm" id="pregunta2_3" aria-describedby="validationServer04Feedback" required>
+                <option value=""> SELECCIONE </option>
+                <option value="10"> AVENIDA TORRENCIAL </option>
+                <option value="6"> COLAPSO DE LA VIVIENDA </option>
+                <option value="8"> DETERIORO ESTRUCTURAL </option>
+                <option value="9"> HUMEDADES </option>
+                <option value="1"> INCENDIO </option>
+                <option value="12"> INUNDACION </option>
+                <option value="2"> MOVIMIENTO EN MASA </option>
+                <option value="13"> OTROS </option>
+                <option value="7"> RIESGO </option>
+                <option value="5"> TECNOLOGICO </option>
+                <option value="4"> TERREMOTO </option>
+                <option value="3"> TERRORISMO </option>
+                <option value="11"> VOLADURA DE TECHO </option> 
+              </select>
+            </div>
+            <div className="col-sm-4">
+              <label  className="form-label">Motivo:</label>
+              <input type="text" placeholder="" className="form-control form-control-sm  "  required/>
+            </div>
 
-        <>
-        <IonItem>
-            <IonLabel onClick={() => setShowModal(true)} color="primary">Fecha visita DAGRD:</IonLabel>
-            {date && (
-              <div className="">
-                {new Date(date).toLocaleDateString()}
-              </div>
-            )}
-          </IonItem>
-          <IonModal isOpen={showModal} onDidDismiss={() => setShowModal(false)}>
-            <IonDatetime
-              presentation="date"
-              onIonChange={e => {
-                setDate(e.detail.value!);
-                setShowModal(false);
-              }}
-            />
-            <IonButton expand="full" onClick={() => setShowModal(false)}>Agregar fecha</IonButton>
-          </IonModal>
-    </>
-    <IonList>
-        <IonItem>
-        <IonLabel color="primary">Tipo de evento:</IonLabel>
-          <IonSelect aria-label="fruit" placeholder="Seleccione" >
-            <IonSelectOption value="apples">Apples</IonSelectOption>
-            <IonSelectOption value="oranges">Oranges</IonSelectOption>
-            <IonSelectOption value="bananas">Bananas</IonSelectOption>
-          </IonSelect>
-        </IonItem>
-        </IonList>
+          
+            
+          </div>
+  </IonList>
 
+  <IonList>
+  <div className="col-sm">
+            <label  className="form-label">Tipo de evento:</label>
+            <select value={tipovisita} onInput={tipovisitafun} className="form-control form-control-sm" id="pregunta2_3" aria-describedby="validationServer04Feedback" required>
+                <option value=""> SELECCIONE </option>
+                <option value="1"> SI</option>
+                <option value="2"> NO </option>
+              </select>
+            </div>
+  </IonList>
 
-      </IonList>
-      <IonList>
-        <IonItem >
-        <IonInput labelPlacement="stacked" color="success"label="Motivo:" aria-label="Primary input" color="primary" placeholder="Motivo"></IonInput>
-        </IonItem>
-      </IonList>
-
-      <IonItem>
-        <IonLabel color="primary">Es inquilinato:</IonLabel>
-          <IonSelect aria-label="fruit" placeholder="Seleccione" >
-            <IonSelectOption value="SI">SI</IonSelectOption>
-            <IonSelectOption value="NO">NO</IonSelectOption>
-          </IonSelect>
-        </IonItem>
-        <br />
-
-    <div><IonButton color="success">Guardar</IonButton><IonButton routerLink={`/tabs/tab3/${params.ficha}`}>Siguiente</IonButton></div>
+  
+  </div>
+   <br /><br />
+    <div><IonButton color="success" onClick={enviar}>Guardar</IonButton><IonButton routerLink={`/tabs/tab3/${params.ficha}`}>Siguiente</IonButton></div>
        
     
     </IonContent>
