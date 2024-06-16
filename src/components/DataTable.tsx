@@ -20,16 +20,24 @@ function CustomDataTable({ title, data, columns }) {
     };
 
     return (
-        <div className='shadow p-3 mb-2 pt-0 bg-white rounded'>
-            <div className="header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <h2>{title}</h2>
+        <div className='shadow p-3 mb-2 pt-0 bg-white rounded' style={{ overflow: 'visible' }}>
+            <div className="header" style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                overflow: 'visible'  // Asegúrate de que el overflow no esté oculto
+            }}>
+                <h2 style={{
+                    maxWidth: '100%',  // Asegura que el título tenga espacio para expandirse
+                    whiteSpace: 'normal'  // Permite que el texto se ajuste según sea necesario
+                }}>{title}</h2>
                 <input
                     type="text"
                     placeholder="Search..."
                     value={filterText}
                     onChange={handleFilterChange}
                     className="form-control"
-                    style={{ width: '500px' }}
+                    style={{ width: '200px' }}
                 />
             </div>
             <DataTable

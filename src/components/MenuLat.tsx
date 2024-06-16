@@ -54,38 +54,38 @@ const MenuLat: React.FC = () => {
         <IonIcon slot="start" icon={analytics} />
         <IonLabel>4 - DATOS DE LA VIVIENDA</IonLabel>
       </IonItem>
-      <IonItem button routerLink={`/tabs/tab5/${ficha2}`}>
+      <IonItem button routerLink={`/tabs/tab6/${ficha2}`}>
         <IonIcon slot="start" icon={newspaper} />
         <IonLabel>5 - SERVICIOS PUBLICOS</IonLabel>
-      </IonItem><IonItem button routerLink={`/tabs/tab6/${ficha2}`}>
+      </IonItem><IonItem button routerLink={`/tabs/tab7/${ficha2}`}>
         <IonIcon slot="start" icon={time} />
         <IonLabel>6 - TIEMPO EN LA VIVIENDA</IonLabel>
-      </IonItem><IonItem button routerLink={`/tabs/tab7/${ficha2}`}>
+      </IonItem><IonItem button routerLink={`/tabs/tab8/${ficha2}`}>
         <IonIcon slot="start" icon={home} />
         <IonLabel>7 y 8- TENENCIA DE LA VIVIENDA</IonLabel>
-      </IonItem><IonItem button routerLink={`/tabs/tab8/${ficha2}`}>
+      </IonItem><IonItem button routerLink={`/tabs/tab9/${ficha2}`}>
         <IonIcon slot="start" icon={people} />
         <IonLabel>9 - CONFORMACION DEL HOGAR</IonLabel>
-      </IonItem><IonItem button routerLink={`/tabs/tab9/${ficha2}`}>
+      </IonItem><IonItem button routerLink={`/tabs/tab10/${ficha2}`}>
         <IonIcon slot="start" icon={clipboard} />
         <IonLabel>10 - DATOS GENERALES (REMISIONES)</IonLabel>
-      </IonItem><IonItem button routerLink={`/tabs/tab10/${ficha2}`}>
+      </IonItem><IonItem button routerLink={`/tabs/tab11/${ficha2}`}>
         <IonIcon slot="start" icon={peopleCircle} />
         <IonLabel>11 - RED DE APOYO</IonLabel>
-      </IonItem><IonItem button routerLink={`/tabs/tab11/${ficha2}`}>
+      </IonItem><IonItem button routerLink={`/tabs/tab12/${ficha2}`}>
         <IonIcon slot="start" icon={heart} />
         <IonLabel>12 - AYUDAS HUMANITARIAS ENTREGADAS</IonLabel>
-      </IonItem><IonItem button routerLink={`/tabs/tab12/${ficha2}`}>
+      </IonItem><IonItem button routerLink={`/tabs/tab13/${ficha2}`}>
         <IonIcon slot="start" icon={logoOctocat} />
         <IonLabel>14 - MASCOTAS</IonLabel>
-      </IonItem><IonItem button routerLink={`/tabs/tab13/${ficha2}`}>
+      </IonItem><IonItem button routerLink={`/tabs/tab14/${ficha2}`}>
         <IonIcon slot="start" icon={home} />
         <IonLabel>15 - UBICACION DE LA FAMILIA POSTERIOR A LA ATENCION SOCIAL</IonLabel>
-      </IonItem><IonItem button routerLink={`/tabs/tab14/${ficha2}`}>
+      </IonItem><IonItem button routerLink={`/tabs/tab15/${ficha2}`}>
         <IonIcon slot="start" icon={text} />
         <IonLabel>16 - OBSERVACIONES</IonLabel>
       </IonItem>
-      <IonItem button routerLink={`/tabs/tab15/${ficha2}`}>
+      <IonItem button routerLink={`/tabs/tab16/${ficha2}`}>
         <IonIcon slot="start" icon={information} />
         <IonLabel>17 - INFORMACION DE QUIEN RESPONDE LA ENCUENTA</IonLabel>
       </IonItem>

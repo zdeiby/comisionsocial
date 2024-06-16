@@ -1,182 +1,129 @@
 import ExploreContainer from '../components/ExploreContainer';
 import './Tab4.css';
-import React,{useState} from 'react';
-import {Person} from '../models/person.model';
+import React, { useState ,useMemo } from 'react';
+import { Person } from '../models/person.model';
 import EmployeeItem from '../components/EmployeeItem';
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, 
-  IonSelect,IonList, IonInput, IonButton, IonItem, IonLabel, 
-  IonBadge,IonSelectOption, IonText, IonDatetimeButton,IonModal,IonDatetime,
-  IonIcon} from '@ionic/react';
+import {
+  IonContent, IonHeader, IonPage, IonTitle, IonToolbar,
+  IonSelect, IonList, IonInput, IonButton, IonItem, IonLabel,
+  IonBadge, IonSelectOption, IonText, IonDatetimeButton, IonModal, IonDatetime,
+  IonIcon
+} from '@ionic/react';
 import { useHistory, useParams } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import CustomDataTable from '../components/DataTable';
+
 
 const Tab15: React.FC = () => {
   const params = useParams();
+  const history = useHistory();
   const [showModal, setShowModal] = useState(false);
   const [date, setDate] = useState('');
+  const [tipovisita, settipovisita] = useState('');
+  const [motivovisita, setmotivovisita] = useState('');
+  const [bomberos, setbomberos] = useState('');
+
+
+  const data = [
+    { id: 1, title: 'Star Wars', year: 'ver observación',year1: '1977',year2: '1977',year3: '1977' },
+    { id: 2, title: 'Conan the Barbarian', year: '1982',year1: '1977',year2: '1977',year3: '1977' },
+    { id: 3, title: 'The Lord of the Rings', year: '2001',year1: '1977',year2: '1977',year3: '1977' }
+  ];
+  
+  const columns = [
+    {
+        name: 'Eliminar',
+        selector: row => <button className='btn btn-info btn-sm text-light' >eliminar</button> ,
+        sortable: true,
+    },
+    {
+        name: 'Observacion',
+        selector: row =><button className='btn btn-info btn-sm text-light' >Observacion</button> ,
+        sortable: true,
+    }
+    ,
+    {
+        name: 'Year',
+        selector: row => row.year,
+        sortable: true,
+    },,
+    {
+        name: 'Year',
+        selector: row => row.year,
+        sortable: true,
+    },
+    {
+        name: 'Year',
+        selector: row => row.year,
+        sortable: true,
+    }
+  ];
+
+  // Manejador para cambios en el campo de búsqueda
+  const handleFilterChange = (event) => {
+      setFilterText(event.target.value);
+  };
+
+
+
+
+  const tipovisitafun = (event) => {
+    settipovisita(event.target.value);
+
+  };
+
+  const motivovisitafun = (event) => {
+    setmotivovisita(event.target.value);
+
+  };
+
+  const bomberosfun = (event) => {
+    setbomberos(event.target.value);
+
+  };
+
+  function enviar() {
+    console.log(motivovisita)
+    console.log(tipovisita)
+    console.log(bomberos)
+  }
   return (
     <IonPage>
-    <IonHeader>
-      <IonToolbar>
-        <IonTitle slot="start">16 - OBSERVACIONES</IonTitle>  
-        <IonTitle slot="end">FICHA SOCIAL: <label style={{color:'#17a2b8'}}>{params.ficha}</label> </IonTitle>
-      </IonToolbar>
-    </IonHeader>
-    <IonContent fullscreen>
-
-    <div className="social-card">
+      <IonHeader>
+        <IonToolbar>
+          <IonTitle slot="start">16 - OBSERVACIONES</IonTitle>
+          <IonTitle slot="end">FICHA SOCIAL: <label style={{ color: '#17a2b8' }}>{params.ficha}</label> </IonTitle>
+        </IonToolbar>
+      </IonHeader>
+      <IonContent fullscreen>
+      <div className="social-card">
       <span className="label">Ficha social:</span>
       <span className="value">{params.ficha}</span>
     </div>
-    <div className="social-card2">
-      <span className="label2">Dirección de residencia</span>
-      <span className="value2">
-      Ingrese la dirección según el siguiente ejemplo, diligenciando los campos requeridos que identifiquen la dirección actual; los campos que no requiera los pude dejar en blanco.
-      Vaya verificando en el recuadro inferior "Dirección" el resultado.
-      Ejemplo:
-      </span>
-      <span className="value2">
-      Vía principal: CARRERA 42 B SUR
-      </span>
-      <span className="value2">
-      Vía secundaria: 25 A ESTE - 135
-      </span>
-      <span className="value2">
 
-      Complemento: Apartamento 101
-      </span>
-    </div> 
-      <br />
-
-    <IonList>
-        <IonItem>
-        <IonLabel color="primary">Vía principal:</IonLabel>
-          <IonSelect aria-label="fruit" placeholder="Seleccione" >
-            <IonSelectOption value="apples">Calle</IonSelectOption>
-            <IonSelectOption value="oranges">Avenida</IonSelectOption>
-            <IonSelectOption value="bananas">Circular</IonSelectOption>
-          </IonSelect>
-        </IonItem>
-        </IonList>
-    <IonList>
-      <IonItem>
-        <IonInput labelPlacement="stacked" color="success"label="Número" aria-label="Primary input" color="primary" placeholder="Número"></IonInput>
-        <IonInput labelPlacement="stacked" color="success"label="Prefijo:" aria-label="Primary input" color="primary" placeholder="Prefijo"></IonInput>
-      </IonItem>
-    </IonList>
-    <IonList>
-        <IonItem>
-        <IonLabel color="primary">Nombre de vía:</IonLabel>
-          <IonSelect aria-label="fruit" placeholder="Seleccione" >
-          <IonSelectOption value="apples">bis</IonSelectOption>
-            <IonSelectOption value="apples">Sur</IonSelectOption>
-            <IonSelectOption value="oranges">Norte</IonSelectOption>
-            <IonSelectOption value="bananas">Este</IonSelectOption>
-            <IonSelectOption value="car">Oeste</IonSelectOption>
-          </IonSelect>
-        </IonItem>
-        </IonList>
-        
-        <IonList>
-      <IonItem>
-        <IonInput labelPlacement="stacked" color="success"label="Via secundaria:" aria-label="Primary input" color="primary" placeholder="Via secundaria:"></IonInput>
-        <IonInput labelPlacement="stacked" color="success"label="Prefijo vía secundaria:" aria-label="Primary input" color="primary" placeholder="Prefijo vía secundaria:"></IonInput>
-      </IonItem>
-    </IonList>
-
-    <IonList>
-        <IonItem>
-        <IonLabel color="primary">Nombre de vía secundaria</IonLabel>
-          <IonSelect aria-label="fruit" placeholder="Seleccione" >
-            <IonSelectOption value="apples">bis</IonSelectOption>
-            <IonSelectOption value="apples">Sur</IonSelectOption>
-            <IonSelectOption value="oranges">Norte</IonSelectOption>
-            <IonSelectOption value="bananas">Este</IonSelectOption>
-            <IonSelectOption value="car">Oeste</IonSelectOption>
-          </IonSelect>
-        </IonItem>
-        </IonList>
-
-        <IonList>
-      <IonItem>
-        <IonInput labelPlacement="stacked" color="success"label="Número casa" aria-label="Primary input" color="primary" placeholder="Número casa:"></IonInput>
-        <IonInput labelPlacement="stacked" color="success"label="Complemento:" aria-label="Primary input" color="primary" placeholder="Complemento:"></IonInput>
-      </IonItem>
-    </IonList>
-    <IonList>
-    <IonItem>
-        <IonInput disabled labelPlacement="stacked" color="success"label="Dirección:" aria-label="Primary input" color="primary" placeholder="Dirección"></IonInput>
-      </IonItem>
-    </IonList>
-
+        <div className=' shadow p-3 mb-5 bg-white rounded'>
+          <IonList>
+  
+            <div className="row g-3 was-validated ">
+             
+            </div><hr />
+            <div className="alert alert-primary" role="alert">
+              <span className="badge badge-secondary text-dark">16 - OBSERVACIONES</span>
+            </div>
+            <div className="row g-3 was-validated ">
+            <div className="col-sm">
+                <textarea placeholder="" className="form-control" rows="5" required/>
+              </div>
+              </div>
+          </IonList>
+         
+        </div>
  
-      <hr /><br />
-      <IonList>
-      <IonItem>
-        <IonLabel color="primary">Rural/Urbano</IonLabel>
-          <IonSelect aria-label="fruit" placeholder="Seleccione" >
-            <IonSelectOption value="SI">SI</IonSelectOption>
-            <IonSelectOption value="NO">NO</IonSelectOption>
-          </IonSelect>
-        </IonItem>
-        </IonList>
+        <div><IonButton color="success" onClick={enviar}>Guardar</IonButton><IonButton routerLink={`/tabs/tab16/${params.ficha}`}>Siguiente</IonButton></div>
 
-        <IonList>
-          <IonItem>
-          <IonLabel  color="primary">Comuna</IonLabel>
-            <IonSelect aria-label="fruit" placeholder="Seleccione"> (Required)
-              <IonSelectOption value="apples">Apples</IonSelectOption>
-              <IonSelectOption value="oranges">Oranges</IonSelectOption>
-              <IonSelectOption value="bananas">Bananas</IonSelectOption>
-            </IonSelect>
-            <IonLabel color="primary">Barrio</IonLabel>
-            <IonSelect aria-label="fruit" placeholder="Seleccione">
-              <IonSelectOption value="apples">Apples</IonSelectOption>
-              <IonSelectOption value="oranges">Oranges</IonSelectOption>
-              <IonSelectOption value="bananas">Bananas</IonSelectOption>
-            </IonSelect>
-       
-          </IonItem>
 
-        </IonList>
-
-        <IonList>
-      <IonItem>
-        <IonInput labelPlacement="stacked" color="success"label="Telefono1:" aria-label="Primary input" color="primary" placeholder="Telefono1:"></IonInput>
-        <IonInput labelPlacement="stacked" color="success"label="Telefono2:" aria-label="Primary input" color="primary" placeholder="Telefono2"></IonInput>
-      </IonItem>
-    </IonList>
-    <IonList>
-      <IonItem>
-        <IonInput labelPlacement="stacked" color="success"label="Latitud:" aria-label="Primary input" color="primary" placeholder="Longitud"></IonInput>
-        <IonInput labelPlacement="stacked" color="success"label="Longitud:" aria-label="Primary input" color="primary" placeholder="Longitud"></IonInput>
-      </IonItem>
-    </IonList>
-    <IonList>
-      <IonItem>
-        <IonInput labelPlacement="stacked" color="success"label="Correo electronico:" aria-label="Primary input" color="primary" placeholder="Correo electronico:"></IonInput>
-      </IonItem>
-    </IonList>
-    <IonList>
-      <IonItem>
-        <IonLabel color="primary"> Estrato</IonLabel>
-          <IonSelect aria-label="fruit" placeholder="Seleccione" >
-            <IonSelectOption value="1">1</IonSelectOption>
-            <IonSelectOption value="2">2</IonSelectOption>
-            <IonSelectOption value="3">3</IonSelectOption>
-            <IonSelectOption value="4">4</IonSelectOption>
-            <IonSelectOption value="5">5</IonSelectOption>
-            <IonSelectOption value="6">6</IonSelectOption>
-          </IonSelect>
-        </IonItem>
-        </IonList>
-
-        <br />
-
-    <div><IonButton color="success">Guardar</IonButton><IonButton routerLink={`/tabs/tab16/${params.ficha}`}>Siguiente</IonButton></div>
-       
-    
-    </IonContent>
-  </IonPage>
+      </IonContent>
+    </IonPage>
   );
 };
 

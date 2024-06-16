@@ -60,31 +60,31 @@ const Tab5: React.FC = () => {
 <IonList>
 <div className="row g-3 was-validated ">
         <div className="col-sm-6">
-        <label  className="form-label">Tipo de evacuacion requerida:</label>
+        <label  className="form-label">Tipo de vivienda:</label>
           <select value={motivovisita} onChange={motivovisitafun} className="form-control form-control-sm" id="pregunta2_3" aria-describedby="validationServer04Feedback" required>
-              <option  value=""> SELECCIONE </option>
-              <option value="1"> EMERGENCIA </option>
-              <option value="4"> POSTERIOR A EMERGENCIA </option>
-              <option value="3"> REVISITA </option>
-              <option value="2"> RIESGO </option> 
+          <option value=""> SELECCIONE </option><option value="2"> APARTAMENTO </option><option value="1"> CASA </option><option value="3"> HABITACION </option><option value="6"> LOCAL </option><option value="5"> PREFABRICADA </option><option value="4"> RANCHO </option>   
             </select>
           </div>
           <div className="col-sm-6">
-          <label  className="form-label">Daños en la vivienda:</label>
+          <label  className="form-label">Material predominante de pisos:</label>
           <select value={tipovisita} onInput={tipovisitafun} className="form-control form-control-sm" id="pregunta2_3" aria-describedby="validationServer04Feedback" required>
-          <option value=""> SELECCIONE </option><option value="2"> DEFINITIVA </option><option value="3"> NO SE REQUIERE </option><option value="5"> PENDIENTE </option><option value="4"> PREVENTIVA </option><option value="1"> TEMPORAL </option>
+          <option value=""> SELECCIONE </option><option value="2"> APARTAMENTO </option><option value="1"> CASA </option><option value="3"> HABITACION </option><option value="6"> LOCAL </option><option value="5"> PREFABRICADA </option><option value="4"> RANCHO </option> 
+            </select>
+          </div>
+          <div className="col-sm-12">
+              <label  className="form-label">Cuales:</label>
+              <input type="text" placeholder="" className="form-control form-control-sm  "  required/>
+            </div>
+          <div className="col-sm-6">
+          <label  className="form-label">Material predominante de paredes:</label>
+          <select value={bomberos} onInput={bomberosfun} className="form-control form-control-sm" id="pregunta2_3" aria-describedby="validationServer04Feedback" required>
+          <option value=""> SELECCIONE </option><option value="3"> BAREQUE </option><option value="7"> DESECHOS(CARTON, LATAS, PLASTICO) </option><option value="1"> LADRILLO </option><option value="4"> MADERA </option><option value="6"> PREFABRICADA </option><option value="2"> TAPIA </option><option value="5"> ZINC </option>
             </select>
           </div>
           <div className="col-sm-6">
-          <label  className="form-label">Daños en los enseres:</label>
+          <label  className="form-label">Material predominante de techos:</label>
           <select value={bomberos} onInput={bomberosfun} className="form-control form-control-sm" id="pregunta2_3" aria-describedby="validationServer04Feedback" required>
-          <option value=""> SELECCIONE </option><option value="3"> NO AFECTADO </option><option value="2"> PARCIAL </option><option value="1"> TOTAL </option>
-            </select>
-          </div>
-          <div className="col-sm-6">
-          <label  className="form-label">Daños en los enseres:</label>
-          <select value={bomberos} onInput={bomberosfun} className="form-control form-control-sm" id="pregunta2_3" aria-describedby="validationServer04Feedback" required>
-          <option value=""> SELECCIONE </option><option value="3"> NO AFECTADO </option><option value="2"> PARCIAL </option><option value="1"> TOTAL </option>
+          <option value=""> SELECCIONE </option><option value="6"> BAREQUE </option><option value="5"> DESECHOS(CARTON, LATA, PLASTICO) </option><option value="3"> ETERNIT </option><option value="1"> LOSA </option><option value="7"> MADERA </option><option value="2"> TEJA DE BARRO </option><option value="4"> ZINC </option> 
             </select>
           </div>
 

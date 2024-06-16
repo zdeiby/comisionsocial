@@ -52,6 +52,7 @@ import '@ionic/react/css/palettes/dark.system.css';
 import './theme/variables.css';
 import Cobertura from './pages/Cobertura';
 import MenuLat from './components/MenuLat';
+import IngresarAyudas from './pages/ingresarayudas';
 
 setupIonicReact();
 
@@ -92,7 +93,10 @@ const App: React.FC = () => {
                   <Tab1 />
                 </Route>
                 <Route exact path="/tabs/tabintegrantes/:ficha">
-                  <IngresarIntegrantes />
+                  <IngresarIntegrantes /> 
+                </Route>
+                <Route exact path="/tabs/tabayudas/:ficha">
+                  <IngresarAyudas /> 
                 </Route>
                 <Route exact path="/tabs/tab2/:ficha">
                   <Tab2 />

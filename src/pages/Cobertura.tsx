@@ -182,7 +182,7 @@ const Cobertura: React.FC = () => {
             <IonToolbar>
               <IonTitle slot="start">Cobertura</IonTitle>
               <IonButton color="danger" slot="end" onClick={() => {
-                localStorage.removeItem('cedula');
+                //localStorage.removeItem('cedula');
                 window.location.href = `/tabs/tab1/${Math.random().toString(36).substr(2, 7)}`;
               }}>Crear Ficha</IonButton>
               <IonButton slot="end" onClick={() => {

@@ -63,11 +63,11 @@ const Tab2: React.FC = () => {
       <div className=' shadow p-3 mb-5 bg-white rounded'>
   <IonList>
   <div className="row g-3 was-validated ">
-          <div className="col-sm-4">
+          <div className="col-sm-6">
               <label  className="form-label">Fecha visita DAGRD:</label>
               <input type="date" placeholder="" className="form-control form-control-sm  "  required/>
             </div>
-            <div className="col-sm-4">
+            <div className="col-sm-6">
             <label  className="form-label">Tipo de evento:</label>
             <select value={tipovisita} onInput={tipovisitafun} className="form-control form-control-sm" id="pregunta2_3" aria-describedby="validationServer04Feedback" required>
                 <option value=""> SELECCIONE </option>
@@ -86,25 +86,28 @@ const Tab2: React.FC = () => {
                 <option value="11"> VOLADURA DE TECHO </option> 
               </select>
             </div>
-            <div className="col-sm-4">
+            <div className="col-sm-12">
+              <label  className="form-label">Cuales:</label>
+              <input type="text" placeholder="" className="form-control form-control-sm  "  required/>
+            </div>
+            <div className="col-sm-12">
               <label  className="form-label">Motivo:</label>
               <input type="text" placeholder="" className="form-control form-control-sm  "  required/>
             </div>
-
-          
-            
           </div>
   </IonList>
 
   <IonList>
-  <div className="col-sm">
-            <label  className="form-label">Tipo de evento:</label>
+  <div className="row g-3 was-validated ">
+
+            <div className="col-sm">
+            <label  className="form-label">Es inquilinato:</label>
             <select value={tipovisita} onInput={tipovisitafun} className="form-control form-control-sm" id="pregunta2_3" aria-describedby="validationServer04Feedback" required>
                 <option value=""> SELECCIONE </option>
-                <option value="1"> SI</option>
-                <option value="2"> NO </option>
+                <option value="1"> NO </option><option value="2"> SI </option>
               </select>
             </div>
+            </div> 
   </IonList>
 
   
