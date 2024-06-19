@@ -12,27 +12,27 @@ import loadSQL from '../models/database';
 import { useHistory, useParams } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-
-
 interface Person {
   fichasocial: number;
   fichatecnia: string;
-  motivovisita: number;
+  motivovisita: string;
   tipovisita: string;
   horaactivacion: string;
   horaatencion: string;
   fechavisita: string;
   fecharegistro: string;
-  usuario: number;
+  usuario: string;
   estado: string;
   tabla: string;
-  tipo: number;
+  tipo: string;
   declaradafallida: string | null;
   ficharecuperda: string | null;
   horallegadaalevento: string;
   remitir: string | null;
   remitir2: string | null;
 }
+
+
 
 
 const Tab1: React.FC = () => {
@@ -116,18 +116,18 @@ const Tab1: React.FC = () => {
       }else{
         setItems({
           fichasocial:  params.ficha,
-          fichatecnia: '',
+          fichatecnia: params.ficha,
           motivovisita: '',
           tipovisita:  '',
           tipo: '',
           horaactivacion:  getCurrentTime(),
           horallegadaalevento:  getCurrentTime(),
           horaatencion: '',
-          fechavisita: '',
-          fecharegistro: '',
-          usuario: '',
+          fechavisita:'',
+          fecharegistro: getCurrentDateTime(),
+          usuario: localStorage.getItem('cedula'),
           estado: '1',
-          tabla:  '',
+          tabla:  'c0_informaciondelevento',
           declaradafallida:  '',
           ficharecuperda:  '',
           remitir:  '',
@@ -137,6 +137,20 @@ const Tab1: React.FC = () => {
     }
 
   };
+
+  const getCurrentDateTime = () => {
+  const date = new Date();
+
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // Los meses comienzan desde 0
+  const day = String(date.getDate()).padStart(2, '0');
+
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+};
 
   const getCurrentTime = () => {
     const now = new Date();
@@ -161,7 +175,7 @@ const Tab1: React.FC = () => {
       horaatencion: data.horaatencion || '',
       fechavisita: data.fechavisita || '',
       fecharegistro: data.fecharegistro || '',
-      usuario: data.usuario || '',
+      usuario: data.usuario || localStorage.getItems('cedula'),
       estado: data.estado || '1',
       tabla: data.tabla || '',
       declaradafallida: data.declaradafallida || '',
@@ -243,30 +257,7 @@ useEffect(() => {
           <span className="value2">Ficha tecnica encontrada en BITACORA de Emergencias. Las horas de Activacion y Llegada se llenaran automaticamente.</span>
         </div>
         <br />
-        {/* <IonList> */}
-          {/* <IonItem>
-            <IonLabel  >Motivo visita</IonLabel>
-            <IonSelect aria-label="fruit" placeholder="Motivo visita"> (Required)
-              <IonSelectOption value="apples">Apples</IonSelectOption>
-              <IonSelectOption value="oranges">Oranges</IonSelectOption>
-              <IonSelectOption value="bananas">Bananas</IonSelectOption>
-            </IonSelect>
-            <IonLabel >Tipo visita</IonLabel>
-            <IonSelect aria-label="fruit" placeholder="Tipo visita">
-              <IonSelectOption value="apples">Apples</IonSelectOption>
-              <IonSelectOption value="oranges">Oranges</IonSelectOption>
-              <IonSelectOption value="bananas">Bananas</IonSelectOption>
-            </IonSelect>
-
-          </IonItem>
-          <IonItem>
-            <IonLabel >Bomberos</IonLabel>
-            <IonSelect aria-label="fruit" placeholder="Bomberos" >
-              <IonSelectOption value="apples">Apples</IonSelectOption>
-              <IonSelectOption value="oranges">Oranges</IonSelectOption>
-              <IonSelectOption value="bananas">Bananas</IonSelectOption>
-            </IonSelect>
-          </IonItem> */}
+       
       <div className=' shadow p-3 mb-5 bg-white rounded'>
 <IonList>
 <div className="row g-3 was-validated ">

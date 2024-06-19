@@ -113,7 +113,7 @@ const Cobertura: React.FC = () => {
     // };
 
     try {
-      const response = await axios.get('../../public/datos.json');
+      const response = await axios.get('../../public/jsonstablas/datos.json');
       const jsonData = response.data;
       const jsonString = JSON.stringify(jsonData);
       setPeople(jsonData);
