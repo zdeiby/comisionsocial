@@ -8,9 +8,9 @@ function CustomDataTable({ title, data, columns }) {
     // Filtrado de datos basado en el texto de búsqueda
     const filteredItems = useMemo(() => {
         return data.filter(item => {
-            // Asumimos que quieres buscar en una columna específica o múltiples columnas
-            // Aquí buscamos en la columna 'title' por simplicidad
-            return item.title.toLowerCase().includes(filterText.toLowerCase());
+            // Concatenar los campos de interés y verificar si el texto de filtro está incluido
+            const searchContent = `${item.programa} ${item.observacion} ${item.integrante}`.toLowerCase();
+            return searchContent.includes(filterText.toLowerCase());
         });
     }, [filterText, data]);
 
@@ -25,15 +25,15 @@ function CustomDataTable({ title, data, columns }) {
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                overflow: 'visible'  // Asegúrate de que el overflow no esté oculto
+                overflow: 'visible'
             }}>
                 <h2 style={{
-                    maxWidth: '100%',  // Asegura que el título tenga espacio para expandirse
-                    whiteSpace: 'normal'  // Permite que el texto se ajuste según sea necesario
+                    maxWidth: '100%',
+                    whiteSpace: 'normal'
                 }}>{title}</h2>
                 <input
                     type="text"
-                    placeholder="Search..."
+                    placeholder="Buscar"
                     value={filterText}
                     onChange={handleFilterChange}
                     className="form-control"

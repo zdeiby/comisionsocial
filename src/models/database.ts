@@ -58,22 +58,22 @@ async function getFromIndexedDB() {
 
 const loadSQL = async (setDb, fetchUsers) => {
 
-    try {
-      const config = {
-        locateFile: (file: string) => `/assets/${file}`,
-      };
-      const SQL = await initSqlJs(config);
+  try {
+    const config = {
+      locateFile: (file: string) => `/assets/${file}`,
+    };
+    const SQL = await initSqlJs(config);
 
-      let database;
-          //const savedDb = localStorage.getItem('sqliteDb');
+    let database;
+    //const savedDb = localStorage.getItem('sqliteDb');
 
-        const savedDb = await getFromIndexedDB();
-      if (savedDb) {
-        const uint8Array = new Uint8Array(savedDb);
-        database = new SQL.Database(uint8Array);
-      } else {
-        database = new SQL.Database();
-        database.run(`
+    const savedDb = await getFromIndexedDB();
+    if (savedDb) {
+      const uint8Array = new Uint8Array(savedDb);
+      database = new SQL.Database(uint8Array);
+    } else {
+      database = new SQL.Database();
+      database.run(`
           CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY,
             name TEXT NOT NULL,
@@ -81,7 +81,7 @@ const loadSQL = async (setDb, fetchUsers) => {
             age INTEGER NOT NULL
           );
         `);
-        database.run(`
+      database.run(`
           CREATE TABLE IF NOT EXISTS pregunta (
             id INTEGER PRIMARY KEY,
             preguntauno TEXT NOT NULL,
@@ -89,7 +89,7 @@ const loadSQL = async (setDb, fetchUsers) => {
             preguntatres TEXT NOT NULL
           );
         `);
-        database.run(`
+      database.run(`
           CREATE TABLE IF NOT EXISTS t_usuario(
             id INTEGER PRIMARY KEY,
             documento INTEGER NOT NULL,
@@ -100,7 +100,7 @@ const loadSQL = async (setDb, fetchUsers) => {
             contrasena TEXT NOT NULL
           );
         `);
-        database.run(`CREATE TABLE  IF NOT EXISTS c0_informaciondelevento (
+      database.run(`CREATE TABLE  IF NOT EXISTS c0_informaciondelevento (
           fichasocial INTEGER PRIMARY KEY AUTOINCREMENT,
           fichatecnia VARCHAR(40) DEFAULT NULL,
           motivovisita INTEGER DEFAULT NULL,
@@ -119,9 +119,9 @@ const loadSQL = async (setDb, fetchUsers) => {
           remitir VARCHAR(100) DEFAULT NULL,
           remitir2 VARCHAR(100) DEFAULT NULL
       );`);
-        
 
-database.run(`
+
+      database.run(`
           CREATE TABLE IF NOT EXISTS c1_identificacionevento (
           fichasocial INTEGER PRIMARY KEY NOT NULL,
           visitadagrd DATE DEFAULT NULL,
@@ -135,7 +135,7 @@ database.run(`
           inquilinato TEXT DEFAULT NULL
         );
           `);
-          database.run(`
+      database.run(`
             CREATE TABLE IF NOT EXISTS c2_localizaciondelevento (
             fichasocial INTEGER PRIMARY KEY NOT NULL,
             direccion TEXT DEFAULT NULL,
@@ -164,7 +164,7 @@ database.run(`
             latitud VARCHAR(100) DEFAULT NULL
           );
           `);
-          database.run(`
+      database.run(`
            CREATE TABLE IF NOT EXISTS c3_evacuacionydanos (
             fichasocial INTEGER PRIMARY KEY NOT NULL,
             tipoevacuacion INTEGER DEFAULT NULL,
@@ -257,18 +257,18 @@ database.run(`
             nameFile TEXT DEFAULT NULL
           );
           `); database.run(`
-            CREATE TABLE IF NOT EXISTS c10_datosgeneralesremisiones (
+           CREATE TABLE IF NOT EXISTS c10_datosgeneralesremisiones (
+            idremision INTEGER PRIMARY KEY AUTOINCREMENT,
             idintegrante INTEGER NOT NULL,
             fichasocial INTEGER NOT NULL,
             programa INTEGER NOT NULL,
-            fecharegistro DATETIME DEFAULT NULL,
+            fecharegistro TEXT DEFAULT NULL,
             usuario INTEGER DEFAULT NULL,
             estado INTEGER DEFAULT NULL,
-            tabla VARCHAR(100) DEFAULT NULL,
+            tabla TEXT DEFAULT NULL,
             observacion TEXT DEFAULT NULL,
-            motivo VARCHAR(25) DEFAULT NULL,
-            PRIMARY KEY (idintegrante, fichasocial, programa)
-          );
+            motivo TEXT DEFAULT NULL
+        );
           `); database.run(`
             CREATE TABLE IF NOT EXISTS c11_reddeapoyo (
             idredapoyo INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
@@ -478,7 +478,7 @@ database.run(`
           );
   
           `);
-          database.run(`
+      database.run(`
             CREATE TABLE IF NOT EXISTS c15_ubicacionposterioratencionsocial (
             fichasocial INTEGER NOT NULL,
             ubicacionposterior INTEGER NOT NULL,
@@ -516,7 +516,7 @@ database.run(`
           );
   
           `);
-          database.run(`
+      database.run(`
             CREATE TABLE IF NOT EXISTS c16_observaciones (
             fichasocial INTEGER NOT NULL,
             observacion TEXT DEFAULT NULL,
@@ -528,7 +528,7 @@ database.run(`
           );
   
           `);
-          database.run(`
+      database.run(`
           CREATE TABLE IF NOT EXISTS c17_autorizacion (
           fichasocial INTEGER NOT NULL,
           idintegrante INTEGER DEFAULT NULL,
@@ -551,13 +551,75 @@ database.run(`
           PRIMARY KEY (fichasocial)
         );
           `);
-      }
+      database.run(`
+            CREATE TABLE IF NOT EXISTS c101_remisiones (
+            fichasocial INTEGER NOT NULL,
+            remisiones INTEGER DEFAULT NULL,
+            fecharegistro DATETIME DEFAULT NULL,
+            usuario INTEGER DEFAULT NULL,
+            estado INTEGER DEFAULT NULL,
+            tabla VARCHAR(100) DEFAULT NULL,
+            PRIMARY KEY (fichasocial)
+          );
+            `);
 
-      setDb(database);
-      fetchUsers(database);
-    } catch (err) {
-      console.error('Error loading SQL.js:', err);
+      database.run(`
+            CREATE TABLE IF NOT EXISTS t1_programas (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              descripcion TEXT,
+              estado INTEGER,
+              tipo INTEGER,
+              usuario INTEGER,
+              tabla TEXT,
+              fecharegistro DATE
+            );
+              `);
+      database.run(`
+                CREATE TABLE IF NOT EXISTS c111_reddeapoyo (
+                  fichasocial int(11) NOT NULL,
+                  reddeapoyo int(11) DEFAULT NULL,
+                  fecharegistro datetime DEFAULT NULL,
+                  usuario int(11) DEFAULT NULL,
+                  estado int(11) DEFAULT NULL,
+                  tabla varchar(100) DEFAULT NULL,
+                  PRIMARY KEY (fichasocial)
+                )
+                  `);
+
+
+      database.run(`
+                    CREATE TABLE IF NOT EXISTS t1_parentesco (
+                      id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                      descripcion VARCHAR(25) DEFAULT NULL,
+                      estado INTEGER DEFAULT NULL
+                    );
+                                          `);
+
+      database.run(`
+                   CREATE TABLE IF NOT EXISTS t1_comunas (
+                      id INTEGER PRIMARY KEY NOT NULL,
+                      descripcion TEXT DEFAULT NULL,
+                      estado INTEGER DEFAULT NULL
+                    );
+                      `);
+
+      database.run(`
+                  CREATE TABLE IF NOT EXISTS t1_barrios (
+                    id INTEGER PRIMARY KEY NOT NULL,
+                    descripcion TEXT DEFAULT NULL,
+                    comuna INTEGER DEFAULT NULL,
+                    estado INTEGER DEFAULT NULL
+                  );
+                      `);
+
+
     }
-  };
 
-  export default loadSQL;
+    setDb(database);
+    fetchUsers(database);
+  } catch (err) {
+    console.error('Error loading SQL.js:', err);
+  }
+};
+
+export default loadSQL;

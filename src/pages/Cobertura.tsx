@@ -134,8 +134,82 @@ const Cobertura: React.FC = () => {
         }
    
     } catch (err) {
-      console.error('Error al exportar los datos JSON:', err);
+      console.error('Error al exportar los datos JSON: c0_informaciondelevento', err);
     }
+
+    try {
+      const response = await axios.get('../../public/jsonstablas/t1_programas.json');
+      const jsonData = response.data;
+     // setProgramas(jsonData);
+
+      for (const item of jsonData) {
+        await db.run(`INSERT OR REPLACE INTO t1_programas (id, descripcion, estado, tipo, usuario, tabla, fecharegistro) VALUES (?, ?, ?, ?, ?, ?, ?);`, [
+          item.id, item.descripcion, item.estado, item.tipo, item.usuario, item.tabla, item.fecharegistro
+        ]);
+      }
+
+      saveDatabase();
+      fetchUsers();
+    } catch (err) {
+      console.error('Error al exportar los datos JSON: t1_programas', err);
+    }
+
+    try {
+      const response = await axios.get('../../public/jsonstablas/t1_parentesco.json');
+      const jsonData = response.data;
+     // setProgramas(jsonData);
+
+      for (const item of jsonData) {
+        await db.run(`INSERT OR REPLACE INTO t1_parentesco  (id, descripcion, estado) VALUES (?, ?, ?);`, [
+          item.id, item.descripcion, item.estado
+        ]);
+      }
+
+      saveDatabase();
+      fetchUsers();
+    } catch (err) {
+      console.error('Error al exportar los datos JSON: t1_parentesco ', err);
+    }
+
+    try {
+      const response = await axios.get('../../public/jsonstablas/t1_comunas.json');
+      const jsonData = response.data;
+     // setProgramas(jsonData);
+
+      for (const item of jsonData) {
+        await db.run(`INSERT OR REPLACE INTO t1_comunas  (id, descripcion, estado) VALUES (?, ?, ?);`, [
+          item.id, item.descripcion, item.estado
+        ]);
+      }
+
+      saveDatabase();
+      fetchUsers();
+    } catch (err) {
+      console.error('Error al exportar los datos JSON: t1_comunas ', err);
+    }
+    
+    
+    try {
+      const response = await axios.get('../../public/jsonstablas/t1_barrios.json');
+      const jsonData = response.data;
+     // setProgramas(jsonData);
+
+      for (const item of jsonData) {
+        await db.run(`INSERT OR REPLACE INTO t1_barrios   (id, descripcion, comuna, estado) VALUES (?, ?, ?, ?);`, [
+          item.id, item.descripcion, item.comuna, item.estado, 
+        ]);
+      }
+
+      saveDatabase();
+      fetchUsers();
+    } catch (err) {
+      console.error('Error al exportar los datos JSON: t1_barrios  ', err);
+    }
+
+
+
+
+
   }
 
   
