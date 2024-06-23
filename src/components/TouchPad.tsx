@@ -3,15 +3,32 @@ import SignaturePad from 'react-signature-canvas';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { IonList } from '@ionic/react';
 
-function TouchPad() {
+function TouchPad({ onSave }) {
     const sigCanvas = useRef({});
     const [penColor, setPenColor] = useState('#000000'); // Usando un color inicial en formato hexadecimal
     const [imageURL, setImageURL] = useState(''); // Estado para almacenar la imagen de la firma
+    const [blobURL, setBlobURL] = useState(''); 
 
     // Limpia el canvas de la firma
     const clearCanvas = () => {
         sigCanvas.current.clear();
         setImageURL(''); // También limpia la imagen mostrada
+        setBlobURL('');
+    };
+
+    const dataURLToBlob = (dataURL) => {
+        const parts = dataURL.split(';base64,');
+        const byteString = atob(parts[1]);
+        const mimeString = parts[0].split(':')[1];
+
+        const buffer = new ArrayBuffer(byteString.length);
+        const uint8Array = new Uint8Array(buffer);
+
+        for (let i = 0; i < byteString.length; i++) {
+            uint8Array[i] = byteString.charCodeAt(i);
+        }
+
+        return new Blob([buffer], { type: mimeString });
     };
 
     // Guarda la imagen de la firma
@@ -22,6 +39,13 @@ function TouchPad() {
         }
         const image = sigCanvas.current.getTrimmedCanvas().toDataURL('image/png');
         setImageURL(image); // Guarda la imagen de la firma en el estado
+        const blob = dataURLToBlob(image);
+        const url=image // = URL.createObjectURL(blob);
+        setBlobURL(url); // Guarda la URL del blob en el estado
+
+        if (onSave) {
+            onSave(url); // Llama a la función de devolución de llamada si está definida
+        }
     };
 
     return (
@@ -51,11 +75,11 @@ function TouchPad() {
                 }}
             />
             <hr />
-            {imageURL && (
+            {/* {imageURL && (
                 <div style={{ marginTop: '10px', justifyContent:'center' }} className='d-flex center'>
                     <img src={imageURL} alt="Firma del usuario" style={{ display: 'block', maxWidth: '100%', height: 'auto' }} />
                 </div>
-            )}
+            )} */}
             <div style={{ marginTop: '10px' }}>
                 Aquí aparecerá la firma del usuario cargada.
             </div>

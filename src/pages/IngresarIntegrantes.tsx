@@ -275,6 +275,20 @@ const IngresarIntegrantes: React.FC = () => {
       }
     };
 
+    const calculateAge = (birthDate) => {
+      const today = new Date();
+      const birthDateObj = new Date(birthDate);
+      let age = today.getFullYear() - birthDateObj.getFullYear();
+      const monthDiff = today.getMonth() - birthDateObj.getMonth();
+    
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDateObj.getDate())) {
+        age--;
+      }
+    
+      return age;
+    };
+    
+
     return (
         <IonPage>
             <IonHeader>
@@ -360,7 +374,7 @@ const IngresarIntegrantes: React.FC = () => {
                             <div className="form-group col-sm">
                                 <blockquote className="blockquote text-center">
                                     <p className="mb-0"></p><h6>Edad:</h6><p></p>
-                                    <p className="mb-0"></p><h5 id="edad">0</h5><p></p>
+                                    <p className="mb-0"></p><h5 id="edad">{calculateAge(items.fechadenacimiento)||'0'}</h5><p></p>
                                 </blockquote>
                             </div>
                         </div>
@@ -505,7 +519,7 @@ const IngresarIntegrantes: React.FC = () => {
 
                 <br />
 
-                <div><button className="btn btn-success" onClick={enviar}>Guardar</button>
+                <div><button className="btn btn-success" onClick={enviar}>Guardar</button>&nbsp;
                 <button className="btn btn-primary" onClick={() => window.location.href = `/tabs/tab9/${params.ficha}`}>Volver</button>
             </div>
 

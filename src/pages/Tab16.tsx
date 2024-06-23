@@ -1,50 +1,185 @@
-import ExploreContainer from '../components/ExploreContainer';
 import './Tab4.css';
-import React, { useState, useRef, useEffect } from 'react';
-import { Person } from '../models/person.model';
-import EmployeeItem from '../components/EmployeeItem';
-import {
-  IonContent, IonHeader, IonPage, IonTitle, IonToolbar,
-  IonSelect, IonList, IonInput, IonButton, IonItem, IonLabel,
-  IonBadge, IonSelectOption, IonText, IonDatetimeButton, IonModal, IonDatetime,
-  IonIcon
-} from '@ionic/react';
-import { useHistory, useParams, useLocation } from 'react-router-dom';
+import React, { useEffect, useState, useRef } from 'react';
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonList, IonButton } from '@ionic/react';
+import { useParams, useLocation } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import TouchPad from '../components/TouchPad';
-import SubirImagenes from '../components/SubirImagenes';
+import loadSQL from '../models/database';
 
+interface Autorizacion {
+  fichasocial: number;
+  idintegrante: number | null;
+  entidad: string | null;
+  requerieseguimiento: number | null;
+  fechaprobable: string | null;
+  diligenciadopor: number | null;
+  acepto: string | null;
+  fecharegistro: string | null;
+  usuario: number | null;
+  estado: number | null;
+  tabla: string | null;
+  nameFile: string | null;
+  apoyosocial: string | null;
+  draw_dataUrl: Blob | null;
+  draw_dataUrlImage: Blob | null;
+  nameFirma: string | null;
+  autorizofirma: string | null;
+  idseguimiento: number | null;
+  firmatitular: string | null;
+}
 
 const Tab16: React.FC = () => {
   const location = useLocation();
   const params = useParams();
   const queryParams = new URLSearchParams(location.search);
   const idayuda = queryParams.get('idayuda');
+  const [db, setDb] = useState<any>(null);
+  const [autorizacion, setAutorizacion] = useState<Autorizacion | null>(null);
   const [showModal, setShowModal] = useState(false);
-  const [date, setDate] = useState('');
-  const [tipovisita, settipovisita] = useState('');
-  const [motivovisita, setmotivovisita] = useState('');
-  const [bomberos, setbomberos] = useState('');
-  const [inputValue, setInputValue] = useState(0);
-  const [image, setImage] = useState(null);  // Estado para almacenar la imagen
-  const [preview, setPreview] = useState('');  // Estado para la URL de previsualización de la imagen
+  const [image, setImage] = useState<Blob | null>(null);
+  const [preview, setPreview] = useState<string>('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [integrantes, setIntegrantes] = useState<Integrante[]>([]);
 
-  const fileInputRef = useRef(null);
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];  // Obtiene el archivo de la entrada del usuario
+  useEffect(() => {
+    loadSQL(setDb, fetchAutorizacion);
+    fetchIntegrantes(); 
+  }, []);
+
+  useEffect(() => {
+    fetchIntegrantes(); 
+  }, [params.ficha,db]);
+
+  const fetchAutorizacion = async (database = db) => {
+    if (database) {
+      const res = await database.exec(`SELECT * FROM c17_autorizacion WHERE fichasocial=${params.ficha}`);
+      if (res[0]?.values && res[0]?.columns) {
+        const transformedData = res[0].values.map((row: any[]) => {
+          return res[0].columns.reduce((obj, col, index) => {
+            obj[col] = row[index];
+            return obj;
+          }, {} as Autorizacion);
+        });
+        setAutorizacion(transformedData[0] || null);
+        if (transformedData[0]?.draw_dataUrlImage) {
+          setPreview(transformedData[0].draw_dataUrlImage);
+        }
+      } else {
+        setAutorizacion({
+          fichasocial: parseInt(params.ficha),
+          idintegrante: null,
+          entidad: '',
+          requerieseguimiento: null,
+          fechaprobable: '',
+          diligenciadopor: null,
+          acepto: '',
+          fecharegistro: getCurrentDateTime(),
+          usuario: parseInt(localStorage.getItem('cedula') || '0', 10),
+          estado: 1,
+          tabla: 'c17_autorizacion',
+          nameFile: '',
+          apoyosocial: '',
+          draw_dataUrl: null,
+          draw_dataUrlImage:null,
+          nameFirma: '',
+          autorizofirma: '',
+          idseguimiento: null,
+          firmatitular: '',
+        });
+      }
+    }
+  };
+
+  const fetchIntegrantes = async (database = db) => {
+    if (database) {
+      const res = await database.exec(`SELECT idintegrante, nombre1, nombre2, apellido1, apellido2 FROM c131_integrante WHERE fichasocial=${params.ficha}`);
+      if (res[0]?.values && res[0]?.columns) {
+        const transformedIntegrantes: Integrante[] = res[0].values.map((row: any[]) => {
+          return res[0].columns.reduce((obj, col, index) => {
+            obj[col] = row[index];
+            return obj;
+          }, {} as Integrante);
+        });
+        setIntegrantes(transformedIntegrantes);
+      }
+    }
+  };
+  
+
+  const saveDatabase = () => {
+    if (db) {
+      const data = db.export();
+      localStorage.setItem('sqliteDb', JSON.stringify(Array.from(data)));
+      const request = indexedDB.open('myDatabase', 1);
+
+      request.onupgradeneeded = (event) => {
+        const db = event.target.result;
+        if (!db.objectStoreNames.contains('sqliteStore')) {
+          db.createObjectStore('sqliteStore');
+        }
+      };
+
+      request.onsuccess = (event) => {
+        const db = event.target.result;
+        const transaction = db.transaction(['sqliteStore'], 'readwrite');
+        const store = transaction.objectStore('sqliteStore');
+        const putRequest = store.put(data, 'sqliteDb');
+
+        putRequest.onsuccess = () => {
+          console.log('Data saved to IndexedDB');
+        };
+
+        putRequest.onerror = (event) => {
+          console.error('Error saving data to IndexedDB:', event.target.error);
+        };
+      };
+
+      request.onerror = (event) => {
+        console.error('Failed to open IndexedDB:', event.target.error);
+      };
+    }
+  };
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>, field: keyof Autorizacion) => {
+    const { value } = event.target;
+    console.log(autorizacion)
+    setAutorizacion((prev) => prev ? { ...prev, [field]: value } : prev);
+  };
+
+  function dataURLToBlob(dataURL: string): Blob {
+    const byteString = atob(dataURL.split(',')[1]);
+    const mimeString = dataURL.split(',')[0].split(':')[1].split(';')[0];
+    const ab = new ArrayBuffer(byteString.length);
+    const ia = new Uint8Array(ab);
+    for (let i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i);
+    }
+    return new Blob([ab], { type: mimeString });
+  }
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
     if (file && file.type.startsWith("image")) {
-      setImage(file);  // Actualiza el estado de la imagen
+      setImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64data = reader.result as string;
+        setPreview(base64data);
+        setAutorizacion((prev) => prev ? { ...prev, draw_dataUrlImage: base64data, nameFile: file.name } : prev);
+      };
+      reader.readAsDataURL(file);
     } else {
       setImage(null);
     }
   };
+  
 
   useEffect(() => {
     if (image) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setPreview(reader.result);  // Establece la URL de previsualización de la imagen
+        setPreview(reader.result as string);
       };
       reader.readAsDataURL(image);
     } else {
@@ -52,36 +187,47 @@ const Tab16: React.FC = () => {
     }
   }, [image]);
 
-
-  const tipovisitafun = (event) => {
-    settipovisita(event.target.value);
-
+  const getCurrentDateTime = () => {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
   };
 
-  const motivovisitafun = (event) => {
-    setmotivovisita(event.target.value);
+  const enviar = async () => {
+    if (!autorizacion) return;
+    try {
+      await db.exec(`INSERT OR REPLACE INTO c17_autorizacion 
+      (fichasocial, idintegrante, entidad, requerieseguimiento, fechaprobable, diligenciadopor, acepto, fecharegistro, usuario, estado, tabla, nameFile, apoyosocial, draw_dataUrl, nameFirma, autorizofirma, idseguimiento, firmatitular,draw_dataUrlImage) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?);`,
+        [
+          autorizacion.fichasocial, autorizacion.idintegrante, autorizacion.entidad, autorizacion.requerieseguimiento, autorizacion.fechaprobable,
+          autorizacion.diligenciadopor, autorizacion.acepto, autorizacion.fecharegistro, autorizacion.usuario, autorizacion.estado,
+          autorizacion.tabla, autorizacion.nameFile, autorizacion.apoyosocial, autorizacion.draw_dataUrl, autorizacion.nameFirma,
+          autorizacion.autorizofirma, autorizacion.idseguimiento, autorizacion.firmatitular,autorizacion.draw_dataUrlImage,
+        ]);
 
+      saveDatabase();
+      alert('Datos Guardados con éxito');
+      fetchAutorizacion(); // Actualizar los datos después de guardar
+    } catch (err) {
+      console.error('Error al exportar los datos JSON:', err);
+    }
   };
 
-  const bomberosfun = (event) => {
-    setbomberos(event.target.value);
-
+  const handleSave = (url: Blob) => {
+    setAutorizacion((prev) => prev ? { ...prev, draw_dataUrl: url } : prev);
   };
 
-  const handleChange = (event) => {
-    setInputValue(event.target.value); // Permite la entrada libre del usuario
-  };
-
-  function enviar() {
-    console.log(motivovisita)
-    console.log(tipovisita)
-    console.log(bomberos)
-  }
   return (
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle slot="start">17 - INFORMACION DE QUIEN RESPONDE LA ENCUENTA</IonTitle>
+          <IonTitle slot="start">17 - INFORMACION DE QUIEN RESPONDE LA ENCUESTA</IonTitle>
           <IonTitle slot="end">FICHA SOCIAL: <label style={{ color: '#17a2b8' }}>{params.ficha}</label> </IonTitle>
         </IonToolbar>
       </IonHeader>
@@ -94,13 +240,18 @@ const Tab16: React.FC = () => {
 
         <br />
 
-        <div className=' shadow p-3 mb-5 bg-white rounded'>
+        <div className='shadow p-3 mb-5 bg-white rounded'>
           <IonList>
             <div className="row g-3 was-validated ">
               <div className="col-sm-6">
                 <label className="form-label">Nombre de quien responde la entrevista:</label>
-                <select value={tipovisita} onInput={tipovisitafun} className="form-control form-control-sm" id="pregunta2_3" aria-describedby="validationServer04Feedback" required>
-                  <option value=""> SELECCIONE </option><option value="7327"> YEISON  BEDOYA  - JEFE DEL HOGAR </option>
+                <select value={autorizacion?.idintegrante || ''} onChange={(e) => handleInputChange(e, 'idintegrante')} className="form-control form-control-sm" aria-describedby="validationServer04Feedback" required>
+                  <option value=""> SELECCIONE </option>
+                  {integrantes.map((integrante) => (
+                    <option key={integrante.idintegrante} value={integrante.idintegrante}>
+                      {`${integrante.nombre1} ${integrante.nombre2} ${integrante.apellido1} ${integrante.apellido2}`}
+                    </option>
+                  ))}
                 </select>
               </div>
 
@@ -108,7 +259,7 @@ const Tab16: React.FC = () => {
                 <label>Adjuntar archivo:</label>
                 <div className="input-group mb-3">
                   <div className="input-group-prepend">
-                    <button onClick={() => fileInputRef.current.click()} className="btn btn-info btn-sm text-light">
+                    <button onClick={() => fileInputRef.current?.click()} className="btn btn-info btn-sm text-light">
                       Cargar Imagen
                     </button>
                     <input
@@ -118,14 +269,12 @@ const Tab16: React.FC = () => {
                       onChange={handleImageChange}
                       style={{ display: "none" }}
                     />
-                    <button className="btn btn-info btn-sm text-light" type="button" onClick={() => (preview) ? setShowModal(true) : alert('Cargar un archivo')}>
+                    <button className="btn btn-info btn-sm text-light" type="button" onClick={() => (preview ? setShowModal(true) : alert('Cargar un archivo'))}>
                       Ver
                     </button>
                   </div>
-                  <input type="text" id="nameFile" className="form-control form-control-sm" placeholder="" value={image ? image.name : ''} disabled />
+                  <input type="text" id="nameFile" className="form-control form-control-sm" placeholder="" value={autorizacion?.nameFile || ''} disabled />
                 </div>
-              </div>
-              <div>
               </div>
             </div>
           </IonList>
@@ -133,34 +282,35 @@ const Tab16: React.FC = () => {
             <div className="row g-3 was-validated ">
               <div className="col-sm-4">
                 <label className="form-label">Quien diligencia la ficha:</label>
-                <select value={tipovisita} onInput={tipovisitafun} className="form-control form-control-sm" id="pregunta2_3" aria-describedby="validationServer04Feedback" required>
-                <option value=""> SELECCIONE </option><option value="76"> ANA BEATRIZ FIGUEROA TORRES </option><option value="24"> APOYO  SOCIAL </option><option value="34"> APOYO SOCIAL DOS </option><option value="8"> BEATRIZ EUGENIA MONCADA GONZALEZ </option><option value="6"> DANIEL  TORO VASQUEZ </option><option value="29"> DANIELA SANDOVAL GARZON </option><option value="7"> DEISY YOHANA GIRALDO ZULUAGA </option><option value="5"> ESTER LUCIA ROJAS ARENAS </option><option value="13"> JOHANA ANDREA CIFUENTES LONGAS </option><option value="21"> LINA MARCELA PEREZ ARAQUE </option><option value="87"> MARITZA  OROZCO MARTINEZ </option><option value="4"> MARYORY LINDEY ABELLO LONDOÑO </option><option value="32"> PAULA ANDREA MIRA MENESES </option><option value="33"> SANDRA JULIANA HERRERA HENAO </option><option value="88"> VIVIANA YANET CALLEJAS DUQUE </option><option value="22"> YEIDY TATIANA HIGUITA </option><option value="9"> YULIET ANDREA LOPEZ RODRIGUEZ </option> 
+                <select value={autorizacion?.diligenciadopor || ''} onChange={(e) => handleInputChange(e, 'diligenciadopor')} className="form-control form-control-sm" aria-describedby="validationServer04Feedback" required>
+                <option value=""> SELECCIONE </option><option value="76"> ANA BEATRIZ FIGUEROA TORRES </option><option value="24"> APOYO  SOCIAL </option><option value="34"> APOYO SOCIAL DOS </option><option value="8"> BEATRIZ EUGENIA MONCADA GONZALEZ </option><option value="6"> DANIEL  TORO VASQUEZ </option><option value="29"> DANIELA SANDOVAL GARZON </option><option value="7"> DEISY YOHANA GIRALDO ZULUAGA </option><option value="5"> ESTER LUCIA ROJAS ARENAS </option><option value="13"> JOHANA ANDREA CIFUENTES LONGAS </option><option value="21"> LINA MARCELA PEREZ ARAQUE </option><option value="87"> MARITZA  OROZCO MARTINEZ </option><option value="4"> MARYORY LINDEY ABELLO LONDOÑO </option><option value="32"> PAULA ANDREA MIRA MENESES </option><option value="33"> SANDRA JULIANA HERRERA HENAO </option><option value="88"> VIVIANA YANET CALLEJAS DUQUE </option><option value="22"> YEIDY TATIANA HIGUITA </option><option value="9"> YULIET ANDREA LOPEZ RODRIGUEZ </option>
                 </select>
               </div>
               <div className="col-sm-4">
                 <label className="form-label" >Nombre apoyo social:</label>
-                <input type="text" placeholder="" className="form-control form-control-sm  " required />
+                <input type="text" onChange={(e) => handleInputChange(e, 'apoyosocial')} value={autorizacion?.apoyosocial || ''} placeholder="" className="form-control form-control-sm" required />
               </div>
               <div className="col-sm-4">
                 <label className="form-label" >Entidad:</label>
-                <input type="text" placeholder="" className="form-control form-control-sm  " required />
+                <input type="text" onChange={(e) => handleInputChange(e, 'entidad')} value={autorizacion?.entidad || ''} placeholder="" className="form-control form-control-sm" required />
               </div>
               <div className="col-sm">
                 <label className="form-label">Requiere seguimiento:</label>
-                <select value={tipovisita} onInput={tipovisitafun} className="form-control form-control-sm" id="pregunta2_3" aria-describedby="validationServer04Feedback" required>
-                <option value=""> SELECCIONE </option><option value="1"> NO </option><option value="2"> SI </option>
+                <select value={autorizacion?.requerieseguimiento || ''} onChange={(e) => handleInputChange(e, 'requerieseguimiento')} className="form-control form-control-sm" aria-describedby="validationServer04Feedback" required>
+                  <option value=""> SELECCIONE </option>
+                  <option value="1"> NO </option>
+                  <option value="2"> SI </option>
                 </select>
               </div>
               <div className="col">
                 <label className="form-label" >Fecha probable:</label>
-                <input type="date" placeholder="" className="form-control form-control-sm  " required />
-                <small  className="form-text text-muted">La fecha para el primer seguimiento no puede ser superior a un mes.</small>
+                <input type="date" onChange={(e) => handleInputChange(e, 'fechaprobable')} value={autorizacion?.fechaprobable || ''} placeholder="" className="form-control form-control-sm" required />
+                <small className="form-text text-muted">La fecha para el primer seguimiento no puede ser superior a un mes.</small>
               </div>
-              
             </div>
           </IonList>
         </div>
-        <div className=' shadow p-3 mb-5 bg-white rounded'>
+        <div className='shadow p-3 mb-5 bg-white rounded'>
           <IonList>
             <div className="social-card2">
               <span className="label2">AUTORIZACIÓN PARA EL TRATAMIENTO DE DATOS PERSONALES:</span>
@@ -174,36 +324,45 @@ const Tab16: React.FC = () => {
             <div className="row g-3 was-validated ">
               <div className="col-sm-6">
                 <label className="form-label">Autorizo el tratamiento de datos:</label>
-                <select value={tipovisita} onInput={tipovisitafun} className="form-control form-control-sm" id="pregunta2_3" aria-describedby="validationServer04Feedback" required>
-                  <option value=""> SELECCIONE </option><option value="1"> NO </option><option value="2"> SI </option>
+                <select value={autorizacion?.autorizofirma || ''} onChange={(e) => handleInputChange(e, 'autorizofirma')} className="form-control form-control-sm" aria-describedby="validationServer04Feedback" required>
+                  <option value=""> SELECCIONE </option>
+                  <option value="1"> NO </option>
+                  <option value="2"> SI </option>
                 </select>
               </div>
               <div className="col-sm-6">
                 <label className="form-label">Firma el representante del hogar:</label>
-                <select value={tipovisita} onInput={tipovisitafun} className="form-control form-control-sm" id="pregunta2_3" aria-describedby="validationServer04Feedback" required>
-                  <option value=""> SELECCIONE </option><option value="1"> NO </option><option value="2"> SI </option>
+                <select value={autorizacion?.firmatitular || ''} onChange={(e) => handleInputChange(e, 'firmatitular')} className="form-control form-control-sm" aria-describedby="validationServer04Feedback" required>
+                  <option value=""> SELECCIONE </option>
+                  <option value="1"> NO </option>
+                  <option value="2"> SI </option>
                 </select>
               </div>
             </div>
           </IonList>
         </div>
 
-        <div className=' shadow p-3 mb-5 bg-white rounded'><div className="col-sm">
-                <div className="alert alert-info" role="alert">
-                     <strong>FIRMA DEL USUARIO:</strong> En este módulo puedes pedir al usuario que realice su firma a mano alzada, esta informacion se visualizara en el PDF. En el siguiente cuadro realiza la firma y cuando este fimado oprime el boton <strong>Cargar Firma</strong>
-                </div>
-            </div> <TouchPad></TouchPad>
-            </div> 
-        
-   
+        <div className='shadow p-3 mb-5 bg-white rounded'>
+          <div className="col-sm">
+            <div className="alert alert-info" role="alert">
+              <strong>FIRMA DEL USUARIO:</strong> En este módulo puedes pedir al usuario que realice su firma a mano alzada, esta informacion se visualizará en el PDF. En el siguiente cuadro realiza la firma y cuando esté firmado oprime el botón <strong>Cargar Firma</strong>
+            </div>
+          </div>
+          <div className='container text-center pb-4 pt-4'>
+          <img src={autorizacion?.draw_dataUrl} alt="" />
+          </div>
 
-        <div><IonButton color="success">Guardar</IonButton><IonButton routerLink={'/cobertura'}>Siguiente</IonButton></div>
+          <TouchPad onSave={handleSave} />
+        </div>
 
-<br />
+        <div>
+          <IonButton color="success" onClick={enviar}>Guardar</IonButton>
+          <IonButton routerLink={'/cobertura'}>Siguiente</IonButton>
+        </div>
+
         {preview && (
           <>
-            {/* Bootstrap Modal */}
-            <div className={`modal ${showModal ? "d-block" : "d-none"} modalnew modal-backdropnew `} tabIndex="-1" role="dialog">
+            <div className={`modal ${showModal ? "d-block" : "d-none"} modalnew modal-backdropnew`} tabIndex="-1" role="dialog">
               <div className="modal-dialog" role="document"><br /><br /><br />
                 <div className="modal-content">
                   <div className="modal-header">
@@ -225,3 +384,4 @@ const Tab16: React.FC = () => {
 };
 
 export default Tab16;
+

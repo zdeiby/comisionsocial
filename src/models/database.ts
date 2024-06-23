@@ -478,44 +478,7 @@ const loadSQL = async (setDb, fetchUsers) => {
           );
   
           `);
-      database.run(`
-            CREATE TABLE IF NOT EXISTS c15_ubicacionposterioratencionsocial (
-            fichasocial INTEGER NOT NULL,
-            ubicacionposterior INTEGER NOT NULL,
-            cualtemporal TEXT DEFAULT NULL,
-            dondeauxilio TEXT DEFAULT NULL,
-            nombreauto TEXT DEFAULT NULL,
-            parentesco VARCHAR(25) DEFAULT NULL,
-            prestada VARCHAR(25) DEFAULT NULL,
-            cuallugardistinto TEXT DEFAULT NULL,
-            direccion TEXT DEFAULT NULL,
-            comuna VARCHAR(25) DEFAULT NULL,
-            barrio VARCHAR(25) DEFAULT NULL,
-            ruralurbano VARCHAR(25) DEFAULT NULL,
-            sector TEXT DEFAULT NULL,
-            telefono1 VARCHAR(25) DEFAULT NULL,
-            telefono2 VARCHAR(25) DEFAULT NULL,
-            dirCampo1 VARCHAR(25) DEFAULT NULL,
-            dirCampo2 VARCHAR(25) DEFAULT NULL,
-            dirCampo3 VARCHAR(100) DEFAULT NULL,
-            dirCampo4 VARCHAR(10) DEFAULT NULL,
-            dirCampo5 VARCHAR(25) DEFAULT NULL,
-            dirCampo6 VARCHAR(100) DEFAULT NULL,
-            dirCampo7 VARCHAR(10) DEFAULT NULL,
-            dirCampo8 VARCHAR(25) DEFAULT NULL,
-            dirCampo9 TEXT DEFAULT NULL,
-            ubicacion VARCHAR(25) DEFAULT NULL,
-            pais VARCHAR(25) DEFAULT NULL,
-            departamento VARCHAR(25) DEFAULT NULL,
-            municipio VARCHAR(25) DEFAULT NULL,
-            fecharegistro DATETIME DEFAULT NULL,
-            usuario INTEGER DEFAULT NULL,
-            estado INTEGER DEFAULT NULL,
-            tabla VARCHAR(100) DEFAULT NULL,
-            PRIMARY KEY (fichasocial, ubicacionposterior)
-          );
-  
-          `);
+
       database.run(`
             CREATE TABLE IF NOT EXISTS c16_observaciones (
             fichasocial INTEGER NOT NULL,
@@ -541,6 +504,7 @@ const loadSQL = async (setDb, fetchUsers) => {
           usuario INTEGER DEFAULT NULL,
           estado INTEGER DEFAULT NULL,
           tabla VARCHAR(100) DEFAULT NULL,
+          draw_dataUrlImage BLOB DEFAULT NULL,
           nameFile TEXT DEFAULT NULL,
           apoyosocial TEXT DEFAULT NULL,
           draw_dataUrl BLOB DEFAULT NULL,
@@ -611,6 +575,14 @@ const loadSQL = async (setDb, fetchUsers) => {
                     estado INTEGER DEFAULT NULL
                   );
                       `);
+
+                      database.run(`
+                        CREATE TABLE IF NOT EXISTS t1_ubicacionposterior (
+                          id INTEGER PRIMARY KEY AUTOINCREMENT,
+                          descripcion TEXT DEFAULT NULL,
+                          estado INTEGER DEFAULT NULL
+                        );
+                            `);
 
 
     }

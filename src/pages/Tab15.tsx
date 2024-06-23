@@ -1,92 +1,116 @@
-import ExploreContainer from '../components/ExploreContainer';
-import './Tab4.css';
-import React, { useState ,useMemo } from 'react';
-import { Person } from '../models/person.model';
-import EmployeeItem from '../components/EmployeeItem';
+import React, { useState, useEffect } from 'react';
 import {
   IonContent, IonHeader, IonPage, IonTitle, IonToolbar,
-  IonSelect, IonList, IonInput, IonButton, IonItem, IonLabel,
-  IonBadge, IonSelectOption, IonText, IonDatetimeButton, IonModal, IonDatetime,
-  IonIcon
+  IonList, IonButton
 } from '@ionic/react';
-import { useHistory, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import CustomDataTable from '../components/DataTable';
+import loadSQL from '../models/database';
 
+const getCurrentDateTime = () => {
+  const date = new Date();
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+};
 
 const Tab15: React.FC = () => {
-  const params = useParams();
-  const history = useHistory();
-  const [showModal, setShowModal] = useState(false);
-  const [date, setDate] = useState('');
-  const [tipovisita, settipovisita] = useState('');
-  const [motivovisita, setmotivovisita] = useState('');
-  const [bomberos, setbomberos] = useState('');
+  const params = useParams<any>();
+  const [db, setDb] = useState<any>(null);
+  const [observacion, setObservacion] = useState<string>('');
+  const [items, setItems] = useState({
+    fichasocial: params.ficha,
+    observacion: '',
+    fecharegistro: getCurrentDateTime(),
+    usuario: localStorage.getItem('cedula'),
+    estado: 1,
+    tabla: 'c16_observaciones',
+  });
 
+  useEffect(() => {
+    loadSQL(setDb, fetchObservacion);
+  }, []);
 
-  const data = [
-    { id: 1, title: 'Star Wars', year: 'ver observación',year1: '1977',year2: '1977',year3: '1977' },
-    { id: 2, title: 'Conan the Barbarian', year: '1982',year1: '1977',year2: '1977',year3: '1977' },
-    { id: 3, title: 'The Lord of the Rings', year: '2001',year1: '1977',year2: '1977',year3: '1977' }
-  ];
-  
-  const columns = [
-    {
-        name: 'Eliminar',
-        selector: row => <button className='btn btn-info btn-sm text-light' >eliminar</button> ,
-        sortable: true,
-    },
-    {
-        name: 'Observacion',
-        selector: row =><button className='btn btn-info btn-sm text-light' >Observacion</button> ,
-        sortable: true,
+  useEffect(() => {
+    fetchObservacion();
+  }, [params.ficha,db]);
+
+  const saveDatabase = () => {
+    if (db) {
+      const data = db.export();
+      localStorage.setItem('sqliteDb', JSON.stringify(Array.from(data)));
+      const request = indexedDB.open('myDatabase', 1);
+
+      request.onupgradeneeded = (event: any) => {
+        const db = event.target.result;
+        if (!db.objectStoreNames.contains('sqliteStore')) {
+          db.createObjectStore('sqliteStore');
+        }
+      };
+
+      request.onsuccess = (event: any) => {
+        const db = event.target.result;
+        const transaction = db.transaction(['sqliteStore'], 'readwrite');
+        const store = transaction.objectStore('sqliteStore');
+        const putRequest = store.put(data, 'sqliteDb');
+
+        putRequest.onsuccess = () => {
+          console.log('Data saved to IndexedDB');
+        };
+
+        putRequest.onerror = (event: any) => {
+          console.error('Error saving data to IndexedDB:', event.target.error);
+        };
+      };
+
+      request.onerror = (event: any) => {
+        console.error('Failed to open IndexedDB:', event.target.error);
+      };
     }
-    ,
-    {
-        name: 'Year',
-        selector: row => row.year,
-        sortable: true,
-    },,
-    {
-        name: 'Year',
-        selector: row => row.year,
-        sortable: true,
-    },
-    {
-        name: 'Year',
-        selector: row => row.year,
-        sortable: true,
+  };
+
+  const fetchObservacion = async (database = db) => {
+    if (db) {
+      const res = await db.exec(`SELECT observacion FROM c16_observaciones WHERE fichasocial=${params.ficha}`);
+      if (res[0]?.values && res[0]?.values.length > 0) {
+        setObservacion(res[0].values[0][0]);
+        setItems((prevItems) => ({
+          ...prevItems,
+          observacion: res[0].values[0][0]
+        }));
+      }
     }
-  ];
-
-  // Manejador para cambios en el campo de búsqueda
-  const handleFilterChange = (event) => {
-      setFilterText(event.target.value);
   };
 
-
-
-
-  const tipovisitafun = (event) => {
-    settipovisita(event.target.value);
-
+  const handleInputChange = (event: any) => {
+    const { value } = event.target;
+    setObservacion(value);
+    setItems((prevItems) => ({
+      ...prevItems,
+      observacion: value,
+    }));
   };
 
-  const motivovisitafun = (event) => {
-    setmotivovisita(event.target.value);
+  const enviar = async (database = db) => {
+    try {
+      await db.exec(`INSERT OR REPLACE INTO c16_observaciones (
+        fichasocial, observacion, fecharegistro, usuario, estado, tabla
+      ) VALUES (?, ?, ?, ?, ?, ?)`,
+      [
+        items.fichasocial, items.observacion, items.fecharegistro, items.usuario, items.estado, items.tabla
+      ]);
 
+      saveDatabase();
+      alert('Observación guardada con éxito');
+    } catch (err) {
+      console.error('Error al guardar la observación:', err);
+    }
   };
 
-  const bomberosfun = (event) => {
-    setbomberos(event.target.value);
-
-  };
-
-  function enviar() {
-    console.log(motivovisita)
-    console.log(tipovisita)
-    console.log(bomberos)
-  }
   return (
     <IonPage>
       <IonHeader>
@@ -96,32 +120,33 @@ const Tab15: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-      <div className="social-card">
-      <span className="label">Ficha social:</span>
-      <span className="value">{params.ficha}</span>
-    </div>
-
-        <div className=' shadow p-3 mb-5 bg-white rounded'>
+        <div className="social-card">
+          <span className="label">Ficha social:</span>
+          <span className="value">{params.ficha}</span>
+        </div>
+        <div className='shadow p-3 mb-5 bg-white rounded'>
           <IonList>
-  
-            <div className="row g-3 was-validated ">
-             
-            </div><hr />
             <div className="alert alert-primary" role="alert">
               <span className="badge badge-secondary text-dark">16 - OBSERVACIONES</span>
             </div>
-            <div className="row g-3 was-validated ">
-            <div className="col-sm">
-                <textarea placeholder="" className="form-control" rows="5" required/>
+            <div className="row g-3 was-validated">
+              <div className="col-sm">
+                <textarea 
+                  placeholder="" 
+                  className="form-control" 
+                  rows="5" 
+                  required 
+                  value={observacion}
+                  onChange={handleInputChange}
+                />
               </div>
-              </div>
+            </div>
           </IonList>
-         
         </div>
- 
-        <div><IonButton color="success" onClick={enviar}>Guardar</IonButton><IonButton routerLink={`/tabs/tab16/${params.ficha}`}>Siguiente</IonButton></div>
-
-
+        <div>
+          <IonButton color="success" onClick={enviar}>Guardar</IonButton>
+          <IonButton routerLink={`/tabs/tab16/${params.ficha}`}>Siguiente</IonButton>
+        </div>
       </IonContent>
     </IonPage>
   );

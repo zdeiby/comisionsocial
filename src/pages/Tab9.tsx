@@ -184,6 +184,11 @@ const Tab9: React.FC = () => {
       sortable: true,
     },
     {
+      name: 'Eliminar',
+      selector: row => <button className='btn btn-danger btn-sm' onClick={() => handleDelete(row.idintegrante)}>Eliminar</button>,
+      sortable: true,
+    },
+    {
       name: 'Nombre',
       selector: row => `${row.nombre1} ${row.nombre2} ${row.apellido1} ${row.apellido2}`,
       sortable: true,
@@ -204,6 +209,20 @@ const Tab9: React.FC = () => {
       sortable: true,
     }
   ];
+
+  const handleDelete = async (id) => {
+    if (db) {
+      try {
+        await db.exec(`DELETE FROM c131_integrante WHERE idintegrante=${id}`);
+        setIntegrantes(prevIntegrantes => prevIntegrantes.filter(integrante => integrante.idintegrante !== id));
+        //saveDatabase(); // Guarda la base de datos después de eliminar
+        alert('Registro eliminado con éxito');
+      } catch (err) {
+        console.error('Error al eliminar el registro:', err);
+        alert('Error al eliminar el registro');
+      }
+    }
+  };
 
   return (
     <IonPage>

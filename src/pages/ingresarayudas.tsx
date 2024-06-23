@@ -84,13 +84,24 @@ interface Ayudas {
     draw_dataUrl: Blob | null;
 }
 
+interface Integrante {
+    idintegrante: number;
+    nombre1: string;
+    nombre2: string;
+    apellido1: string;
+    apellido2: string;
+  }
+  
+
 const IngresarAyudas: React.FC = () => {
     const location = useLocation();
     const params = useParams();
     const queryParams = new URLSearchParams(location.search);
-    const idayudas = queryParams.get('idayudas');
+    const idayudas = queryParams.get('idayuda');
     const [ayudas, setAyudas] = useState<Ayudas[]>([]);
     const [db, setDb] = useState<any>(null);
+    const [integrantes, setIntegrantes] = useState<Integrante[]>([]);
+    const [bloobs, setBloobs] =useState('');
     const [items, setItems] = useState<Ayudas>({
         idayudas: null,
         fichasocial: parseInt(params.ficha),
@@ -293,6 +304,17 @@ const IngresarAyudas: React.FC = () => {
                 });
             }
         }
+
+        const integrantesRes = await db.exec(`SELECT idintegrante, nombre1, nombre2, apellido1, apellido2 FROM c131_integrante WHERE fichasocial=${params.ficha}`);
+      if (integrantesRes[0]?.values && integrantesRes[0]?.columns) {
+        const transformedIntegrantes: Integrante[] = integrantesRes[0].values.map((row: any[]) => {
+          return integrantesRes[0].columns.reduce((obj, col, index) => {
+            obj[col] = row[index];
+            return obj;
+          }, {} as Integrante);
+        });
+        setIntegrantes(transformedIntegrantes);
+      }
     };
 
     const getCurrentDateTime = () => {
@@ -420,6 +442,15 @@ const IngresarAyudas: React.FC = () => {
         }
     };
 
+    const handleSave = (url) => {
+        console.log('URL de Blob:', url);
+        setBloobs(url);
+        setItems((prevItems) => ({
+            ...prevItems,
+            draw_dataUrl: url
+        }));
+    };
+
     return (
         <IonPage>
             <IonHeader>
@@ -478,7 +509,7 @@ const IngresarAyudas: React.FC = () => {
                         <div className="col-sm-6">
                                 <label className="form-label">Que entidad:</label>
                                 <select onChange={(e) => handleInputChange(e, 'quienpaq')} value={items.quienpaq || ''} className="form-control form-control-sm" id="pregunta2_3" aria-describedby="validationServer04Feedback" required>
-                                <option value=""> SELECCIONE </option><option value="1"> NO </option><option value="2"> SI </option>
+                                <option value=""> SELECCIONE </option><option value="1"> COMISIÓN SOCIAL </option><option value="2"> OTRA </option>  
                                                                 </select>
                             </div>
                             <div className="col-sm-6">
@@ -771,7 +802,12 @@ const IngresarAyudas: React.FC = () => {
                             <div className="col-sm-6">
                                 <label className="form-label">Integrante que recibe o autotiza:</label>
                                 <select onChange={(e) => handleInputChange(e, 'idintegrante')} value={items.idintegrante || ''} className="form-control form-control-sm" id="pregunta2_3" aria-describedby="validationServer04Feedback" required>
-                                <option value=""> SELECCIONE </option><option value="7327"> YEISON  BEDOYA  - JEFE DEL HOGAR </option> 
+                                <option value=""> SELECCIONE </option>
+                                {integrantes.map((integrante) => (
+                                    <option key={integrante.idintegrante} value={integrante.idintegrante}>
+                                    {`${integrante.nombre1} ${integrante.nombre2} ${integrante.apellido1} ${integrante.apellido2}`}
+                                    </option>
+                                ))}
                                 </select>
                             </div>
                             <div className="col-sm-6">
@@ -821,19 +857,27 @@ const IngresarAyudas: React.FC = () => {
                     <div className="alert alert-primary" role="alert">
                     <span className="badge badge-secondary text-dark">FIRMA DEL USUARIO QUIÉN RECIBE LA AYUDA:</span>
                     <span className='badge text-dark'>En este módulo puedes pedir al usuario que realice su firma a mano alzada, esta informacion se visualizara en el PDF. En el siguiente cuadro realiza la firma y cuando este fimado oprime el boton</span>
+                  
+                  
                    <br /> <span className="badge badge-secondary text-dark">Cargar Firma</span>
                     </div>
-   
+                    <div className='container text-center'>
+                        <img src={items.draw_dataUrl} alt="" />
+                    </div><hr />
                     </IonList>
-
-                    <TouchPad></TouchPad>
+                                    
+                    <TouchPad onSave={handleSave}></TouchPad>
+                    
                     <br />
 
                 </div>
 
                 <br />
 
-                <div><IonButton onClick={enviar} color="success">Guardar</IonButton><IonButton routerLink={`/tabs/tab12/${params.ficha}`}>Siguiente</IonButton></div>
+                <div><button className="btn btn-success" onClick={enviar}>Guardar</button>&nbsp;
+                <button className="btn btn-primary" onClick={() => window.location.href = `/tabs/tab12/${params.ficha}`}>Volver</button>
+
+                </div>
 
 
             </IonContent>

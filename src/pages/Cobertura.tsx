@@ -112,33 +112,33 @@ const Cobertura: React.FC = () => {
     //   }
     // };
 
-    try {
-      const response = await axios.get('../../public/jsonstablas/datos.json');
-      const jsonData = response.data;
-      const jsonString = JSON.stringify(jsonData);
-      setPeople(jsonData);
-          for (const item of jsonData) {
-            const fichaSocial = item.fichasocial;
-            const fichatecnia = item.fichatecnia;
-            await db.run(`INSERT OR REPLACE INTO c0_informaciondelevento (fichasocial,fichatecnia, motivovisita,tipovisita,horaactivacion
-                          ,horaatencion,fechavisita,fecharegistro,usuario,estado,tabla,tipo,declaradafallida,ficharecuperda,horallegadaalevento,
-                          remitir,remitir2
-                          ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);`, [fichaSocial, fichatecnia, item.motivovisita, item.tipovisita, item.horaactivacion
-              , item.horaatencion, item.fechavisita, item.fecharegistro, item.usuario, item.estado, item.tabla, item.tipo, item.declaradafallida, item.ficharecuperda, item.horallegadaalevento,
-              item.remitir, item.remitir2]);
-              fetchUsers();
-              saveDatabase();
-          // update ui
-          const respSelect =  await db.run(`SELECT * FROM "c0_informaciondelevento"  ;`);
-         // setItems(respSelect[0]?.columns);
-        }
+    // try {
+    //   const response = await axios.get('/public/jsonstablas/datos.json');
+    //   const jsonData = response.data;
+    //   const jsonString = JSON.stringify(jsonData);
+    //   setPeople(jsonData);
+    //       for (const item of jsonData) {
+    //         const fichaSocial = item.fichasocial;
+    //         const fichatecnia = item.fichatecnia;
+    //         await db.run(`INSERT OR REPLACE INTO c0_informaciondelevento (fichasocial,fichatecnia, motivovisita,tipovisita,horaactivacion
+    //                       ,horaatencion,fechavisita,fecharegistro,usuario,estado,tabla,tipo,declaradafallida,ficharecuperda,horallegadaalevento,
+    //                       remitir,remitir2
+    //                       ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);`, [fichaSocial, fichatecnia, item.motivovisita, item.tipovisita, item.horaactivacion
+    //           , item.horaatencion, item.fechavisita, item.fecharegistro, item.usuario, item.estado, item.tabla, item.tipo, item.declaradafallida, item.ficharecuperda, item.horallegadaalevento,
+    //           item.remitir, item.remitir2]);
+    //           fetchUsers();
+    //           saveDatabase();
+    //       // update ui
+    //       const respSelect =  await db.run(`SELECT * FROM "c0_informaciondelevento"  ;`);
+    //      // setItems(respSelect[0]?.columns);
+    //     }
    
-    } catch (err) {
-      console.error('Error al exportar los datos JSON: c0_informaciondelevento', err);
-    }
+    // } catch (err) {
+    //   console.error('Error al exportar los datos JSON: c0_informaciondelevento', err);
+    // }
 
     try {
-      const response = await axios.get('../../public/jsonstablas/t1_programas.json');
+      const response = await axios.get('/jsonstablas/t1_programas.json');
       const jsonData = response.data;
      // setProgramas(jsonData);
 
@@ -155,7 +155,7 @@ const Cobertura: React.FC = () => {
     }
 
     try {
-      const response = await axios.get('../../public/jsonstablas/t1_parentesco.json');
+      const response = await axios.get('/jsonstablas/t1_parentesco.json');
       const jsonData = response.data;
      // setProgramas(jsonData);
 
@@ -172,7 +172,7 @@ const Cobertura: React.FC = () => {
     }
 
     try {
-      const response = await axios.get('../../public/jsonstablas/t1_comunas.json');
+      const response = await axios.get('/jsonstablas/t1_comunas.json');
       const jsonData = response.data;
      // setProgramas(jsonData);
 
@@ -190,7 +190,7 @@ const Cobertura: React.FC = () => {
     
     
     try {
-      const response = await axios.get('../../public/jsonstablas/t1_barrios.json');
+      const response = await axios.get('/jsonstablas/t1_barrios.json');
       const jsonData = response.data;
      // setProgramas(jsonData);
 
@@ -204,6 +204,25 @@ const Cobertura: React.FC = () => {
       fetchUsers();
     } catch (err) {
       console.error('Error al exportar los datos JSON: t1_barrios  ', err);
+    }
+
+
+    try {
+      const response = await axios.get('/jsonstablas/t1_ubicacionposterior.json');
+      const jsonData = response.data;
+     // setProgramas(jsonData);
+
+      for (const item of jsonData) {
+        await db.run(`INSERT OR REPLACE INTO t1_ubicacionposterior (id, descripcion, estado) VALUES (?, ?, ?);`, [
+          item.id, item.descripcion, item.estado, 
+        ]);
+      }
+
+      saveDatabase();
+      fetchUsers();
+      window.alert('sincronizacion exitosa')
+    } catch (err) {
+      console.error('Error al exportar los datos JSON: t1_ubicacionposterior  ', err);
     }
 
 
