@@ -96,7 +96,8 @@ const Tab2: React.FC = () => {
             return obj;
           }, {} as Person);
         });
-        setPeople(transformedPeople); 
+        setPeople(transformedPeople);
+        setButtonDisabled((transformedPeople[0].tipoevento)?false:true);  
       }else{
         setItems({
           fichasocial:  params.ficha,
@@ -113,14 +114,6 @@ const Tab2: React.FC = () => {
       }
     }
 
-  };
-
-  const getCurrentTime = () => {
-    const now = new Date();
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    const seconds = String(now.getSeconds()).padStart(2, '0');
-    return `${hours}:${minutes}:${seconds}`;
   };
 
   const getCurrentDateTime = () => {
@@ -171,11 +164,15 @@ useEffect(() => {
 
   const handleInputChange = (event, field) => {
     const { value } = event.target;
-    setItems((prevItems) => ({
-      ...prevItems,
-      [field]: value,
-    }));
-console.log(items)
+    setItems((prevItems) => {
+      const newState = { ...prevItems, [field]: value };
+      if (field === 'tipoevento') {
+        newState.otro = value === '13' ? '' : 'NO APLICA';
+      }if (field === 'tipoevento') {
+        newState.quebrada = value === '12' ? '' : 'NO APLICA';
+      }
+      return newState;
+    });
   };
 
  useEffect(() => {
@@ -194,9 +191,9 @@ console.log(items)
 
           // update ui
           const respSelect = db.exec(`SELECT * FROM "c1_identificacionevento"  where fichasocial="${items.fichasocial}";`);
-          setButtonDisabled(false);
           saveDatabase();
           alert('Datos Guardados con éxito');
+          setButtonDisabled(false);
         }
            catch (err) {
       console.error('Error al exportar los datos JSON:', err);
@@ -255,14 +252,16 @@ console.log(items)
                 <option value="11"> VOLADURA DE TECHO </option> 
               </select>
             </div>
+            {(items.tipoevento =='13')? 
             <div className="col-sm-12">
               <label  className="form-label">Cuales:</label>
-              <input type="text" onChange={(e) => handleInputChange(e, 'otro')} value={items.otro} placeholder="" className="form-control form-control-sm  "  required/>
-            </div>
+              <input type="text" onChange={(e) => handleInputChange(e, 'otro')} value={items.otro ||''} placeholder="" className="form-control form-control-sm  "  required/>
+            </div>:'' }
+            {(items.tipoevento =='12')? 
             <div className="col-sm-12">
               <label  className="form-label">Motivo:</label>
-              <input type="text" onChange={(e) => handleInputChange(e, 'quebrada')} value={items.quebrada} placeholder="" className="form-control form-control-sm  "  required/>
-            </div>
+              <input type="text" onChange={(e) => handleInputChange(e, 'quebrada')} value={items.quebrada || ''} placeholder="" className="form-control form-control-sm  "  required/>
+            </div>:'' }
           </div>
   </IonList>
 
@@ -282,7 +281,7 @@ console.log(items)
   
   </div>
    <br /><br />
-    <div><IonButton color="success" onClick={enviar}>Guardar</IonButton><IonButton routerLink={`/tabs/tab3/${params.ficha}`}>Siguiente</IonButton></div>
+    <div><IonButton color="success" onClick={enviar}>Guardar</IonButton><IonButton disabled={buttonDisabled} routerLink={`/tabs/tab3/${params.ficha}`}>Siguiente</IonButton></div>
        
     
     </IonContent>

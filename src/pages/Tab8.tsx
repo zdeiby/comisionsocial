@@ -119,6 +119,7 @@ const Tab8: React.FC = () => {
           }, {} as Person);
         });
         setPeople(transformedPeople);
+        setButtonDisabled((transformedPeople[0].tenenciadelavivienda)?false:true); 
       } else {
         setItems({
           fichasocial: params.ficha,
@@ -126,18 +127,18 @@ const Tab8: React.FC = () => {
           propietario: '',
           propietariotel1: '',
           propietariotel2: '',
-          escritura: '',
-          compraventa: '',
-          promesa: '',
-          posesion: '',
-          impuestopredial: '',
-          serviciospublicos: '',
-          matriculapredial: '',
-          extrajuicio: '',
-          ninguno: '',
-          otro: '',
+          escritura: '1',
+          compraventa: '1',
+          promesa: '1',
+          posesion: '1',
+          impuestopredial: '1',
+          serviciospublicos: '1',
+          matriculapredial: '1',
+          extrajuicio: '1',
+          ninguno: '1',
+          otro: '1',
           cualdocumentos: '',
-          unidadproductuva: '',
+          unidadproductuva: '1',
           cualunidadproductiva: '',
           fecharegistro: getCurrentDateTime(),
           usuario: localStorage.getItem('cedula'),
@@ -195,11 +196,22 @@ const Tab8: React.FC = () => {
 
   const handleInputChange = (event, field) => {
     const { value } = event.target;
-    setItems((prevItems) => ({
-      ...prevItems,
-      [field]: value,
-    }));
-    console.log(items);
+    setItems((prevItems) => {
+      const newState = { ...prevItems, [field]: value };
+      if (field === 'tenenciadelavivienda') {
+        newState.propietario = value === '4' ? '' : '';
+        newState.propietariotel1 = value === '1' ? '' : '';
+        newState.propietariotel2 = value === '6' ? '' : '';
+      } if (field === 'otro') {
+        newState.cualdocumentos = value === '2' ? '' : '';
+      } 
+      if (field === 'unidadproductuva') {
+        newState.cualunidadproductiva = value === '2' ? '' : '';
+      } 
+
+      
+      return newState;
+    });
   };
 
   useEffect(() => {
@@ -254,30 +266,32 @@ const Tab8: React.FC = () => {
                 <select onChange={(e) => handleInputChange(e, 'tenenciadelavivienda')} value={items.tenenciadelavivienda} className="form-control form-control-sm" id="pregunta2_3" aria-describedby="validationServer04Feedback" required>
                 <option value=""> SELECCIONE </option><option value="2"> ALQUILADA </option><option value="4"> INVADIDA </option><option value="5"> POSESION </option><option value="3"> PRESTADA </option><option value="1"> PROPIA </option><option value="6"> SUCESION </option>                </select>
               </div>
+              {(items.tenenciadelavivienda =='2' ||items.tenenciadelavivienda =='3')? 
               <div className="col-sm">
                 <label className="form-label" >Propietario/poseedor</label>
                 <input type="text"  onChange={(e) => handleInputChange(e, 'propietario')} value={items.propietario} className="form-control form-control-sm  " required/>
               </div>
+              :'' }
 
             </div>
-          </IonList>
-          <IonList>
+          </IonList> 
+          <IonList>{(items.tenenciadelavivienda =='2' ||items.tenenciadelavivienda =='3')?
             <div className="row g-3 was-validated ">
               <div className="col-sm">
                 <label className="form-label" >Telefono1 del propietario:</label>
                 <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'propietariotel1')} value={items.propietariotel1} className="form-control form-control-sm  " />
               <small>Minimo 10 digitos, si es fijo debe incluir el 604.</small>
               </div>
-            </div>
+            </div>:'' }
         </IonList>
-        <IonList>
+        <IonList>{(items.tenenciadelavivienda =='2' ||items.tenenciadelavivienda =='3')?
             <div className="row g-3 was-validated ">
               <div className="col-sm">
                 <label className="form-label" >Telefono2 del propietario:</label>
                 <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'propietariotel2')} value={items.propietariotel2} className="form-control form-control-sm  " />
                 <small>Minimo 10 digitos, si es fijo debe incluir el 604.</small>
               </div>
-            </div>
+            </div>:'' }
         </IonList>
         </div>
         <div className=' shadow p-3 mb-2 pt-0 bg-white rounded'>
@@ -338,10 +352,11 @@ const Tab8: React.FC = () => {
                 <option value="1"> NO </option><option value="2"> SI </option>
                 </select>
               </div>
+              {(items.otro =='2')?
               <div className="col-sm">
                 <label className="form-label" >Cual</label>
                 <input type="text" placeholder="" onChange={(e) => handleInputChange(e, 'cualdocumentos')} value={items.cualdocumentos} className="form-control form-control-sm  " required/>
-              </div>
+              </div> :''}
               
             </div>
           </IonList>
@@ -353,10 +368,11 @@ const Tab8: React.FC = () => {
                 <option value="1"> NO </option><option value="2"> SI </option>
                 </select>
               </div>
+              {(items.unidadproductuva =='2')?
               <div className="col-sm">
                 <label className="form-label" >Cual</label>
                 <input type="text" placeholder="" onChange={(e) => handleInputChange(e, 'cualunidadproductiva')} value={items.cualunidadproductiva} className="form-control form-control-sm  " required/>
-              </div>
+              </div>:''}
             </div>
           </IonList>
 
@@ -365,7 +381,7 @@ const Tab8: React.FC = () => {
 
         <br />
 
-        <div><IonButton color="success" onClick={enviar}>Guardar</IonButton><IonButton routerLink={`/tabs/tab9/${params.ficha}`}>Siguiente</IonButton></div>
+        <div><IonButton color="success" onClick={enviar}>Guardar</IonButton><IonButton disabled={buttonDisabled} routerLink={`/tabs/tab9/${params.ficha}`}>Siguiente</IonButton></div>
 
 
       </IonContent>

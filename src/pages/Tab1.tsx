@@ -112,7 +112,9 @@ const Tab1: React.FC = () => {
             return obj;
           }, {} as Person);
         });
-        setPeople(transformedPeople); 
+        setPeople(transformedPeople);
+        setButtonDisabled((transformedPeople[0].tipovisita)?false:true); 
+    
       }else{
         setItems({
           fichasocial:  params.ficha,

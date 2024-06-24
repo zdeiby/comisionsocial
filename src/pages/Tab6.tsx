@@ -92,6 +92,7 @@ const Tab6: React.FC = () => {
           }, {} as Person);
         });
         setPeople(transformedPeople);
+        setButtonDisabled((transformedPeople[0].energia)?false:true);
       } else {
         setItems({
           fichasocial: params.ficha,
@@ -146,11 +147,13 @@ const Tab6: React.FC = () => {
 
   const handleInputChange = (event, field) => {
     const { value } = event.target;
-    setItems((prevItems) => ({
-      ...prevItems,
-      [field]: value,
-    }));
-    console.log(items);
+    setItems((prevItems) => {
+      const newState = { ...prevItems, [field]: value };
+      if (field === 'telefono') {
+        newState.telefonofijo = value === '1' ? 'NO APLICA' : '';
+      }
+      return newState;
+    });
   };
 
   useEffect(() => {
@@ -233,11 +236,12 @@ const Tab6: React.FC = () => {
           <option value=""> SELECCIONE </option><option value="4"> COMUNAL </option><option value="8"> CONVENCIONAL </option><option value="2"> FRAUDE </option><option value="1"> NO TIENE </option><option value="3"> PREPAGO </option><option value="5"> VEREDAL </option>
           </select>
           </div>
+          {(items.telefono !='1' && items.telefono)? 
           <div className="col-sm">
               <label  className="form-label">Telefono fijo:</label>
               <input onChange={(e) => handleInputChange(e, 'telefonofijo')} value={items.telefonofijo} type="number" placeholder="" className="form-control form-control-sm  "  required/>
                         <small  className="form-text text-muted">Minimo 10 digitos, si es fijo debe incluir el 604.</small>
-          </div>
+          </div> :'' }
 
         </div>
 </IonList>
@@ -247,7 +251,7 @@ const Tab6: React.FC = () => {
 
       
 
-    <div><IonButton color="success" onClick={enviar}>Guardar</IonButton><IonButton routerLink={`/tabs/tab7/${params.ficha}`}>Siguiente</IonButton></div>
+    <div><IonButton color="success" onClick={enviar}>Guardar</IonButton><IonButton disabled={buttonDisabled} routerLink={`/tabs/tab7/${params.ficha}`}>Siguiente</IonButton></div>
        
     
     </IonContent>

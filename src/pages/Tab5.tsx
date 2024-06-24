@@ -92,6 +92,7 @@ const Tab5: React.FC = () => {
           }, {} as Person);
         });
         setPeople(transformedPeople);
+        setButtonDisabled((transformedPeople[0].tipovivienda)?false:true);
       } else {
         setItems({
           fichasocial: params.ficha,
@@ -144,11 +145,13 @@ const Tab5: React.FC = () => {
 
   const handleInputChange = (event, field) => {
     const { value } = event.target;
-    setItems((prevItems) => ({
-      ...prevItems,
-      [field]: value,
-    }));
-    console.log(items);
+    setItems((prevItems) => {
+      const newState = { ...prevItems, [field]: value };
+      if (field === 'materialpisos') {
+        newState.materialpisosotro = value === '6' ? '' : 'NO APLICA';
+      }
+      return newState;
+    });
   };
 
   useEffect(() => {
@@ -207,10 +210,11 @@ const Tab5: React.FC = () => {
           <option value=""> SELECCIONE </option><option value="1"> BALDOSA </option><option value="2"> CEMENTO </option><option value="3"> MADERA </option><option value="6"> OTROS </option><option value="5"> PIEDRA </option><option value="4"> TIERRA </option>
             </select>
           </div>
+          {(items.materialpisos =='6')? 
           <div className="col-sm-12">
               <label  className="form-label">Cuales:</label>
               <input type="text" onChange={(e) => handleInputChange(e, 'materialpisosotro')} value={items.materialpisosotro} placeholder="" className="form-control form-control-sm  "  required/>
-            </div>
+            </div> :'' }
           <div className="col-sm-6">
           <label  className="form-label">Material predominante de paredes:</label>
           <select onChange={(e) => handleInputChange(e, 'materialparedes')} value={items.materialparedes} className="form-control form-control-sm" id="pregunta2_3" aria-describedby="validationServer04Feedback" required>
@@ -232,7 +236,7 @@ const Tab5: React.FC = () => {
 
         <br />
 
-    <div><IonButton color="success" onClick={enviar}>Guardar</IonButton><IonButton routerLink={`/tabs/tab6/${params.ficha}`}>Siguiente</IonButton></div>
+    <div><IonButton color="success" onClick={enviar}>Guardar</IonButton><IonButton disabled={buttonDisabled} routerLink={`/tabs/tab6/${params.ficha}`}>Siguiente</IonButton></div>
        
     
     </IonContent>

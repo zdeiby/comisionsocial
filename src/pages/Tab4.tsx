@@ -88,6 +88,7 @@ const Tab4: React.FC = () => {
           }, {} as Person);
         });
         setPeople(transformedPeople);
+        setButtonDisabled((transformedPeople[0].tipoevacuacion)?false:true);  
       } else {
         setItems({
           fichasocial: params.ficha,
@@ -216,7 +217,7 @@ const Tab4: React.FC = () => {
 
         <br />
 
-    <div><IonButton color="success" onClick={enviar}>Guardar</IonButton><IonButton routerLink={`/tabs/tab5/${params.ficha}`}>Siguiente</IonButton></div>
+    <div><IonButton color="success" onClick={enviar}>Guardar</IonButton><IonButton disabled={buttonDisabled} routerLink={`/tabs/tab5/${params.ficha}`}>Siguiente</IonButton></div>
        
     
     </IonContent>
