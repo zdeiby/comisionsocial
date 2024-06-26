@@ -100,6 +100,13 @@ const loadSQL = async (setDb, fetchUsers) => {
             contrasena TEXT NOT NULL
           );
         `);
+        database.run(`
+        CREATE TABLE IF NOT EXISTS t1_comision (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        usuario TEXT NOT NULL,
+        contrasena TEXT NOT NULL
+      );
+        `);
       database.run(`CREATE TABLE  IF NOT EXISTS c0_informaciondelevento (
           fichasocial INTEGER PRIMARY KEY AUTOINCREMENT,
           fichatecnia VARCHAR(40) DEFAULT NULL,
@@ -275,10 +282,10 @@ const loadSQL = async (setDb, fetchUsers) => {
             fichasocial INTEGER DEFAULT NULL,
             ubicacion VARCHAR(25) DEFAULT NULL,
             nombreauto TEXT DEFAULT NULL,
-            parentesco VARCHAR(25) DEFAULT NULL,
+            parentesco TEXT DEFAULT NULL,
             direccion TEXT DEFAULT NULL,
-            comuna VARCHAR(25) DEFAULT NULL,
-            barrio VARCHAR(25) DEFAULT NULL,
+            comuna TEXT DEFAULT NULL,
+            barrio TEXT DEFAULT NULL,
             ruralurbano VARCHAR(25) DEFAULT NULL,
             sector TEXT DEFAULT NULL,
             telefono1 VARCHAR(25) DEFAULT NULL,

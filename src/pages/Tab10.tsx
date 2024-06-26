@@ -38,6 +38,8 @@ interface Integrante {
   nombre2: string;
   apellido1: string;
   apellido2: string;
+  parentesco: string;
+  descripcion: String;
 }
 
 interface Programa {
@@ -71,6 +73,7 @@ const Tab10: React.FC = () => {
   const [programas, setProgramas] = useState<Programa[]>([]);
   const [db, setDb] = useState<any>(null);
   const [numRemisiones, setNumRemisiones] = useState(0);
+ // const [buttonDisabled, setButtonDisabled] = useState(true);
 
   const [items, setItems] = useState({
     idintegrante: '',
@@ -137,6 +140,7 @@ const Tab10: React.FC = () => {
           }, {} as Person);
         });
         setPeople(transformedPeople);
+       // setButtonDisabled((transformedPeople[0].tipodefamilia)?false:true);  
       } else {
         setItems({
           ...items,
@@ -145,7 +149,11 @@ const Tab10: React.FC = () => {
         });
       }
 
-      const integrantesRes = await db.exec(`SELECT idintegrante, nombre1, nombre2, apellido1, apellido2 FROM c131_integrante WHERE fichasocial=${params.ficha}`);
+      const integrantesRes = await db.exec(`
+        SELECT ig.idintegrante, ig.nombre1, ig.nombre2, ig.apellido1, ig.apellido2, tp.descripcion, ig.parentesco 
+        FROM c131_integrante ig
+        JOIN t1_parentesco tp ON ig.parentesco=tp.id 
+        WHERE fichasocial=${params.ficha}`);
       if (integrantesRes[0]?.values && integrantesRes[0]?.columns) {
         const transformedIntegrantes: Integrante[] = integrantesRes[0].values.map((row: any[]) => {
           return integrantesRes[0].columns.reduce((obj, col, index) => {
@@ -154,6 +162,7 @@ const Tab10: React.FC = () => {
           }, {} as Integrante);
         });
         setIntegrantes(transformedIntegrantes);
+        console.log(transformedIntegrantes)
       }
     }
   };
@@ -190,7 +199,7 @@ const Tab10: React.FC = () => {
           }, {} as Remision);
         });
         setRemisiones(transformedRemisiones);
-        setNumRemisiones(transformedRemisiones.length); 
+        setNumRemisiones(transformedRemisiones.length);
       }
     }
   };
@@ -220,11 +229,16 @@ const Tab10: React.FC = () => {
 
   const handleInputChange = (event, field) => {
     const { value } = event.target;
-    setItems((prevItems) => ({
-      ...prevItems,
-      [field]: value,
-    }));
-    console.log(items);
+    setItems((prevItems) => {
+      const newState = { ...prevItems, [field]: value };
+      if (field === 'tipodefamilia') {
+        newState.programa = value ? '' : '';
+        newState.idintegrante = value ? '' : '';
+        newState.observacion = value ? '' : '';
+
+      }
+      return newState;
+    });
   };
 
   useEffect(() => {
@@ -234,22 +248,35 @@ const Tab10: React.FC = () => {
   const enviar = async () => {
     console.log(items);
     try {
-     if(items.tipodefamilia=='1' || items.tipodefamilia=='2' && items.idintegrante !==''){ await db.exec(`INSERT OR REPLACE INTO c10_datosgeneralesremisiones (idintegrante, fichasocial, programa, fecharegistro, usuario, estado, tabla, observacion, motivo)
+      if (items.tipodefamilia == '1' || items.tipodefamilia == '2' && items.idintegrante !== '') {
+        await db.exec(`INSERT OR REPLACE INTO c10_datosgeneralesremisiones (idintegrante, fichasocial, programa, fecharegistro, usuario, estado, tabla, observacion, motivo)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);`,
-        [
-          items.idintegrante, items.fichasocial, items.programa, items.fecharegistro, items.usuario, items.estado, items.tabla, items.observacion, items.motivo
-        ]);}
+          [
+            items.idintegrante, items.fichasocial, items.programa, items.fecharegistro, items.usuario, items.estado, items.tabla, items.observacion, items.motivo
+          ]);
+      }
 
-      if(items.tipodefamilia=='1' || items.tipodefamilia=='2'){ await db.exec(`INSERT OR REPLACE INTO c101_remisiones (fichasocial, remisiones, fecharegistro, usuario, estado, tabla)
+      if (items.tipodefamilia == '1' || items.tipodefamilia == '2') {
+        await db.exec(`INSERT OR REPLACE INTO c101_remisiones (fichasocial, remisiones, fecharegistro, usuario, estado, tabla)
       VALUES (?, ?, ?, ?, ?, ?);`,
-        [
-          items.fichasocial, 1, items.fecharegistro, items.usuario, items.estado, '101_remisiones'
-        ]);
+          [
+            items.fichasocial, 1, items.fecharegistro, items.usuario, items.estado, '101_remisiones'
+          ]);
       }
 
       saveDatabase();
       alert('Datos Guardados con éxito');
       fetchRemisiones(); // Actualizar la lista de remisiones después de guardar
+     // setButtonDisabled(false);
+      setItems({ idintegrante: '',
+        fichasocial: params.ficha,
+        programa: '',
+        fecharegistro: getCurrentDateTime(),
+        usuario: localStorage.getItem('cedula') || '',
+        estado: '1',
+        tabla: 'c10_datosgeneralesremisiones',
+        observacion: '',
+        motivo: '',})
     } catch (err) {
       console.error('Error al exportar los datos JSON:', err);
     }
@@ -260,13 +287,13 @@ const Tab10: React.FC = () => {
     try {
       await db.exec(`DELETE FROM c10_datosgeneralesremisiones WHERE idintegrante = ? AND programa = ?`, [idintegrante, codigoprograma]);
       console.log('Remisión eliminada en la base de datos');
-      
+
       setRemisiones(prevRemisiones => {
         const updatedRemisiones = prevRemisiones.filter(remision => remision.idintegrante !== idintegrante || remision.codigoprograma !== codigoprograma);
         setNumRemisiones(updatedRemisiones.length);
         return updatedRemisiones;
       });
-      
+
       alert('Remisión eliminada con éxito');
     } catch (err) {
       console.error('Error al eliminar la remisión:', err);
@@ -278,51 +305,51 @@ const Tab10: React.FC = () => {
     {
       name: 'Ver Observacion',
       selector: row => (
-          <>
-              <button
-                  className='btn btn-info btn-sm text-light'
-                  onClick={() => eliminarRemision(row.idintegrante, row.codigoprograma)}
-              >
-                  eliminar
-              </button>&nbsp;
-              <button
-                  className="btn btn-info btn-sm text-light"
-                  type="button"
-                  onClick={() => setShowModal(true)}
-              >
-                  Ver
-              </button>
-          </>
+        <>
+          <button
+            className='btn btn-info btn-sm text-light'
+            onClick={() => eliminarRemision(row.idintegrante, row.codigoprograma)}
+          >
+            eliminar
+          </button>&nbsp;
+          <button
+            className="btn btn-info btn-sm text-light"
+            type="button"
+            onClick={() => setShowModal(true)}
+          >
+            Ver
+          </button>
+        </>
       ),
       sortable: true,
       style: {
-          whiteSpace: 'nowrap',
-          overflow: 'visible'
+        whiteSpace: 'nowrap',
+        overflow: 'visible'
       },
       minWidth: '200px'
-  },
-  {
+    },
+    {
       name: 'Programa',
       selector: row => row.programa,
       sortable: true,
       style: {
-          whiteSpace: 'nowrap',
-          overflow: 'visible'
+        whiteSpace: 'nowrap',
+        overflow: 'visible'
       },
       minWidth: '500px'
-  },
-  {
+    },
+    {
       name: 'Integrante',
       selector: row => row.integrante,
       sortable: true,
       style: {
-          whiteSpace: 'nowrap',
-          overflow: 'visible'
+        whiteSpace: 'nowrap',
+        overflow: 'visible'
       },
       minWidth: '400px'
-  }
+    }
   ];
-console.log('remisiones', remisiones)
+  console.log('remisiones', remisiones)
   return (
     <IonPage>
       <IonHeader>
@@ -364,11 +391,11 @@ console.log('remisiones', remisiones)
               </div>
             </div>
           </IonList>
-          <IonList>
+          {(items.tipodefamilia == '2' || items.tipodefamilia == '1') ? <IonList>
             <div className="row g-3 was-validated">
               <div className="col-sm">
                 <label className="form-label">Nombre del programa / Inspeccion</label>
-                <select onChange={(e) => handleInputChange(e, 'programa')}  className="form-control form-control-sm" id="pregunta2_3" aria-describedby="validationServer04Feedback" required>
+                <select onChange={(e) => handleInputChange(e, 'programa')} className="form-control form-control-sm" id="pregunta2_3" aria-describedby="validationServer04Feedback" required>
                   <option value="" selected>SELECCIONE</option>
                   {items.tipodefamilia === '1' && programas.filter(programa => programa.tipo === 1).map((programa) => (
                     <option key={programa.id} value={programa.id}>{programa.descripcion}</option>
@@ -376,18 +403,35 @@ console.log('remisiones', remisiones)
                   {items.tipodefamilia === '2' && programas.filter(programa => programa.tipo === 2).map((programa) => (
                     <option key={programa.id} value={programa.id}>{programa.descripcion}</option>
                   ))}
-                
+
                 </select>
               </div>
               <div className="col-sm">
                 <label className="form-label">Integrante del hogar:</label>
-                <select onChange={(e) => handleInputChange(e, 'idintegrante')}  className="form-control form-control-sm" id="pregunta2_3" aria-describedby="validationServer04Feedback" required>
+                <select onChange={(e) => handleInputChange(e, 'idintegrante')} value={items.idintegrante} className="form-control form-control-sm" id="pregunta2_3" aria-describedby="validationServer04Feedback" required>
                   <option value="">SELECCIONE</option>
-                  {integrantes.map((integrante) => (
-                    <option key={integrante.idintegrante} value={integrante.idintegrante}>
-                      {`${integrante.nombre1} ${integrante.nombre2} ${integrante.apellido1} ${integrante.apellido2}`}
-                    </option>
-                  ))}
+                    { integrantes
+                    .filter(integrante => integrante.parentesco == '1')
+                    .map((integrante) => (
+                      <option key={integrante.idintegrante} value={integrante.idintegrante}>
+                        {`${integrante.nombre1} ${integrante.nombre2} ${integrante.apellido1} ${integrante.apellido2} - ${integrante.descripcion}`}
+                      </option>
+                    )) } 
+                     {(items.tipodefamilia === '1' && items.programa !='1' && items.programa !='2' && items.programa !='' ) ? integrantes
+                     .filter(integrante => integrante.parentesco >= '2')
+                     .map((integrante) => (
+                       <option key={integrante.idintegrante} value={integrante.idintegrante}>
+                         {`${integrante.nombre1} ${integrante.nombre2} ${integrante.apellido1} ${integrante.apellido2} - ${integrante.descripcion}`}
+                       </option>
+                     )) : ''}
+                      {/* {(items.programa != '1' || items.programa != '2' || items.programa != '' && items.tipodefamilia == '1') ? integrantes
+                     .filter(integrante => integrante.parentesco != '1')
+                     .map((integrante) => (
+                       <option key={integrante.idintegrante} value={integrante.idintegrante}>
+                         {`${integrante.nombre1} ${integrante.nombre2} ${integrante.apellido1} ${integrante.apellido2} - ${integrante.descripcion}`}
+                       </option>
+                     )) : ''} */}
+                   
                 </select>
               </div>
             </div><hr />
@@ -396,10 +440,10 @@ console.log('remisiones', remisiones)
             </div>
             <div className="row g-3 was-validated">
               <div className="col-sm">
-                <textarea placeholder="" onChange={(e) => handleInputChange(e, 'observacion')}  className="form-control" rows="5" required/>
+                <textarea placeholder="" onChange={(e) => handleInputChange(e, 'observacion')} value={items.observacion} className="form-control" rows="5" required />
               </div>
             </div>
-          </IonList>
+          </IonList> : ''}
         </div>
         <div className='shadow p-3 mb-2 pt-0 bg-white rounded'>
           <IonList>
@@ -421,7 +465,7 @@ console.log('remisiones', remisiones)
         {showModal && (
           <>
             {/* Bootstrap Modal */}
-            <div className={`modal ${showModal ? "d-block" : "d-none"} modalnew modal-backdropnew `}  tabIndex="-1" role="dialog">
+            <div className={`modal ${showModal ? "d-block" : "d-none"} modalnew modal-backdropnew `} tabIndex="-1" role="dialog">
               <div className="modal-dialog" role="document"><br /><br /><br />
                 <div className="modal-content">
                   <div className="modal-header">
@@ -438,7 +482,7 @@ console.log('remisiones', remisiones)
           </>
         )}
 
-        <div><IonButton color="success" onClick={enviar}>Guardar</IonButton><IonButton routerLink={`/tabs/tab11/${params.ficha}`}>Siguiente</IonButton></div>
+        <div><IonButton color="success" onClick={enviar}>Guardar</IonButton><IonButton  routerLink={`/tabs/tab11/${params.ficha}`}>Siguiente</IonButton></div>
 
       </IonContent>
     </IonPage>

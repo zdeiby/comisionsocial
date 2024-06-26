@@ -38,7 +38,7 @@ interface Person {
   usuario: number | null;
   estado: number | null;
   tabla: string | null;
-  dondeseubica:string | null;
+  dondeseubica: string | null;
 }
 
 interface Reddeapoyo {
@@ -103,13 +103,15 @@ const Tab11: React.FC = () => {
   const [db, setDb] = useState<any>(null);
   const [numReddeapoyo, setNumReddeapoyo] = useState(0);
   const [showModal, setShowModal] = useState(false);
+  const [selectedIntegrante, setSelectedIntegrante] = useState(null);
+
 
   const [items, setItems] = useState({
     idredapoyo: null,
     fichasocial: params.ficha,
     ubicacion: '',
     nombreauto: '',
-    parentesco:'',
+    parentesco: '',
     direccion: '',
     comuna: '',
     barrio: '',
@@ -138,12 +140,12 @@ const Tab11: React.FC = () => {
   });
 
 
-  const [items2, setItems2] = useState({    
+  const [items2, setItems2] = useState({
     idredapoyo: null,
     fichasocial: params.ficha,
     ubicacion: '',
     nombreauto: '',
-    parentesco:'',
+    parentesco: '',
     direccion: '',
     comuna: '',
     barrio: '',
@@ -168,7 +170,7 @@ const Tab11: React.FC = () => {
     estado: '1',
     tabla: 'c11_reddeapoyo',
     tipodefamilia: '',
-    dondeseubica:'',
+    dondeseubica: '',
   });
 
   useEffect(() => {
@@ -225,7 +227,7 @@ const Tab11: React.FC = () => {
             return obj;
           }, {} as Person);
         });
-       // setPeople(transformedPeople);
+        // setPeople(transformedPeople);
       } else {
         setItems({
           ...items,
@@ -250,12 +252,20 @@ const Tab11: React.FC = () => {
   const fetchReddeapoyo = async () => {
     if (db) {
       const res = await db.exec(`
-      SELECT r.idredapoyo, r.fichasocial, r.nombreauto AS integrante, r.telefono1, r.telefono2, i.descripcion as barrios, c.descripcion as comunas, p.descripcion as parentesco, r.direccion
-      FROM c11_reddeapoyo r
-      JOIN t1_barrios i ON r.barrio = i.id
-      JOIN t1_comunas c ON r.comuna = c.id
-      JOIN t1_parentesco p ON r.parentesco = p.id
-      WHERE r.fichasocial=${params.ficha}
+      SELECT 
+      r.idredapoyo, 
+      r.fichasocial, 
+      r.nombreauto AS integrante, 
+      r.telefono1, 
+      r.telefono2, 
+      (SELECT i.descripcion FROM t1_barrios i WHERE r.barrio = i.id) AS barrios, 
+      (SELECT c.descripcion FROM t1_comunas c WHERE r.comuna = c.id) AS comunas, 
+      (SELECT p.descripcion FROM t1_parentesco p WHERE r.parentesco = p.id) AS parentesco, 
+      r.direccion
+    FROM 
+      c11_reddeapoyo r
+    WHERE 
+      r.fichasocial=${params.ficha}
       `);
       if (res[0]?.values && res[0]?.columns) {
         const transformedReddeapoyo: Reddeapoyo[] = res[0].values.map((row: any[]) => {
@@ -265,17 +275,17 @@ const Tab11: React.FC = () => {
           }, {} as Reddeapoyo);
         });
         setReddeapoyo(transformedReddeapoyo);
-        setNumReddeapoyo(transformedReddeapoyo.length); 
-        console.log('red de apoyof', reddeapoyo)
+        setNumReddeapoyo(transformedReddeapoyo.length);
+      
       }
-    }
+    }  console.log('red de apoyof', reddeapoyo)
   };
 
   useEffect(() => {
     if (people.length > 0) {
       let data = people[0] || {};
       setItems({
-        idredapoyo: null ,
+        idredapoyo: null,
         fichasocial: data.fichasocial || params.ficha,
         ubicacion: data.ubicacion || '',
         nombreauto: data.nombreauto || '',
@@ -304,7 +314,7 @@ const Tab11: React.FC = () => {
         estado: data.estado || '',
         tabla: data.tabla || '',
         tipodefamilia: data.tipodefamilia || '',
-        dondeseubica:data.dondeseubica || '',
+        dondeseubica: data.dondeseubica || '',
       });
     }
   }, [people]);
@@ -319,11 +329,56 @@ const Tab11: React.FC = () => {
 
   const handleInputChange = (event, field) => {
     const { value } = event.target;
-    setItems((prevItems) => ({
-      ...prevItems,
-      [field]: value,
-    }));
-    console.log(items, 'items1');
+    setItems((prevItems) => {
+      const newState = { ...prevItems, [field]: value };
+      if (field === 'dondeseubica') {
+        newState.departamento = value  ? '' : '';
+        newState.pais = value ? '' : '';
+        newState.municipio = value  ? '' : '';
+        newState.barrio = value  ? '' : '';
+        newState.comuna = value  ? '' : '';
+        newState.direccion = value  ? '' : '';
+        newState.dirCampo1 = value  ? '' : '';
+        newState.dirCampo2 = value  ? '' : '';
+        newState.dirCampo3 = value  ? '' : '';
+        newState.dirCampo4 = value  ? '' : '';
+        newState.dirCampo5 = value  ? '' : '';
+        newState.dirCampo6 = value  ? '' : '';
+        newState.dirCampo7 = value  ? '' : '';
+        newState.dirCampo8 = value  ? '' : '';
+        newState.dirCampo9 = value  ? '' : '';
+        newState.sector = value  ? '' : '';
+        newState.ruralurbano = value  ? '' : '';
+      }  if (field === 'departamento') {
+        newState.direccion = value  ? '' : '';
+      } if (field === 'pais') {
+        newState.direccion = value  ? '' : '';
+      }  if (field === 'tipodefamilia') {
+        newState.departamento = value  ? '' : '';
+        newState.pais = value ? '' : '';
+        newState.municipio = value  ? '' : '';
+        newState.barrio = value  ? '' : '';
+        newState.comuna = value  ? '' : '';
+        newState.direccion = value  ? '' : '';
+        newState.direccion = value  ? '' : '';  
+        newState.dirCampo1 = value  ? '' : '';
+        newState.dirCampo2 = value  ? '' : '';
+        newState.dirCampo3 = value  ? '' : '';
+        newState.dirCampo4 = value  ? '' : '';
+        newState.dirCampo5 = value  ? '' : '';
+        newState.dirCampo6 = value  ? '' : '';
+        newState.dirCampo7 = value  ? '' : '';
+        newState.dirCampo8 = value  ? '' : '';
+        newState.dirCampo9 = value  ? '' : '';
+        newState.sector = value  ? '' : '';
+        newState.nombreauto = value  ? '' : '';
+        newState.parentesco = value  ? '' : '';
+        newState.telefono1 = value  ? '' : '';
+        newState.telefono2 = value  ? '' : '';
+        newState.dondeseubica = value  ? '' : '';
+      }  return newState;
+    });    
+   
   };
   console.log(items, 'items uno');
   useEffect(() => {
@@ -331,9 +386,9 @@ const Tab11: React.FC = () => {
   }, [items]);
 
   useEffect(() => {
-    const newDireccion =items2.dirCampo1+items.dirCampo2+' '+items.dirCampo3
-    +items2.dirCampo4+items.dirCampo5+' '+items.dirCampo6+items2.dirCampo7+items.dirCampo8
-    +' || '+items.dirCampo9;
+    const newDireccion = items2.dirCampo1 + items.dirCampo2 + ' ' + items.dirCampo3
+      + items2.dirCampo4 + items.dirCampo5 + ' ' + items.dirCampo6 + items2.dirCampo7 + items.dirCampo8
+      + ' || ' + items.dirCampo9;
     setItems(prevItems => ({ ...prevItems, direccion: newDireccion }));
   }, [items.dirCampo1, items.dirCampo2, items.dirCampo3, items.dirCampo4, items.dirCampo5, items.dirCampo6, items.dirCampo7, items.dirCampo8, items.dirCampo9]);
 
@@ -342,20 +397,20 @@ const Tab11: React.FC = () => {
   const enviar = async () => {
     console.log(items);
     try {
-      if(items.tipodefamilia=='2'){ 
+      if (items.tipodefamilia == '2') {
         await db.exec(`INSERT OR REPLACE INTO c11_reddeapoyo ( fichasocial, ubicacion, nombreauto, parentesco, direccion, comuna, barrio, ruralurbano, sector, telefono1, telefono2, dirCampo1, dirCampo2, dirCampo3, dirCampo4, dirCampo5, dirCampo6, dirCampo7, dirCampo8, dirCampo9, pais, departamento, municipio, fecharegistro, usuario, estado, tabla)
           VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?);`,
-        [
-           items.fichasocial, items.ubicacion, items.nombreauto,items.parentesco, items.direccion, items.comuna, items.barrio, items.ruralurbano, items.sector, items.telefono1, items.telefono2, items.dirCampo1, items.dirCampo2, items.dirCampo3, items.dirCampo4, items.dirCampo5, items.dirCampo6, items.dirCampo7, items.dirCampo8, items.dirCampo9, items.pais, items.departamento, items.municipio, items.fecharegistro, items.usuario, items.estado, items.tabla
-        ]);
+          [
+            items.fichasocial, items.ubicacion, items.nombreauto, items.parentesco, items.direccion, items.comuna, items.barrio, items.ruralurbano, items.sector, items.telefono1, items.telefono2, items.dirCampo1, items.dirCampo2, items.dirCampo3, items.dirCampo4, items.dirCampo5, items.dirCampo6, items.dirCampo7, items.dirCampo8, items.dirCampo9, items.pais, items.departamento, items.municipio, items.fecharegistro, items.usuario, items.estado, items.tabla
+          ]);
       }
 
-      if(items.tipodefamilia=='2'){ 
+      if (items.tipodefamilia == '2') {
         await db.exec(`INSERT OR REPLACE INTO c111_reddeapoyo (fichasocial, reddeapoyo, fecharegistro, usuario, estado, tabla)
           VALUES (?, ?, ?, ?, ?, ?);`,
-        [
-          items.fichasocial, 1, items.fecharegistro, items.usuario, items.estado, '111_reddeapoyo'
-        ]);
+          [
+            items.fichasocial, 1, items.fecharegistro, items.usuario, items.estado, '111_reddeapoyo'
+          ]);
       }
 
       saveDatabase();
@@ -406,13 +461,13 @@ const Tab11: React.FC = () => {
     try {
       await db.exec(`DELETE FROM c11_reddeapoyo WHERE idredapoyo = ? AND fichasocial = ?`, [idredapoyo, fichasocial]);
       console.log('Red de apoyo eliminada en la base de datos');
-      
+
       setReddeapoyo(prevReddeapoyo => {
         const updatedReddeapoyo = prevReddeapoyo.filter(reddeapoyo => reddeapoyo.idredapoyo !== idredapoyo || reddeapoyo.fichasocial !== fichasocial);
         setNumReddeapoyo(updatedReddeapoyo.length);
         return updatedReddeapoyo;
       });
-      
+
       alert('Red de apoyo eliminada con éxito');
     } catch (err) {
       console.error('Error al eliminar la red de apoyo:', err);
@@ -423,16 +478,19 @@ const Tab11: React.FC = () => {
     {
       name: 'Eliminar',
       selector: row => <><button className='btn btn-info btn-sm text-light' onClick={() => eliminarReddeapoyo(row.idredapoyo, row.fichasocial)}>eliminar</button> <button
-      className="btn btn-info btn-sm text-light"
-      type="button"
-      onClick={() => setShowModal(true)}
-  >
-      Ver
-  </button></>,
+        className="btn btn-info btn-sm text-light"
+        type="button"
+        onClick={() => {
+          setSelectedIntegrante(row);
+          setShowModal(true);
+        }}
+      >
+        Ver
+      </button></>,
       sortable: true,
       style: {
-          whiteSpace: 'nowrap',
-          overflow: 'visible'
+        whiteSpace: 'nowrap',
+        overflow: 'visible'
       },
       minWidth: '200px'
     },
@@ -443,8 +501,8 @@ const Tab11: React.FC = () => {
       style: {
         whiteSpace: 'nowrap',
         overflow: 'visible'
-    },
-    minWidth: '200px'
+      },
+      minWidth: '200px'
     },
     {
       name: 'telefono1',
@@ -457,7 +515,7 @@ const Tab11: React.FC = () => {
       selector: row => row.telefono2,
       sortable: true,
     }
-    
+
   ];
 
   const handleInputChange2 = (e, fieldName) => {
@@ -529,10 +587,10 @@ const Tab11: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-      <div className="social-card">
-      <span className="label">Ficha social:</span>
-      <span className="value">{params.ficha}</span>
-    </div>
+        <div className="social-card">
+          <span className="label">Ficha social:</span>
+          <span className="value">{params.ficha}</span>
+        </div>
 
         <div className=' shadow p-3 mb-5 bg-white rounded'>
           <IonList>
@@ -543,65 +601,66 @@ const Tab11: React.FC = () => {
               <div className="col-sm">
                 <label className="form-label">En caso de emergencia tiene alguien que le brinde apoyo?</label>
                 <select onChange={(e) => handleInputChange(e, 'tipodefamilia')} value={items.tipodefamilia || ''} className="form-control form-control-sm" id="pregunta2_3" aria-describedby="validationServer04Feedback" required>
-                <option value=""> SELECCIONE </option><option value="1"> NO </option><option value="2"> SI </option> 
-               </select>
+                  <option value=""> SELECCIONE </option><option value="1"> NO </option><option value="2"> SI </option>
+                </select>
               </div>
-            <div className="col-sm">
-              <blockquote className="blockquote text-center">
-                    <p className="mb-0">
-                    </p><h6>Numero de personas en red de apoyo:</h6>
-                    <p></p>
-                    <p className="mb-0">
-                    </p><h5 id="numerointegrantes">{numReddeapoyo}</h5>
-                    <p></p>
+              <div className="col-sm">
+                <blockquote className="blockquote text-center">
+                  <p className="mb-0">
+                  </p><h6>Numero de personas en red de apoyo:</h6>
+                  <p></p>
+                  <p className="mb-0">
+                  </p><h5 id="numerointegrantes">{numReddeapoyo}</h5>
+                  <p></p>
                 </blockquote>
               </div>
 
             </div>
           </IonList>
-          <IonList>
-  
-            <div className="row g-3 was-validated ">
-              <div className="col-sm-6">
-                <label  className="form-label" >Nombre:</label>
-                <input type="text" onChange={(e) => handleInputChange(e, 'nombreauto')} value={items.nombreauto || ''} placeholder="" className="form-control form-control-sm  "  required/>
+
+          {(items.tipodefamilia == '2') ?
+            <IonList>
+              <div className="row g-3 was-validated ">
+                <div className="col-sm-6">
+                  <label className="form-label" >Nombre:</label>
+                  <input type="text" onChange={(e) => handleInputChange(e, 'nombreauto')} value={items.nombreauto || ''} placeholder="" className="form-control form-control-sm  " required />
+                </div>
+                <div className="col-sm">
+                  <label className="form-label">Parentesco:</label>
+                  <select onChange={(e) => handleInputChange(e, 'parentesco')} value={items.parentesco || ''} className="form-control form-control-sm" id="pregunta2_3" aria-describedby="validationServer04Feedback" required>
+                    <option value=""> SELECCIONE </option><option value="6"> ABUELO(A) </option><option value="10"> BISABUELO(A) </option><option value="11"> BISNIETO(A) </option><option value="3"> CÓNYUGE O COMPAÑERO(A) PERMANENTE </option><option value="18"> CUÑADO(A) </option><option value="5"> HERMANO(A) </option><option value="15"> HIJASTRO(A) </option><option value="4"> HIJO(A) </option><option value="20"> HIJOS(A) ADOPTIVOS </option><option value="1"> JEFE DEL HOGAR </option><option value="17"> MADRASTRA </option><option value="7"> NIETO(A) </option><option value="14"> NUERA </option><option value="22"> OTROS NO PARIENTES </option><option value="21"> OTROS PARIENTES </option><option value="16"> PADRASTRO </option><option value="2"> PADRES </option><option value="19"> PADRES ADOPTANTES </option><option value="9"> SOBRINO(A) </option><option value="12"> SUEGRO(A) </option><option value="8"> TÍO(A) </option><option value="13"> YERNO </option>
+                  </select>
+                </div>
+                <div className="col-sm-6">
+                  <label className="form-label">Telefono1:</label>
+                  <input className="form-label" onChange={(e) => handleInputChange(e, 'telefono1')} value={items.telefono1 || ''} type="number" placeholder="" className="form-control form-control-sm  " />
+                </div> <div className="col-sm-6">
+                  <label className="form-label" >Telefono2:</label>
+                  <input onChange={(e) => handleInputChange(e, 'telefono2')} value={items.telefono2 || ''} type="number" placeholder="" className="form-control form-control-sm  " />
+                </div>
               </div>
-              <div className="col-sm">
-                <label className="form-label">Parentesco:</label>
-                <select onChange={(e) => handleInputChange(e, 'parentesco')} value={items.parentesco || ''} className="form-control form-control-sm" id="pregunta2_3" aria-describedby="validationServer04Feedback" required>
-                <option value=""> SELECCIONE </option><option value="6"> ABUELO(A) </option><option value="10"> BISABUELO(A) </option><option value="11"> BISNIETO(A) </option><option value="3"> CÓNYUGE O COMPAÑERO(A) PERMANENTE </option><option value="18"> CUÑADO(A) </option><option value="5"> HERMANO(A) </option><option value="15"> HIJASTRO(A) </option><option value="4"> HIJO(A) </option><option value="20"> HIJOS(A) ADOPTIVOS </option><option value="1"> JEFE DEL HOGAR </option><option value="17"> MADRASTRA </option><option value="7"> NIETO(A) </option><option value="14"> NUERA </option><option value="22"> OTROS NO PARIENTES </option><option value="21"> OTROS PARIENTES </option><option value="16"> PADRASTRO </option><option value="2"> PADRES </option><option value="19"> PADRES ADOPTANTES </option><option value="9"> SOBRINO(A) </option><option value="12"> SUEGRO(A) </option><option value="8"> TÍO(A) </option><option value="13"> YERNO </option>
-               </select>
-              </div>
-              <div className="col-sm-6">
-                <label className="form-label">Telefono1:</label>
-                <input className="form-label" onChange={(e) => handleInputChange(e, 'telefono1')} value={items.telefono1 || ''} type="number" placeholder="" className="form-control form-control-sm  "  />
-              </div> <div className="col-sm-6">
-                <label  className="form-label" >Telefono2:</label>
-                <input onChange={(e) => handleInputChange(e, 'telefono2')} value={items.telefono2 || ''} type="number" placeholder="" className="form-control form-control-sm  "  />
-              </div>
-            </div>
-          </IonList>
-          <IonList>
+            </IonList> : ''}
+          {(items.tipodefamilia == '2') ? <IonList>
             <div className="row g-3 was-validated ">
               <div className="col-sm">
                 <label className="form-label">Donde se ubica:</label>
                 <select onChange={(e) => handleInputChange(e, 'dondeseubica')} value={items.dondeseubica || ''} className="form-control form-control-sm" id="pregunta2_3" aria-describedby="validationServer04Feedback" required>
-                <option value=""> SELECCIONE </option><option value="1"> EN MEDELLIN </option><option value="3"> OTRO DEPARTAMENTO </option><option value="2"> OTRO MUNICIPIO DE ANTIOQUIA </option><option value="4"> OTRO PAIS </option> 
+                  <option value=""> SELECCIONE </option><option value="1"> EN MEDELLIN </option><option value="3"> OTRO DEPARTAMENTO </option><option value="2"> OTRO MUNICIPIO DE ANTIOQUIA </option><option value="4"> OTRO PAIS </option>
                 </select>
               </div>
             </div>
-          </IonList>
-          <IonList>
+          </IonList> : ''}
+          {(items.tipodefamilia == '2' && items.dondeseubica == '3') ? <IonList>
             <div className="row g-3 was-validated ">
               <div className="col-sm">
                 <label className="form-label">Cual departamento:</label>
                 <select onChange={(e) => handleInputChange(e, 'departamento')} value={items.departamento || ''} className="form-control form-control-sm" id="pregunta2_3" aria-describedby="validationServer04Feedback" required>
-                <option value=""> SELECCIONE </option><option value="28"> AMAZONAS </option><option value="24"> ARAUCA </option><option value="27"> ARCHIPIÉLAGO DE SAN ANDRÉS, PROVIDENCIA Y SANTA CATALINA </option><option value="1"> ATLÁNTICO </option><option value="2"> BOGOTÁ, D.C. </option><option value="3"> BOLÍVAR </option><option value="4"> BOYACÁ </option><option value="5"> CALDAS </option><option value="6"> CAQUETÁ </option><option value="25"> CASANARE </option><option value="7"> CAUCA </option><option value="8"> CESAR </option><option value="11"> CHOCÓ </option><option value="9"> CÓRDOBA </option><option value="10"> CUNDINAMARCA </option><option value="29"> GUAINÍA </option><option value="30"> GUAVIARE </option><option value="12"> HUILA </option><option value="13"> LA GUAJIRA </option><option value="14"> MAGDALENA </option><option value="15"> META </option><option value="16"> NARIÑO </option><option value="17"> NORTE DE SANTANDER </option><option value="26"> PUTUMAYO </option><option value="18"> QUINDIO </option><option value="19"> RISARALDA </option><option value="20"> SANTANDER </option><option value="21"> SUCRE </option><option value="22"> TOLIMA </option><option value="23"> VALLE DEL CAUCA </option><option value="31"> VAUPÉS </option><option value="32"> VICHADA </option>
+                  <option value=""> SELECCIONE </option><option value="28"> AMAZONAS </option><option value="24"> ARAUCA </option><option value="27"> ARCHIPIÉLAGO DE SAN ANDRÉS, PROVIDENCIA Y SANTA CATALINA </option><option value="1"> ATLÁNTICO </option><option value="2"> BOGOTÁ, D.C. </option><option value="3"> BOLÍVAR </option><option value="4"> BOYACÁ </option><option value="5"> CALDAS </option><option value="6"> CAQUETÁ </option><option value="25"> CASANARE </option><option value="7"> CAUCA </option><option value="8"> CESAR </option><option value="11"> CHOCÓ </option><option value="9"> CÓRDOBA </option><option value="10"> CUNDINAMARCA </option><option value="29"> GUAINÍA </option><option value="30"> GUAVIARE </option><option value="12"> HUILA </option><option value="13"> LA GUAJIRA </option><option value="14"> MAGDALENA </option><option value="15"> META </option><option value="16"> NARIÑO </option><option value="17"> NORTE DE SANTANDER </option><option value="26"> PUTUMAYO </option><option value="18"> QUINDIO </option><option value="19"> RISARALDA </option><option value="20"> SANTANDER </option><option value="21"> SUCRE </option><option value="22"> TOLIMA </option><option value="23"> VALLE DEL CAUCA </option><option value="31"> VAUPÉS </option><option value="32"> VICHADA </option>
                 </select>
               </div>
             </div>
-          </IonList>
-          <IonList>
+          </IonList> : ''}
+          {(items.tipodefamilia == '2' && items.dondeseubica == '2') ? <IonList>
             <div className="row g-3 was-validated ">
               <div className="col-sm">
                 <label className="form-label">Cual municipio:</label>
@@ -610,8 +669,8 @@ const Tab11: React.FC = () => {
                 </select>
               </div>
             </div>
-          </IonList>
-          <IonList>
+          </IonList> : ''}
+          {(items.tipodefamilia == '2' && items.dondeseubica == '4') ? <IonList>
             <div className="row g-3 was-validated ">
               <div className="col-sm">
                 <label className="form-label">Cual pais:</label>
@@ -620,280 +679,273 @@ const Tab11: React.FC = () => {
                 </select>
               </div>
             </div>
-          </IonList>
+          </IonList> : ''}
 
-         
+
         </div>
 
 
+        {(items.tipodefamilia == '2'  && items.dondeseubica == '1') ?   
         <div className=' shadow p-3 mb-2 pt-0 bg-white rounded'>
 
-        <div className="social-card2">
-      <span className="label2">Dirección de residencia</span>
-      <span className="value2">
-      Ingrese la dirección según el siguiente ejemplo, diligenciando los campos requeridos que identifiquen la dirección actual; los campos que no requiera los pude dejar en blanco.
-      Vaya verificando en el recuadro inferior "Dirección" el resultado.
-      Ejemplo:
-      </span>
-      <span className="value2">
-      Vía principal: CARRERA 42 B SUR
-      </span>
-      <span className="value2">
-      Vía secundaria: 25 A ESTE - 135
-      </span>
-      <span className="value2">
+          <div className="social-card2">
+            <span className="label2">Dirección de residencia</span>
+            <span className="value2">
+              Ingrese la dirección según el siguiente ejemplo, diligenciando los campos requeridos que identifiquen la dirección actual; los campos que no requiera los pude dejar en blanco.
+              Vaya verificando en el recuadro inferior "Dirección" el resultado.
+              Ejemplo:
+            </span>
+            <span className="value2">
+              Vía principal: CARRERA 42 B SUR
+            </span>
+            <span className="value2">
+              Vía secundaria: 25 A ESTE - 135
+            </span>
+            <span className="value2">
 
-      Complemento: Apartamento 101
-      </span>
-    </div>
-      <br />
-
-  <IonList>
-
-  <div className="row g-3 was-validated ">
-          <div className="col-sm">
-                    <label  className="form-label">Via principal:</label>
-                    <select  onChange={(e) => {
-                        handleInputChange(e, 'dirCampo1');
-                        handleInputChange2(e,'dirCampo1'); // Llama a otra función si es necesario
-                      }} value={items.dirCampo1} className="form-control form-control-sm" id="vprincipal" aria-describedby="validationServer04Feedback" required>
-                        <option value=""> SELECCIONE </option>
-                        <option value="1"> AUTOPISTA </option>
-                        <option value="2"> AVENIDA </option>
-                        <option value="3"> AVENIDA CALLE </option>
-                        <option value="4"> AVENIDA CARRERA </option>
-                        <option value="5"> BULEVAR </option>
-                        <option value="6"> CALLE </option>
-                        <option value="7"> CARRERA </option>
-                        <option value="8"> CIRCULAR </option>
-                        <option value="10"> CIRCUNVALAR </option>
-                        <option value="11"> CTAS CORRIDAS </option>
-                        <option value="12"> DIAGONAL </option>
-                        <option value="9"> KILOMETRO </option>
-                        <option value="20"> OTRA </option>
-                        <option value="13"> PASAJE </option>
-                        <option value="14"> PASEO </option>
-                        <option value="15"> PEATONAL </option>
-                        <option value="16"> TRANSVERSAL </option>
-                        <option value="17"> TRONCAL </option>
-                        <option value="18"> VARIANTE </option>
-                        <option value="19"> VIA </option> 
-                    </select>
-                    </div>
-          
-            <div className="col-sm">
-              <label  className="form-label" style={{color: 'white'}}>.</label>
-              <input type="text" placeholder="" onChange={(e) =>
-                        handleInputChange(e, 'dirCampo2')
-                       } value={items.dirCampo2} className="form-control form-control-sm  "  required/>
-            </div>
-            <div className="col-sm">
-              <label  className="form-label" style={{color: 'white'}}>.</label>
-              <input type="text" onChange={(e) => 
-                        handleInputChange(e, 'dirCampo3')}  value={items.dirCampo3} placeholder="" className="form-control form-control-sm  "  />
-            </div>
-            <div className="col-sm">
-                    <label  className="form-label" style={{color: 'white'}}>.</label>
-                    <select onChange={(e) => {
-                        handleInputChange(e, 'dirCampo4');
-                        handleInputChange2(e,'dirCampo4'); // Llama a otra función si es necesario
-                      }}  value={items.dirCampo4} className="form-control form-control-sm"  aria-describedby="validationServer04Feedback" >
-                    <option value=""> SELECCIONE </option>
-                    <option value="5"> BIS </option>
-                    <option value="3"> ESTE </option>
-                    <option value="2"> NORTE </option>
-                    <option value="4"> OESTE </option>
-                    <option value="1"> SUR </option>   
-                    </select>
-                    </div>
-
-                <div className="simbolo col-sm-1">
-                <label ><br/></label>
-                <h4>#</h4>
-            </div>    
+              Complemento: Apartamento 101
+            </span>
           </div>
-          
-         
-  </IonList>
+          <br />
 
-  <IonList>
-  <div className="row g-3 was-validated ">
-  <div className="col-sm">
-              <label  className="form-label" >Via secundaria:</label>
-              <input type="number" onChange={(e) => 
-                        handleInputChange(e, 'dirCampo5')
-                      }  value={items.dirCampo5} placeholder="" className="form-control form-control-sm  "  />
+          <IonList>
+
+            <div className="row g-3 was-validated ">
+              <div className="col-sm">
+                <label className="form-label">Via principal:</label>
+                <select onChange={(e) => {
+                  handleInputChange(e, 'dirCampo1');
+                  handleInputChange2(e, 'dirCampo1'); // Llama a otra función si es necesario
+                }} value={items.dirCampo1} className="form-control form-control-sm" id="vprincipal" aria-describedby="validationServer04Feedback" required>
+                  <option value=""> SELECCIONE </option>
+                  <option value="1"> AUTOPISTA </option>
+                  <option value="2"> AVENIDA </option>
+                  <option value="3"> AVENIDA CALLE </option>
+                  <option value="4"> AVENIDA CARRERA </option>
+                  <option value="5"> BULEVAR </option>
+                  <option value="6"> CALLE </option>
+                  <option value="7"> CARRERA </option>
+                  <option value="8"> CIRCULAR </option>
+                  <option value="10"> CIRCUNVALAR </option>
+                  <option value="11"> CTAS CORRIDAS </option>
+                  <option value="12"> DIAGONAL </option>
+                  <option value="9"> KILOMETRO </option>
+                  <option value="20"> OTRA </option>
+                  <option value="13"> PASAJE </option>
+                  <option value="14"> PASEO </option>
+                  <option value="15"> PEATONAL </option>
+                  <option value="16"> TRANSVERSAL </option>
+                  <option value="17"> TRONCAL </option>
+                  <option value="18"> VARIANTE </option>
+                  <option value="19"> VIA </option>
+                </select>
+              </div>
+
+              <div className="col-sm">
+                <label className="form-label" style={{ color: 'white' }}>.</label>
+                <input type="text" placeholder="" onChange={(e) =>
+                  handleInputChange(e, 'dirCampo2')
+                } value={items.dirCampo2} className="form-control form-control-sm  " required />
+              </div>
+              <div className="col-sm">
+                <label className="form-label" style={{ color: 'white' }}>.</label>
+                <input type="text" onChange={(e) =>
+                  handleInputChange(e, 'dirCampo3')} value={items.dirCampo3} placeholder="" className="form-control form-control-sm  " />
+              </div>
+              <div className="col-sm">
+                <label className="form-label" style={{ color: 'white' }}>.</label>
+                <select onChange={(e) => {
+                  handleInputChange(e, 'dirCampo4');
+                  handleInputChange2(e, 'dirCampo4'); // Llama a otra función si es necesario
+                }} value={items.dirCampo4} className="form-control form-control-sm" aria-describedby="validationServer04Feedback" >
+                  <option value=""> SELECCIONE </option>
+                  <option value="5"> BIS </option>
+                  <option value="3"> ESTE </option>
+                  <option value="2"> NORTE </option>
+                  <option value="4"> OESTE </option>
+                  <option value="1"> SUR </option>
+                </select>
+              </div>
+
+              <div className="simbolo col-sm-1">
+                <label ><br /></label>
+                <h4>#</h4>
+              </div>
             </div>
 
-            
-          
-            <div className="col-sm">
-              <label  className="form-label" style={{color: 'white'}}>.</label>
-              <input type="text" onChange={(e) => 
-                        handleInputChange(e, 'dirCampo6')
-                   // Llama a otra función si es necesario
-                      }  value={items.dirCampo6} placeholder="" className="form-control form-control-sm  "  />
-            </div>
+
+          </IonList>
+
+          <IonList>
+            <div className="row g-3 was-validated ">
+              <div className="col-sm">
+                <label className="form-label" >Via secundaria:</label>
+                <input type="number" onChange={(e) =>
+                  handleInputChange(e, 'dirCampo5')
+                } value={items.dirCampo5} placeholder="" className="form-control form-control-sm  " />
+              </div>
 
 
-            <div className="col-sm">
-                    <label  className="form-label" style={{color: 'white'}}>.</label>
-                    <select onChange={(e) => {
-                        handleInputChange(e, 'dirCampo7');
-                        handleInputChange2(e,'dirCampo7'); // Llama a otra función si es necesario
-                      }}  value={items.dirCampo7} className="form-control form-control-sm" id="pregunta2_3" aria-describedby="validationServer04Feedback" >
-                    <option value=""> SELECCIONE </option>
-                    <option value="5"> BIS </option>
-                    <option value="3"> ESTE </option>
-                    <option value="2"> NORTE </option>
-                    <option value="4"> OESTE </option>
-                    <option value="1"> SUR </option> 
-                    </select>
+
+              <div className="col-sm">
+                <label className="form-label" style={{ color: 'white' }}>.</label>
+                <input type="text" onChange={(e) =>
+                  handleInputChange(e, 'dirCampo6')
+                  // Llama a otra función si es necesario
+                } value={items.dirCampo6} placeholder="" className="form-control form-control-sm  " />
+              </div>
+
+
+              <div className="col-sm">
+                <label className="form-label" style={{ color: 'white' }}>.</label>
+                <select onChange={(e) => {
+                  handleInputChange(e, 'dirCampo7');
+                  handleInputChange2(e, 'dirCampo7'); // Llama a otra función si es necesario
+                }} value={items.dirCampo7} className="form-control form-control-sm" id="pregunta2_3" aria-describedby="validationServer04Feedback" >
+                  <option value=""> SELECCIONE </option>
+                  <option value="5"> BIS </option>
+                  <option value="3"> ESTE </option>
+                  <option value="2"> NORTE </option>
+                  <option value="4"> OESTE </option>
+                  <option value="1"> SUR </option>
+                </select>
               </div>
 
               <div className="simbolo col-sm-1 ">
-                <label ><br/></label>
+                <label ><br /></label>
                 <h4>-</h4>
-            </div>
-
-
-            <div className="col-sm">
-              <label  className="form-label" style={{color: 'white'}}>.</label>
-              <input type="number" onChange={(e) => 
-                        handleInputChange(e, 'dirCampo8')
-                      }  value={items.dirCampo8} placeholder="" className="form-control form-control-sm  "  />
-            </div>
-            
-          </div>
-  </IonList>
-
-  <IonList>
-  <div className="row g-3 was-validated ">
-            <div className="col-sm">
-              <label  className="form-label" >Complemento</label>
-              <input type="text" onChange={(e) => 
-                        handleInputChange(e, 'dirCampo9')}  value={items.dirCampo9} placeholder="" className="form-control form-control-sm  "  required/>
-            </div>
-          </div>
-  </IonList>
-<hr />
-  <IonList>
-  <div className="row g-3 was-validated ">
-            <div className="col-sm">
-              <label  className="form-label" >Direccion:</label>
-              <input disabled type="text"  value={items.direccion}   placeholder="" className="form-control form-control-sm  "  required/>
-            </div>
-          </div>
-  </IonList>
-  <hr />
-
-  <IonList>
-  <div className="row g-3 was-validated ">
-            <div className="col-sm">
-                    <label  className="form-label" >Rural/Urbano</label>
-                    <select onChange={(e) => handleInputChange(e, 'ruralurbano')}  value={items.ruralurbano} className="form-control form-control-sm" id="pregunta2_3" aria-describedby="validationServer04Feedback" required>
-                    <option value=""> SELECCIONE </option>
-                    <option value="2"> RURAL </option>
-                    <option value="1"> URBANO </option>
-                    </select>
               </div>
 
-                <div className="col-sm">
-                  <label  className="form-label" >Sector:</label>
-                  <input type="text" onChange={(e) => handleInputChange(e, 'sector')} value={items.sector} placeholder="" className="form-control form-control-sm  "  />
-                </div>
 
-          </div>
-  </IonList>
+              <div className="col-sm">
+                <label className="form-label" style={{ color: 'white' }}>.</label>
+                <input type="number" onChange={(e) =>
+                  handleInputChange(e, 'dirCampo8')
+                } value={items.dirCampo8} placeholder="" className="form-control form-control-sm  " />
+              </div>
+
+            </div>
+          </IonList>
+
+          <IonList>
+            <div className="row g-3 was-validated ">
+              <div className="col-sm">
+                <label className="form-label" >Complemento</label>
+                <input type="text" onChange={(e) =>
+                  handleInputChange(e, 'dirCampo9')} value={items.dirCampo9} placeholder="" className="form-control form-control-sm  " required />
+              </div>
+            </div>
+          </IonList>
+          <hr />
+          <IonList>
+            <div className="row g-3 was-validated ">
+              <div className="col-sm">
+                <label className="form-label" >Direccion:</label>
+                <input disabled type="text" value={items.direccion} placeholder="" className="form-control form-control-sm  " required />
+              </div>
+            </div>
+          </IonList>
+          <hr />
+
+          <IonList>
+            <div className="row g-3 was-validated ">
+              <div className="col-sm">
+                <label className="form-label" >Rural/Urbano</label>
+                <select onChange={(e) => handleInputChange(e, 'ruralurbano')} value={items.ruralurbano} className="form-control form-control-sm" id="pregunta2_3" aria-describedby="validationServer04Feedback" required>
+                  <option value=""> SELECCIONE </option>
+                  <option value="2"> RURAL </option>
+                  <option value="1"> URBANO </option>
+                </select>
+              </div>
+
+              <div className="col-sm">
+                <label className="form-label" >Sector:</label>
+                <input type="text" onChange={(e) => handleInputChange(e, 'sector')} value={items.sector} placeholder="" className="form-control form-control-sm  " />
+              </div>
+
+            </div>
+          </IonList>
 
 
-  <IonList>
-  <div className="row g-3 was-validated ">
-            <div className="col-sm">
-                    <label  className="form-label" >Comuna</label>
-                    <select onChange={(e) => handleInputChange(e, 'comuna')} value={items.comuna} className="form-control form-control-sm" id="pregunta2_3" aria-describedby="validationServer04Feedback" required>
-                    <option value="" >Seleccione</option>
-                    {comunas.map((programa) => (
+          <IonList>
+            <div className="row g-3 was-validated ">
+              <div className="col-sm">
+                <label className="form-label" >Comuna</label>
+                <select onChange={(e) => handleInputChange(e, 'comuna')} value={items.comuna} className="form-control form-control-sm" id="pregunta2_3" aria-describedby="validationServer04Feedback" required>
+                  <option value="" >Seleccione</option>
+                  {comunas.map((programa) => (
                     <option key={programa.id} value={programa.id}>{programa.descripcion}</option>
                   ))}
-                    </select>
+                </select>
               </div>
-            <div className="col-sm">
-                    <label  className="form-label" >Barrio</label>
-                    <select onChange={(e) => handleInputChange(e, 'barrio')} value={items.barrio} className="form-control form-control-sm" id="pregunta2_3" aria-describedby="validationServer04Feedback" required>
-                    <option value="" >Seleccione</option>
-                    {barrios
-                        .filter(programa => programa.comuna == parseInt(items.comuna))
-                        .map((programa) => (
-                          <option key={programa.id} value={programa.id}>{programa.descripcion}</option>
-                        ))
-                        }
-                    </select>
+              <div className="col-sm">
+                <label className="form-label" >Barrio</label>
+                <select onChange={(e) => handleInputChange(e, 'barrio')} value={items.barrio} className="form-control form-control-sm" id="pregunta2_3" aria-describedby="validationServer04Feedback" required>
+                  <option value="" >Seleccione</option>
+                  {barrios
+                    .filter(programa => programa.comuna == parseInt(items.comuna))
+                    .map((programa) => (
+                      <option key={programa.id} value={programa.id}>{programa.descripcion}</option>
+                    ))
+                  }
+                </select>
               </div>
-          </div>
-  </IonList>
+            </div>
+          </IonList>
 
-  </div>
-  <div className=' shadow p-3 mb-2 pt-0 bg-white rounded'>
+        </div> :''}
+        <div className=' shadow p-3 mb-2 pt-0 bg-white rounded'>
           <IonList>
             <div className="alert alert-primary" role="alert">
               <span className="badge badge-secondary text-dark">PERSONAS COMO RED DE APOYO</span>
             </div>
-            <CustomDataTable  
-                title="Integrantes"
-                data={reddeapoyo}
-                columns={columns}/>
+            <CustomDataTable
+              title="Integrantes"
+              data={reddeapoyo}
+              columns={columns} />
           </IonList>
         </div>
 
         <br />
 
-        {showModal && (
-          <>
-            {/* Bootstrap Modal */}
-            <div className={`modal ${showModal ? "d-block" : "d-none"} modalnew modal-backdropnew `}  tabIndex="-1" role="dialog">
-              <div className="modal-dialog" role="document"><br /><br /><br />
-                <div className="modal-content">
-                  <div className="modal-header">
-                    <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={() => setShowModal(false)}>
-                      <span aria-hidden="true">&times;</span>
-                    </button>
-                  </div>
-                  <div className="modal-body text-center">
-                  <div className="modal-body text-center">
-                    <table className="table table-bordered table-striped">
-                      <tbody>
-                        <tr>
-                          <th scope="row">Parentesco</th>
-                          <td>{reddeapoyo[0]!.parentesco}</td> 
-                        </tr>
-                        {/* <tr>
-                          <th scope="row">Ubicación</th>
-                          <td>{items.ubicacion}</td>
-                        </tr> */}
-                        <tr>
-                          <th scope="row">Comuna</th>
-                          <td>{reddeapoyo[0]!.comunas}</td>
-                        </tr>
-                        <tr>
-                          <th scope="row">Barrio</th>
-                          <td>{reddeapoyo[0]!.barrios}</td>
-                        </tr>
-                        <tr>
-                          <th scope="row">Dirección</th>
-                          <td>{items.direccion}</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
+        {showModal && selectedIntegrante && (
+  <div className={`modal ${showModal ? "d-block" : "d-none"} modalnew modal-backdropnew`} tabIndex="-1" role="dialog">
+    <div className="modal-dialog" role="document"><br /><br /><br />
+      <div className="modal-content">
+        <div className="modal-header">
+          <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={() => setShowModal(false)}>
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div className="modal-body text-center">
+          <div className="modal-body text-center">
+            <table className="table table-bordered table-striped">
+              <tbody>
+                <tr>
+                  <th scope="row">Parentesco</th>
+                  <td>{selectedIntegrante.parentesco || 'N/A'}</td>
+                </tr>
+                <tr>
+                  <th scope="row">Comuna</th>
+                  <td>{selectedIntegrante.comunas || 'N/A'}</td>
+                </tr>
+                <tr>
+                  <th scope="row">Barrio</th>
+                  <td>{selectedIntegrante.barrios || 'N/A'}</td>
+                </tr>
+                <tr>
+                  <th scope="row">Dirección</th>
+                  <td>{selectedIntegrante.direccion || 'N/A'}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
 
-                    
-                  </div>
-                </div>
-              </div>
-            </div>
-          </>
-        )}
 
         <div><IonButton color="success" onClick={enviar}>Guardar</IonButton><IonButton routerLink={`/tabs/tab12/${params.ficha}`}>Siguiente</IonButton></div>
 

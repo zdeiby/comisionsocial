@@ -159,17 +159,17 @@ const IngresarIntegrantes: React.FC = () => {
           sexo: '',
           orientacionsexual: '',
           identidaddegenero: '',
-          etnia: '',
+          etnia: '7',
           estadocivil: '',
           gestantelactante: '',
           escolaridad: '',
           parentesco: '',
-          discapacidad: '',
+          discapacidad: '1',
           regimendesalud: '',
-          enfermedades: '',
+          enfermedades: '6',
           actividad: '',
           ocupacion: '',
-          estadousuario: '',
+          estadousuario: '3',
           campesino: '',
           desplazado: '',
           sisbenizado: '',
@@ -243,11 +243,13 @@ const IngresarIntegrantes: React.FC = () => {
 
   const handleInputChange = (event, field) => {
     const { value } = event.target;
-    setItems((prevItems) => ({
-      ...prevItems,
-      [field]: value,
-    }));
-    console.log(items);
+    setItems((prevItems) => {
+      const newState = { ...prevItems, [field]: value };
+      if (field === 'sexo') {
+        newState.gestantelactante = value ? '' : '';
+      }
+      return newState;
+    });
   };
 
   useEffect(() => {
@@ -447,6 +449,7 @@ const IngresarIntegrantes: React.FC = () => {
             </div>
           </IonList>
           <IonList>
+          {(items.sexo =='2')? 
             <div className="row g-3 was-validated ">
               <div className="col-sm">
                 <label className="form-label">Gestante y lactante:</label>
@@ -454,7 +457,7 @@ const IngresarIntegrantes: React.FC = () => {
                   <option value=""> SELECCIONE </option><option value="1"> GESTANTE </option><option value="3"> GESTANTE Y LACTANTE </option><option value="2"> LACTANTE </option><option value="4"> NINGUNA </option>
                 </select>
               </div>
-            </div>
+            </div>:''}
           </IonList>
 
           <IonList>
@@ -514,6 +517,7 @@ const IngresarIntegrantes: React.FC = () => {
                 <select onChange={(e) => handleInputChange(e, 'campesino')} value={items.campesino} className="form-control form-control-sm" id="pregunta2_3" aria-describedby="validationServer04Feedback" required>
                   <option value=""> SELECCIONE </option><option value="2"> NO </option><option value="1"> SI </option><option value="3"> SIN DATO </option>                                 </select>
               </div>
+              
               <div className="col-sm-6">
                 <label className="form-label">Desplazado:</label>
                 <select onChange={(e) => handleInputChange(e, 'desplazado')} value={items.desplazado} className="form-control form-control-sm" id="pregunta2_3" aria-describedby="validationServer04Feedback" required>
@@ -536,7 +540,7 @@ const IngresarIntegrantes: React.FC = () => {
             <div className="row g-3 was-validated ">
               <div className="col-sm">
                 <label className="form-label">Condición de víctima / hecho victimizante:</label>
-                <select onChange={(e) => handleInputChange(e, 'victima')} value={items.victima} className="form-control form-control-sm" id="pregunta2_3" aria-describedby="validationServer04Feedback" required>
+                <select  disabled={(items.desplazado =='1')?false:true} onChange={(e) => handleInputChange(e, 'victima')} value={items.victima} className="form-control form-control-sm" id="pregunta2_3" aria-describedby="validationServer04Feedback" required>
                   <option value=""> SELECCIONE </option><option value="8"> ABANDONO O DESPOJO FORZADO </option><option value="10"> AMENAZA A LA VIDA, INTEGRIDAD Y SEGURIDAD PERSONAL </option><option value="9"> DAÑO EN BIENES MUEBLES O INMUEBLES (TERRORISMO) </option><option value="7"> DELITOS CONTRA LA INTEGRIDAD Y LIBERTAD SEXUAL </option><option value="1"> DESAPARICIÓN FORZADA </option><option value="4"> DESPLAZAMIENTO FORZADO </option><option value="15"> HOMICIDIO </option><option value="6"> LESIONES PERSONALES (PERMANENTES O TRANSITORIAS) </option><option value="11"> MÁS DE UN HECHO VICTIMIZANTE </option><option value="12"> NINGUNA </option><option value="16"> OTRO </option><option value="3"> RECLUTAMIENTO FORZADO Y UTILIZACIÓN </option><option value="2"> SECUESTRO </option><option value="13"> SIN DATO </option><option value="14"> TORTURA O TRATOS CRUELES, INHUMANOS O DEGRADANTES </option><option value="5"> VÍCTIMAS DE MINAS ANTIPERSONAL (MAP), MUNICIONES SIN EXPLOSIONAR (MUSE) Y ARTEFACTOS EXPLOSIVOS IMPROVISADOS (AEI) </option>
                 </select>
               </div>

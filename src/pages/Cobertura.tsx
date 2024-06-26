@@ -423,7 +423,7 @@ const Cobertura: React.FC = () => {
         onIonInput={(e) => setSearchText(e.detail.value)}
         placeholder="Buscar por estado, ficha, nombre, etc."
       />
-      <IonButton onClick={sincronizacion}>Sincronización</IonButton>
+      <IonButton onClick={sincronizacion}>Sincronización subida de información</IonButton>
 
         </>
       ) : ''}
