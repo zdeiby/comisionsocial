@@ -22,6 +22,7 @@ const Tab15: React.FC = () => {
   const params = useParams<any>();
   const [db, setDb] = useState<any>(null);
   const [observacion, setObservacion] = useState<string>('');
+  const [buttonDisabled, setButtonDisabled] = useState(true);
   const [items, setItems] = useState({
     fichasocial: params.ficha,
     observacion: '',
@@ -82,6 +83,8 @@ const Tab15: React.FC = () => {
           ...prevItems,
           observacion: res[0].values[0][0]
         }));
+        setButtonDisabled((res[0].values[0][0])?false:true); 
+
       }
     }
   };
@@ -103,7 +106,7 @@ const Tab15: React.FC = () => {
       [
         items.fichasocial, items.observacion, items.fecharegistro, items.usuario, items.estado, items.tabla
       ]);
-
+      setButtonDisabled(false);
       saveDatabase();
       alert('Observación guardada con éxito');
     } catch (err) {
@@ -145,7 +148,7 @@ const Tab15: React.FC = () => {
         </div>
         <div>
           <IonButton color="success" onClick={enviar}>Guardar</IonButton>
-          <IonButton routerLink={`/tabs/tab16/${params.ficha}`}>Siguiente</IonButton>
+          <IonButton routerLink={`/tabs/tab16/${params.ficha}`} disabled={buttonDisabled}>Siguiente</IonButton>
         </div>
       </IonContent>
     </IonPage>

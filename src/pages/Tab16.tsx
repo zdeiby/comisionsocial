@@ -143,8 +143,21 @@ const Tab16: React.FC = () => {
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>, field: keyof Autorizacion) => {
     const { value } = event.target;
-    console.log(autorizacion)
-    setAutorizacion((prev) => prev ? { ...prev, [field]: value } : prev);
+    setAutorizacion((prev) => {
+      if (!prev) return prev;
+  
+      const newState = { ...prev, [field]: value };
+  
+      if (field === 'requerieseguimiento') {
+        newState.fechaprobable = value === '2' ? '' : '';
+      } 
+      if (field === 'autorizofirma') {
+        newState.firmatitular = value === '2' ? '' : '';
+        newState.draw_dataUrl= value === '2' ? '' : '';
+      }
+  
+      return newState;
+    });
   };
 
   function dataURLToBlob(dataURL: string): Blob {
@@ -302,11 +315,12 @@ const Tab16: React.FC = () => {
                   <option value="2"> SI </option>
                 </select>
               </div>
+             {(autorizacion?.requerieseguimiento == '2' )?
               <div className="col">
                 <label className="form-label" >Fecha probable:</label>
                 <input type="date" onChange={(e) => handleInputChange(e, 'fechaprobable')} value={autorizacion?.fechaprobable || ''} placeholder="" className="form-control form-control-sm" required />
                 <small className="form-text text-muted">La fecha para el primer seguimiento no puede ser superior a un mes.</small>
-              </div>
+              </div> :''}
             </div>
           </IonList>
         </div>
@@ -330,6 +344,7 @@ const Tab16: React.FC = () => {
                   <option value="2"> SI </option>
                 </select>
               </div>
+              {(autorizacion?.autorizofirma == '2' )?
               <div className="col-sm-6">
                 <label className="form-label">Firma el representante del hogar:</label>
                 <select value={autorizacion?.firmatitular || ''} onChange={(e) => handleInputChange(e, 'firmatitular')} className="form-control form-control-sm" aria-describedby="validationServer04Feedback" required>
@@ -337,11 +352,11 @@ const Tab16: React.FC = () => {
                   <option value="1"> NO </option>
                   <option value="2"> SI </option>
                 </select>
-              </div>
+              </div>:''}
             </div>
           </IonList>
         </div>
-
+        {(autorizacion?.autorizofirma=='2')?
         <div className='shadow p-3 mb-5 bg-white rounded'>
           <div className="col-sm">
             <div className="alert alert-info" role="alert">
@@ -349,11 +364,11 @@ const Tab16: React.FC = () => {
             </div>
           </div>
           <div className='container text-center pb-4 pt-4'>
-          <img src={autorizacion?.draw_dataUrl} alt="" />
+          <img src={autorizacion?.draw_dataUrl}  alt="" />
           </div>
 
           <TouchPad onSave={handleSave} />
-        </div>
+        </div> :''}
 
         <div>
           <IonButton color="success" onClick={enviar}>Guardar</IonButton>

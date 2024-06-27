@@ -81,15 +81,16 @@ const Tab13: React.FC = () => {
           }, {});
         });
         setPeople(transformedPeople);
+        setButtonDisabled((transformedPeople[0].fichasocial)?false:true); 
       } else {
         setItems({
           fichasocial: params.ficha,
           tienemascotas: '',
-          cuantos: '',
-          cuales: '',
+          cuantos: '0',
+          cuales: 'NO APLICA',
           albergalos: '',
           dondelista: '',
-          donde: '',
+          donde: 'NO APLICA',
           requierealbergue: '',
           fecharegistro: getCurrentDateTime(),
           usuario: localStorage.getItem('cedula'),
@@ -137,11 +138,27 @@ const Tab13: React.FC = () => {
 
   const handleInputChange = (event, field) => {
     const { value } = event.target;
-    setItems((prevItems) => ({
-      ...prevItems,
-      [field]: value,
-    }));
-    console.log(items);
+    setItems((prevItems) => {
+      const newState = { ...prevItems, [field]: value };
+      if (field === 'tienemascotas') {
+        newState.donde = value  =='2'? '' : 'NO APLICA';
+        newState.cuales = value =='2' ? '' : 'NO APLICA';
+        newState.cuantos = value =='2'? '0' : '0'; 
+        newState.albergalos = value =='2'? '' : ''; 
+        newState.dondelista = value =='2'? '' : ''; 
+        newState.requierealbergue = value =='2'? '' : '';    
+      }
+
+      if (field === 'albergalos') {
+        newState.dondelista = value  =='2'? '' : '';
+        newState.donde = value  =='2'? '' : 'NO APLICA';
+        newState.requierealbergue = value  =='1'? '' : '';
+
+      }
+      
+
+      return newState;
+    });
   };
 
   useEffect(() => {
@@ -194,25 +211,28 @@ const Tab13: React.FC = () => {
                   <option value="2">SI</option>
                 </select>
               </div>
+              {(items.tienemascotas =='2')?
               <div className="col-sm">
                 <label className="form-label">Cuantos</label>
                 <input type="number" value={items.cuantos} onChange={(e) => handleInputChange(e, 'cuantos')} className="form-control form-control-sm" required />
                 <small className="form-text text-muted">Solo números, mínimo uno.</small>
-              </div>
-              <div className="col-sm-12">
+              </div>  :''}
+                  {(items.tienemascotas =='2')?
+                  <div className="col-sm-12">
                 <label className="form-label">Cuales:</label>
                 <input type="text" value={items.cuales} onChange={(e) => handleInputChange(e, 'cuales')} className="form-control form-control-sm" required />
                 <small className="form-text text-muted">Por favor separa cada mascota por comas.</small>
-              </div>
-              <div className="col-sm-12">
+              </div> :''}
+                 {(items.tienemascotas =='2')? <div className="col-sm-12">
                 <label className="form-label">En caso de ser necesario, tiene donde albergarlos mientras se ubica en un lugar seguro:</label>
                 <select value={items.albergalos} onChange={(e) => handleInputChange(e, 'albergalos')} className="form-control form-control-sm" required>
                   <option value="">SELECCIONE</option>
                   <option value="1">NO</option>
                   <option value="2">SI</option>
                 </select>
-              </div>
-              <div className="col-sm-12">
+              </div> :''}
+                 {(items.tienemascotas =='2' && items.albergalos=='2')? 
+                 <div className="col-sm-12">
                 <label className="form-label">¿Donde?</label>
                 <select value={items.dondelista} onChange={(e) => handleInputChange(e, 'dondelista')} className="form-control form-control-sm" required>
                   <option value="">SELECCIONE</option>
@@ -220,13 +240,15 @@ const Tab13: React.FC = () => {
                   <option value="1">RED FAMILIAR</option>
                   <option value="2">RED SOCIAL</option>
                 </select>
-              </div>
-              <div className="col-sm">
+              </div> :''}
+                 {(items.tienemascotas =='2' && items.albergalos=='2' && items.dondelista=='3')? 
+                 <div className="col-sm">
                 <label className="form-label">Cual:</label>
                 <input type="text" value={items.donde} onChange={(e) => handleInputChange(e, 'donde')} className="form-control form-control-sm" required />
                 <small className="form-text text-muted">Informa donde se van a albergar las mascotas.</small>
-              </div>
-              <div className="col-sm-12">
+              </div> :''}
+              {(items.tienemascotas =='2' && items.albergalos=='1')? 
+                  <div className="col-sm-12">
                 <label className="form-label">Requiere albergue para su mascota?</label>
                 <select value={items.requierealbergue} onChange={(e) => handleInputChange(e, 'requierealbergue')} className="form-control form-control-sm" required>
                   <option value="">SELECCIONE</option>
@@ -234,7 +256,7 @@ const Tab13: React.FC = () => {
                   <option value="1">NO</option>
                   <option value="2">SI</option>
                 </select>
-              </div>
+                 </div> :''}
             </div>
           </IonList>
         </div>
@@ -243,7 +265,7 @@ const Tab13: React.FC = () => {
 
         <div>
           <IonButton color="success" onClick={enviar}>Guardar</IonButton>
-          <IonButton routerLink={`/tabs/tab14/${params.ficha}`}>Siguiente</IonButton>
+          <IonButton routerLink={`/tabs/tab14/${params.ficha}`} disabled={buttonDisabled}>Siguiente</IonButton>
         </div>
       </IonContent>
     </IonPage>

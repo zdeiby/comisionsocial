@@ -6,7 +6,7 @@ import loadSQL from '../models/database';
 import {
     IonContent, IonHeader, IonPage, IonTitle, IonToolbar,
     IonList, IonButton
-  } from '@ionic/react';
+} from '@ionic/react';
 import TouchPad from '../components/TouchPad';
 
 interface Ayudas {
@@ -90,8 +90,8 @@ interface Integrante {
     nombre2: string;
     apellido1: string;
     apellido2: string;
-  }
-  
+}
+
 
 const IngresarAyudas: React.FC = () => {
     const location = useLocation();
@@ -101,7 +101,7 @@ const IngresarAyudas: React.FC = () => {
     const [ayudas, setAyudas] = useState<Ayudas[]>([]);
     const [db, setDb] = useState<any>(null);
     const [integrantes, setIntegrantes] = useState<Integrante[]>([]);
-    const [bloobs, setBloobs] =useState('');
+    const [bloobs, setBloobs] = useState('');
     const [items, setItems] = useState<Ayudas>({
         idayudas: null,
         fichasocial: parseInt(params.ficha),
@@ -232,27 +232,27 @@ const IngresarAyudas: React.FC = () => {
                     idayudas: null,
                     fichasocial: parseInt(params.ficha),
                     paquetealimentario: null,
-                    tipoa: null,
-                    tipob: null,
-                    tipoc: null,
+                    tipoa: 0,
+                    tipob: 0,
+                    tipoc: 0,
                     noalimentarias: null,
                     quienoa: '',
                     factura: '',
-                    dcocina: null,
-                    daseohogar: null,
-                    daseofamiliar: null,
-                    dasehombre: null,
-                    daseomujer: null,
-                    daseonna: null,
-                    daseoinfantil: null,
-                    daseoespecial: null,
-                    dcolchonetas: null,
-                    dcobijas: null,
-                    dsabanas: null,
-                    dalmohadas: null,
+                    dcocina: 0,
+                    daseohogar: 0,
+                    daseofamiliar: 0,
+                    dasehombre: 0,
+                    daseomujer: 0,
+                    daseonna: 0,
+                    daseoinfantil: 0,
+                    daseoespecial: 0,
+                    dcolchonetas: 0,
+                    dcobijas: 0,
+                    dsabanas: 0,
+                    dalmohadas: 0,
                     enitdad: '',
                     otros: null,
-                    cuales: '',
+                    cuales: 'NO APLICA',
                     entidadotros: '',
                     fechadeentrega: '',
                     idintegrante: '',
@@ -261,34 +261,34 @@ const IngresarAyudas: React.FC = () => {
                     estado: 1,
                     tabla: 'c12_ayudasentregadas',
                     tipoentraga: null,
-                    ococina: null,
-                    acocina: null,
-                    oaseohogar: null,
-                    aaseohogar: null,
-                    oaseofamiliar: null,
-                    aaseofamiliar: null,
-                    oasehombre: null,
-                    aasehombre: null,
-                    oaseomujer: null,
-                    aaseomujer: null,
-                    oaseonna: null,
-                    aaseonna: null,
-                    oaseoinfantil: null,
-                    aaseoinfantil: null,
-                    oaseoespecial: null,
-                    aaseoespecial: null,
-                    ocolchonetas: null,
-                    acolchonetas: null,
-                    ocobijas: null,
-                    acobijas: null,
-                    osabanas: null,
-                    asabanas: null,
-                    oalmohadas: null,
-                    aalmohadas: null,
+                    ococina: 0,
+                    acocina: 0,
+                    oaseohogar: 0,
+                    aaseohogar: 0,
+                    oaseofamiliar: 0,
+                    aaseofamiliar: 0,
+                    oasehombre: 0,
+                    aasehombre: 0,
+                    oaseomujer: 0,
+                    aaseomujer: 0,
+                    oaseonna: 0,
+                    aaseonna: 0,
+                    oaseoinfantil: 0,
+                    aaseoinfantil: 0,
+                    oaseoespecial: 0,
+                    aaseoespecial: 0,
+                    ocolchonetas: 0,
+                    acolchonetas: 0,
+                    ocobijas: 0,
+                    acobijas: 0,
+                    osabanas: 0,
+                    asabanas: 0,
+                    oalmohadas: 0,
+                    aalmohadas: 0,
                     quienpaq: '',
-                    cualpaq: '',
+                    cualpaq: 'NO APLICA',
                     quienasis: '',
-                    cualasis: '',
+                    cualasis: 'NO APLICA',
                     asistencialiamentaria: null,
                     redentrega: null,
                     entregado: null,
@@ -306,15 +306,15 @@ const IngresarAyudas: React.FC = () => {
         }
 
         const integrantesRes = await db.exec(`SELECT idintegrante, nombre1, nombre2, apellido1, apellido2 FROM c131_integrante WHERE fichasocial=${params.ficha}`);
-      if (integrantesRes[0]?.values && integrantesRes[0]?.columns) {
-        const transformedIntegrantes: Integrante[] = integrantesRes[0].values.map((row: any[]) => {
-          return integrantesRes[0].columns.reduce((obj, col, index) => {
-            obj[col] = row[index];
-            return obj;
-          }, {} as Integrante);
-        });
-        setIntegrantes(transformedIntegrantes);
-      }
+        if (integrantesRes[0]?.values && integrantesRes[0]?.columns) {
+            const transformedIntegrantes: Integrante[] = integrantesRes[0].values.map((row: any[]) => {
+                return integrantesRes[0].columns.reduce((obj, col, index) => {
+                    obj[col] = row[index];
+                    return obj;
+                }, {} as Integrante);
+            });
+            setIntegrantes(transformedIntegrantes);
+        }
     };
 
     const getCurrentDateTime = () => {
@@ -414,11 +414,153 @@ const IngresarAyudas: React.FC = () => {
 
     const handleInputChange = (event, field) => {
         const { value } = event.target;
-        setItems((prevItems) => ({
-            ...prevItems,
-            [field]: value,
-        }));
-        console.log(items);
+        setItems((prevItems) => {
+            const newState = { ...prevItems, [field]: value };
+            if (field === 'paquetealimentario') {
+              newState.tipoa = value ? 0 : '';
+              newState.paquete1 = value ? null : '';
+              newState.paquete2 = value ? null : '';
+              newState.paquete3 = value ? null : '';
+              newState.paquete4 = value ? null : '';
+              newState.quienpaq = value ? '' : '';
+              newState.cualpaq = value =='1'? 'NO APLICA' : 'NO APLICA';
+
+            }
+            if (field === 'quienpaq') {
+                newState.cualpaq = value =='1'? 'NO APLICA' : '';
+              }
+
+              if (field === 'quienasis') {
+                newState.cualasis = value =='1'? 'NO APLICA' : '';
+              }
+
+              if (field === 'asistencialiamentaria') {
+                newState.tipob = value ? null : '';
+                newState.quienasis = value ? null : '';
+                newState.cualasis = value =='1'? 'NO APLICA' : 'NO APLICA';
+  
+              }
+
+
+              if (field === 'quienoa') {
+
+                //ACNUR
+                newState.acocina = value =='1'|| value =='2'? '0' : '';
+                newState.aaseohogar = value =='1'|| value =='2'? '0' : '';
+                newState.aaseofamiliar = value =='1'|| value =='2'? '0' : '';
+                newState.aasehombre = value =='1'|| value =='2'? '0' : '';
+                newState.aaseomujer = value =='1'|| value =='2'? '0' : '';
+                newState.aaseonna = value =='1'|| value =='2'? '0' : '';
+                newState.aaseoinfantil = value =='1'|| value =='2'? '0' : '';
+                newState.aaseoespecial = value =='1'|| value =='2'? '0' : '';
+                newState.acolchonetas = value =='1'|| value =='2'? '0' : '';
+                newState.asabanas = value =='1'|| value =='2'? '0' : '';
+                newState.aalmohadas = value =='1'|| value =='2'? '0' : '';
+                newState.acobijas = value =='1'|| value =='2'? '0' : '';
+
+                //DAGRD
+                newState.dcocina = value =='1'|| value =='2'? '0' : '';
+                newState.daseohogar = value =='1'|| value =='2'? '0' : '';
+                newState.daseofamiliar = value =='1'|| value =='2'? '0' : '';
+                newState.dasehombre = value =='1'|| value =='2'? '0' : '';
+                newState.daseomujer = value =='1'|| value =='2'? '0' : '';
+                newState.daseonna = value =='1'|| value =='2'? '0' : '';
+                newState.daseoinfantil = value =='1'|| value =='2'? '0' : '';
+                newState.daseoespecial = value =='1'|| value =='2'? '0' : '';
+                newState.dcolchonetas = value =='1'|| value =='2'? '0' : '';
+                newState.dsabanas = value =='1'|| value =='2'? '0' : '';
+                newState.dalmohadas = value =='1'|| value =='2'? '0' : '';
+                newState.dcobijas = value =='1'|| value =='2'? '0' : '';
+                //OID
+
+                newState.ococina = value =='1'|| value =='2'? '0' : '';
+                newState.oaseohogar = value =='1'|| value =='2'? '0' : '';
+                newState.oaseofamiliar = value =='1'|| value =='2'? '0' : '';
+                newState.oasehombre = value =='1'|| value =='2'? '0' : '';
+                newState.oaseomujer = value =='1'|| value =='2'? '0' : '';
+                newState.oaseonna = value =='1'|| value =='2'? '0' : '';
+                newState.oaseoinfantil = value =='1'|| value =='2'? '0' : '';
+                newState.oaseoespecial = value =='1'|| value =='2'? '0' : '';
+                newState.ocolchonetas = value =='1'|| value =='2'? '0' : '';
+                newState.osabanas = value =='1'|| value =='2'? '0' : '';
+                newState.oalmohadas = value =='1'|| value =='2'? '0' : '';
+                newState.ocobijas = value =='1'|| value =='2'? '0' : '';
+                
+
+              }
+
+              if (field === 'noalimentarias') {
+
+                //AGNUR
+                newState.quienoa = value ? '' : '';
+                newState.acocina = value ? '0' : '';
+                newState.aaseohogar = value ? '0' : '';
+                newState.aaseofamiliar = value ? '0' : '';
+                newState.aasehombre = value ? '0' : '';
+                newState.aaseomujer = value ? '0' : '';
+                newState.aaseonna = value ? '0' : '';
+                newState.aaseoinfantil = value ? '0' : '';
+                newState.aaseoespecial = value ? '0' : '';
+                newState.acolchonetas = value ? '0' : '';
+                newState.asabanas = value ? '0' : '';
+                newState.aalmohadas = value ? '0' : '';
+                newState.acobijas = value ? '0' : '';
+
+                //DAGRD
+                
+                newState.dcocina = value ? '0' : '';
+                newState.daseohogar = value ? '0' : '';
+                newState.daseofamiliar = value ? '0' : '';
+                newState.dasehombre = value ? '0' : '';
+                newState.daseomujer = value ? '0' : '';
+                newState.daseonna = value ? '0' : '';
+                newState.daseoinfantil = value ? '0' : '';
+                newState.daseoespecial = value ? '0' : '';
+                newState.dcolchonetas = value ? '0' : '';
+                newState.dsabanas = value ? '0' : '';
+                newState.dalmohadas = value ? '0' : '';
+                newState.dcobijas = value ? '0' : '';
+
+                //OID
+
+                newState.ococina = value ? '0' : '';
+                newState.oaseohogar = value ? '0' : '';
+                newState.oaseofamiliar = value ? '0' : '';
+                newState.oasehombre = value ? '0' : '';
+                newState.oaseomujer = value ? '0' : '';
+                newState.oaseonna = value ? '0' : '';
+                newState.oaseoinfantil = value ? '0' : '';
+                newState.oaseoespecial = value ? '0' : '';
+                newState.ocolchonetas = value ? '0' : '';
+                newState.osabanas = value ? '0' : '';
+                newState.oalmohadas = value ? '0' : '';
+                newState.ocobijas = value ? '0' : '';
+              }
+
+              if (field === 'quienasis') {
+                newState.cualasis = value =='1'? 'NO APLICA' : '';
+              }
+
+              if (field === 'otros') {
+                newState.entidadotros = value ? '' : '';
+                newState.cuales = value =='2'? '' : 'NO APLICA';
+                newState.tipoc = value ? '0' : '0';
+  
+              }
+
+              if (field === 'redentrega') {
+                newState.nombrerecibeayuda = value ? '' : '';
+                newState.documentorecibeayuda = value ? '' : 'NO APLICA';
+                newState.idintegrante = value ? '0' : '0';
+  
+              }
+
+
+
+
+
+            return newState;
+          });
     };
 
     useEffect(() => {
@@ -472,126 +614,132 @@ const IngresarAyudas: React.FC = () => {
                 <div className=' shadow p-3 mb-5 bg-white rounded'>
                     <IonList>
                         <div className="row g-3 was-validated ">
-                        <div className="col-sm-6">
+                            <div className="col-sm-6">
                                 <label className="form-label">Paquete alimentario:</label>
                                 <select onChange={(e) => handleInputChange(e, 'paquetealimentario')} value={items.paquetealimentario || ''} className="form-control form-control-sm" id="pregunta2_3" aria-describedby="validationServer04Feedback" required>
-                                <option value=""> SELECCIONE </option><option value="1"> NO </option><option value="2"> SI </option>
-                                                                </select>
+                                    <option value=""> SELECCIONE </option><option value="1"> NO </option><option value="2"> SI </option>
+                                </select>
                             </div>
-                            <div className="col-sm-6">
-                                <label className="form-label" >Cantidad:</label>
-                                <input type="number" max={4} onChange={(e) => handleInputChange(e, 'tipoa')} value={items.tipoa || ''} placeholder="" className="form-control form-control-sm  " required />
-                            </div>
+                            {(items.paquetealimentario == '2') ?
+                                <div className="col-sm-6">
+                                    <label className="form-label" >Cantidad:</label>
+                                    <input type="number" min={0} max={4} onChange={(e) => handleInputChange(e, 'tipoa')} value={items.tipoa || ''} placeholder="" className="form-control form-control-sm  " required />
+                                </div> : ''}
                         </div>
                     </IonList>
                     <IonList>
                         <div className="row g-3 was-validated ">
                             <div className="col-sm">
                                 <label className="form-label" >Paquete 1</label>
-                                <input type="text" onChange={(e) => handleInputChange(e, 'paquete1')} value={items.paquete1 || ''} placeholder="" className="form-control form-control-sm  "  />
+                                <input type="number" onChange={(e) => handleInputChange(e, 'paquete1')} value={items.paquete1 || ''} disabled={(items.tipoa ==1 || items.tipoa ==2 || items.tipoa ==3 || items.tipoa ==4)?false:true} placeholder="" className="form-control form-control-sm  " />
                             </div>
                             <div className="col-sm">
                                 <label className="form-label" >Paquete 2</label>
-                                <input type="text" onChange={(e) => handleInputChange(e, 'paquete2')} value={items.paquete2 || ''} placeholder="" className="form-control form-control-sm  "  />
+                                <input type="number" onChange={(e) => handleInputChange(e, 'paquete2')} value={items.paquete2 || ''} disabled={(items.tipoa ==2 || items.tipoa ==3 || items.tipoa ==4)?false:true} placeholder="" className="form-control form-control-sm  " />
                             </div>
                             <div className="col-sm">
                                 <label className="form-label" >Paquete 3</label>
-                                <input type="text" onChange={(e) => handleInputChange(e, 'paquete3')} value={items.paquete3 || ''} placeholder="" className="form-control form-control-sm  "  />
+                                <input type="number" onChange={(e) => handleInputChange(e, 'paquete3')} value={items.paquete3 || ''} disabled={(items.tipoa ==3 || items.tipoa ==4 )?false:true} placeholder="" className="form-control form-control-sm  " />
                             </div>
                             <div className="col-sm">
                                 <label className="form-label" >Paquete 4</label>
-                                <input type="text" onChange={(e) => handleInputChange(e, 'paquete4')} value={items.paquete4 || ''} placeholder="" className="form-control form-control-sm  "  />
+                                <input type="number" onChange={(e) => handleInputChange(e, 'paquete4')} value={items.paquete4 || ''} disabled={(items.tipoa ==4)?false:true} placeholder="" className="form-control form-control-sm  " />
                             </div>
                         </div>
                     </IonList>
                     <IonList>
                         <div className="row g-3 was-validated ">
-                        <div className="col-sm-6">
+                        {(items.paquetealimentario == '2') ?<div className="col-sm-6">
                                 <label className="form-label">Que entidad:</label>
                                 <select onChange={(e) => handleInputChange(e, 'quienpaq')} value={items.quienpaq || ''} className="form-control form-control-sm" id="pregunta2_3" aria-describedby="validationServer04Feedback" required>
-                                <option value=""> SELECCIONE </option><option value="1"> COMISIÓN SOCIAL </option><option value="2"> OTRA </option>  
-                                                                </select>
-                            </div>
+                                    <option value=""> SELECCIONE </option><option value="1"> COMISIÓN SOCIAL </option><option value="2"> OTRA </option>
+                                </select>
+                            </div> :''}
+                            {(items.quienpaq == '2')?
                             <div className="col-sm-6">
                                 <label className="form-label" >Cual:</label>
-                                <input type="text" onChange={(e) => handleInputChange(e, 'cualpaq')} value={items.cualpaq || ''}  placeholder="" className="form-control form-control-sm  " required />
-                            </div>
+                                <input type="text" onChange={(e) => handleInputChange(e, 'cualpaq')} value={items.cualpaq} placeholder="" className="form-control form-control-sm  " required />
+                            </div>:''}
                         </div>
                     </IonList>
 
-                    
+
 
                     <IonList>
-                    <div className="alert alert-primary" role="alert">
-                    <span className="badge badge-secondary text-dark">ASISTENCIA ALIMENTARIA EN EMERGENCIA</span>
-                    </div>
+                        <div className="alert alert-primary" role="alert">
+                            <span className="badge badge-secondary text-dark">ASISTENCIA ALIMENTARIA EN EMERGENCIA</span>
+                        </div>
                         <div className="row g-3 was-validated ">
                             <div className="col-sm-6">
                                 <label className="form-label">Asistencia alimentaria en emergencia:</label>
                                 <select onChange={(e) => handleInputChange(e, 'asistencialiamentaria')} value={items.asistencialiamentaria || ''} className="form-control form-control-sm" id="pregunta2_3" aria-describedby="validationServer04Feedback" required>
-                                <option value=""> SELECCIONE </option><option value="1"> NO </option><option value="2"> SI </option>
+                                    <option value=""> SELECCIONE </option><option value="1"> NO </option><option value="2"> SI </option>
                                 </select>
                             </div>
-                            <div className="col-sm-6">
+                            {(items.asistencialiamentaria == '2') ?  <div className="col-sm-6">
                                 <label className="form-label" >Cuantos:</label>
                                 <input type="number" onChange={(e) => handleInputChange(e, 'tipob')} value={items.tipob || ''} placeholder="" className="form-control form-control-sm  " required />
-                            </div>
+                            </div> :''} {(items.asistencialiamentaria == '2') ?
                             <div className="col-sm-6">
                                 <label className="form-label">Que entidad:</label>
                                 <select onChange={(e) => handleInputChange(e, 'quienasis')} value={items.quienasis || ''} className="form-control form-control-sm" id="pregunta2_3" aria-describedby="validationServer04Feedback" required>
-                                <option value=""> SELECCIONE </option><option value="1"> COMISIÓN SOCIAL </option><option value="2"> OTRA </option>
+                                    <option value=""> SELECCIONE </option><option value="1"> COMISIÓN SOCIAL </option><option value="2"> OTRA </option>
                                 </select>
-                            </div>
+                            </div>:''}
+                            {(items.quienasis == '2') ?
                             <div className="col-sm-6">
                                 <label className="form-label" >Cual:</label>
-                                <input type="text"  onChange={(e) => handleInputChange(e, 'cualasis')} value={items.cualasis || ''} placeholder="" className="form-control form-control-sm  " required />
-                            </div>
+                                <input type="text" onChange={(e) => handleInputChange(e, 'cualasis')} value={items.cualasis || ''} placeholder="" className="form-control form-control-sm  " required />
+                            </div>:''}
                         </div>
                     </IonList>
-            
+
 
 
                     <IonList>
-                    <div className="alert alert-primary" role="alert">
-                    <span className="badge badge-secondary text-dark">AYUDAS NO ALIMENTARIAS</span>
-                    </div>
+                        <div className="alert alert-primary" role="alert">
+                            <span className="badge badge-secondary text-dark">AYUDAS NO ALIMENTARIAS</span>
+                        </div>
                         <div className="row g-3 was-validated ">
-                        <div className="col-sm-12">
+                            <div className="col-sm-12">
                                 <label className="form-label">No alimentarias:</label>
                                 <select onChange={(e) => handleInputChange(e, 'noalimentarias')} value={items.noalimentarias || ''} className="form-control form-control-sm" id="pregunta2_3" aria-describedby="validationServer04Feedback" required>
-                                <option value=""> SELECCIONE </option><option value="1"> NO </option><option value="2"> SI </option>
-                                                                </select>
+                                    <option value=""> SELECCIONE </option><option value="1"> NO </option><option value="2"> SI </option>
+                                </select>
                             </div>
+                            {(items.noalimentarias == '2') ? 
                             <div className="col-sm-6">
                                 <label className="form-label" >Factura:</label>
                                 <input type="text" onChange={(e) => handleInputChange(e, 'factura')} value={items.factura || 'NO APLICA'} placeholder="" className="form-control form-control-sm  " required />
-                            </div>
+                            </div> :''}
+                            {(items.noalimentarias == '2') ? 
                             <div className="col-sm-6">
                                 <label className="form-label">Quien entrega (DAGRD - OIM - ACNUR):</label>
                                 <select onChange={(e) => handleInputChange(e, 'quienoa')} value={items.quienoa || ''} className="form-control form-control-sm" id="pregunta2_3" aria-describedby="validationServer04Feedback" required>
                                     <option value=""> SELECCIONE </option><option value="3"> ACNUR </option><option value="1"> DAGRD </option><option value="2"> OIM </option>
-                                 </select>
-                            </div>
+                                </select>
+                            </div>:''}
                         </div>
                     </IonList>
                     {/*ACNUR */}
-                    <IonList>
+                    {(items.quienoa == '3' && items.noalimentarias == '2') ? <> 
+                     <IonList>
                         <div className="row g-3 was-validated ">
                             <div className="col-sm">
                                 <label className="form-label" >Kit Higiene Hombre:</label>
-                                <input type="number" placeholder=""  onChange={(e) => handleInputChange(e, 'acocina')} value={items.acocina || ''} className="form-control form-control-sm  "  />
+                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'acocina')} value={items.acocina || '0'} className="form-control form-control-sm  " />
                             </div>
                             <div className="col-sm">
                                 <label className="form-label" >Kit Higiene Dama:</label>
-                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'aaseohogar')} value={items.aaseohogar || ''} className="form-control form-control-sm  "  />
+                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'aaseohogar')} value={items.aaseohogar || '0'} className="form-control form-control-sm  " />
                             </div>
                             <div className="col-sm">
                                 <label className="form-label" >Kit Higiene Niño:</label>
-                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'aaseofamiliar')} value={items.aaseofamiliar || '0'} className="form-control form-control-sm  "  />
+                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'aaseofamiliar')} value={items.aaseofamiliar || '0'} className="form-control form-control-sm  " />
                             </div>
                             <div className="col-sm">
                                 <label className="form-label" >Kit Higiene Bebe:</label>
-                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'aasehombre')} value={items.aasehombre || '0'} className="form-control form-control-sm  "  />
+                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'aasehombre')} value={items.aasehombre || '0'} className="form-control form-control-sm  " />
                             </div>
                         </div>
                     </IonList>
@@ -599,19 +747,19 @@ const IngresarAyudas: React.FC = () => {
                         <div className="row g-3 was-validated ">
                             <div className="col-sm">
                                 <label className="form-label" >Kit Higiene Bebe con Pañales:</label>
-                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'aaseomujer')} value={items.aaseomujer || '0'} className="form-control form-control-sm  "  />
+                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'aaseomujer')} value={items.aaseomujer || '0'} className="form-control form-control-sm  " />
                             </div>
                             <div className="col-sm">
                                 <label className="form-label" >Kit Abrigo:</label>
-                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'aaseonna')} value={items.aaseonna || '0'} className="form-control form-control-sm  "  />
+                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'aaseonna')} value={items.aaseonna || '0'} className="form-control form-control-sm  " />
                             </div>
                             <div className="col-sm">
                                 <label className="form-label" >Colchonetas:</label>
-                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'aaseoinfantil')} value={items.aaseoinfantil || '0'} className="form-control form-control-sm  "  />
+                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'aaseoinfantil')} value={items.aaseoinfantil || '0'} className="form-control form-control-sm  " />
                             </div>
                             <div className="col-sm">
                                 <label className="form-label" >Almohada:</label>
-                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'aaseoespecial')} value={items.aaseoespecial || '0'} className="form-control form-control-sm  "  />
+                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'aaseoespecial')} value={items.aaseoespecial || '0'} className="form-control form-control-sm  " />
                             </div>
                         </div>
                     </IonList>
@@ -619,42 +767,43 @@ const IngresarAyudas: React.FC = () => {
                         <div className="row g-3 was-validated ">
                             <div className="col-sm">
                                 <label className="form-label" >Pañales etapa 1:</label>
-                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'acolchonetas')} value={items.acolchonetas || '0'} className="form-control form-control-sm  "  />
+                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'acolchonetas')} value={items.acolchonetas || '0'} className="form-control form-control-sm  " />
                             </div>
                             <div className="col-sm">
                                 <label className="form-label" >Pañales etapa 2:</label>
-                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'acobijas')} value={items.acobijas || '0'} className="form-control form-control-sm  "  />
+                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'acobijas')} value={items.acobijas || '0'} className="form-control form-control-sm  " />
                             </div>
                             <div className="col-sm">
                                 <label className="form-label" >Pañales etapa 3:</label>
-                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'asabanas')} value={items.asabanas || '0'} className="form-control form-control-sm  "  />
+                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'asabanas')} value={items.asabanas || '0'} className="form-control form-control-sm  " />
                             </div>
                             <div className="col-sm">
                                 <label className="form-label" >Pañales etapa 4:</label>
-                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'aalmohadas')} value={items.aalmohadas || '0'} className="form-control form-control-sm  "  />
+                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'aalmohadas')} value={items.aalmohadas || '0'} className="form-control form-control-sm  " />
                             </div>
                         </div>
-                    </IonList>
+                    </IonList> </> :''}
 
                     {/*DAGRD */}
+                    {(items.quienoa == '1' && items.noalimentarias == '2') ? <> 
 
                     <IonList>
                         <div className="row g-3 was-validated ">
                             <div className="col-sm">
                                 <label className="form-label" >Kit de cocina:</label>
-                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'dcocina')} value={items.dcocina || ''} className="form-control form-control-sm  "  />
+                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'dcocina')} value={items.dcocina || '0'} className="form-control form-control-sm  " />
                             </div>
                             <div className="col-sm">
                                 <label className="form-label" >Kit Aseo Hogar:</label>
-                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'daseohogar')} value={items.daseohogar || ''} className="form-control form-control-sm  "  />
+                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'daseohogar')} value={items.daseohogar || '0'} className="form-control form-control-sm  " />
                             </div>
                             <div className="col-sm">
                                 <label className="form-label" >Kit Higiene Familiar:</label>
-                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'daseofamiliar')} value={items.daseofamiliar || ''} className="form-control form-control-sm  "  />
+                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'daseofamiliar')} value={items.daseofamiliar || '0'} className="form-control form-control-sm  " />
                             </div>
                             <div className="col-sm">
                                 <label className="form-label" >Kit Higiene Hombre:</label>
-                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'dasehombre')} value={items.dasehombre || ''} className="form-control form-control-sm  "  />
+                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'dasehombre')} value={items.dasehombre || '0'} className="form-control form-control-sm  " />
                             </div>
                         </div>
                     </IonList>
@@ -662,19 +811,19 @@ const IngresarAyudas: React.FC = () => {
                         <div className="row g-3 was-validated ">
                             <div className="col-sm">
                                 <label className="form-label" >Kit Higiene Mujer:</label>
-                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'daseomujer')} value={items.daseomujer || ''} className="form-control form-control-sm  "  />
+                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'daseomujer')} value={items.daseomujer || '0'} className="form-control form-control-sm  " />
                             </div>
                             <div className="col-sm">
                                 <label className="form-label" >Kit Higiene Niño (a):</label>
-                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'daseonna')} value={items.daseonna || ''} className="form-control form-control-sm  "  />
+                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'daseonna')} value={items.daseonna || '0'} className="form-control form-control-sm  " />
                             </div>
                             <div className="col-sm">
                                 <label className="form-label" >Kit Higiene Bebe:</label>
-                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'daseoinfantil')} value={items.daseoinfantil || ''} className="form-control form-control-sm  "  />
+                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'daseoinfantil')} value={items.daseoinfantil || '0'} className="form-control form-control-sm  " />
                             </div>
                             <div className="col-sm">
                                 <label className="form-label" >Kit Higiene Especial:</label>
-                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'daseoespecial')} value={items.daseoespecial || ''} className="form-control form-control-sm  "  />
+                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'daseoespecial')} value={items.daseoespecial || '0'} className="form-control form-control-sm  " />
                             </div>
                         </div>
                     </IonList>
@@ -682,42 +831,43 @@ const IngresarAyudas: React.FC = () => {
                         <div className="row g-3 was-validated ">
                             <div className="col-sm">
                                 <label className="form-label" >Colchonetas:</label>
-                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'daseoespecial')} value={items.daseoespecial || ''} className="form-control form-control-sm  "  />
+                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'daseoespecial')} value={items.daseoespecial || '0'} className="form-control form-control-sm  " />
                             </div>
                             <div className="col-sm">
                                 <label className="form-label" >Cobijas:</label>
-                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'dcobijas')} value={items.dcobijas || ''} className="form-control form-control-sm  "  />
+                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'dcobijas')} value={items.dcobijas || '0'} className="form-control form-control-sm  " />
                             </div>
                             <div className="col-sm">
                                 <label className="form-label" >Sabanas:</label>
-                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'dsabanas')} value={items.dsabanas || ''} className="form-control form-control-sm  "  />
+                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'dsabanas')} value={items.dsabanas || '0'} className="form-control form-control-sm  " />
                             </div>
                             <div className="col-sm">
                                 <label className="form-label" >Almohadas:</label>
-                                <input type="number" min={0} placeholder="" onChange={(e) => handleInputChange(e, 'dalmohadas')} value={items.dalmohadas || ''} className="form-control form-control-sm  "  />
+                                <input type="number" min={0} placeholder="" onChange={(e) => handleInputChange(e, 'dalmohadas')} value={items.dalmohadas || '0'} className="form-control form-control-sm  " />
                             </div>
                         </div>
-                    </IonList>
+                    </IonList> </> :''}
 
-                {/*OIM */}
+                    {/*OIM */}
 
-                <IonList>
+                    {(items.quienoa == '2' && items.noalimentarias == '2') ? <> 
+                    <IonList>
                         <div className="row g-3 was-validated ">
                             <div className="col-sm">
                                 <label className="form-label" >Kit de cocina:</label>
-                                <input type="number" placeholder=""  onChange={(e) => handleInputChange(e, 'ococina')} value={items.ococina || ''} className="form-control form-control-sm  "  />
+                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'ococina')} value={items.ococina || '0'} className="form-control form-control-sm  " />
                             </div>
                             <div className="col-sm">
                                 <label className="form-label" >Kit Hábitat:</label>
-                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'oaseohogar')} value={items.oaseohogar || ''} className="form-control form-control-sm  "  />
+                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'oaseohogar')} value={items.oaseohogar || '0'} className="form-control form-control-sm  " />
                             </div>
                             <div className="col-sm">
                                 <label className="form-label" >Kit Menaje Familiar:</label>
-                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'oaseofamiliar')} value={items.oaseofamiliar || ''} className="form-control form-control-sm  "  />
+                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'oaseofamiliar')} value={items.oaseofamiliar || '0'} className="form-control form-control-sm  " />
                             </div>
                             <div className="col-sm">
                                 <label className="form-label" >Kit climatico Adultos y Adolescentes:</label>
-                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'oasehombre')} value={items.oasehombre || ''} className="form-control form-control-sm  "  />
+                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'oasehombre')} value={items.oasehombre || '0'} className="form-control form-control-sm  " />
                             </div>
                         </div>
                     </IonList>
@@ -725,19 +875,19 @@ const IngresarAyudas: React.FC = () => {
                         <div className="row g-3 was-validated ">
                             <div className="col-sm">
                                 <label className="form-label" >Kit climatico NN:</label>
-                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'oaseomujer')} value={items.oaseomujer || ''} className="form-control form-control-sm  "  />
+                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'oaseomujer')} value={items.oaseomujer || '0'} className="form-control form-control-sm  " />
                             </div>
                             <div className="col-sm">
                                 <label className="form-label" >Kit Higiene Hombre:</label>
-                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'oaseonna')} value={items.oaseonna || ''} className="form-control form-control-sm  "  />
+                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'oaseonna')} value={items.oaseonna || '0'} className="form-control form-control-sm  " />
                             </div>
                             <div className="col-sm">
                                 <label className="form-label" >Kit Higiene Mujer y Adolescentes:</label>
-                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'oaseoinfantil')} value={items.oaseoinfantil || ''} className="form-control form-control-sm  "  />
+                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'oaseoinfantil')} value={items.oaseoinfantil || '0'} className="form-control form-control-sm  " />
                             </div>
                             <div className="col-sm">
                                 <label className="form-label" >Kit Higiene NN:</label>
-                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'oaseoespecial')} value={items.oaseoespecial || ''} className="form-control form-control-sm  "  />
+                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'oaseoespecial')} value={items.oaseoespecial || '0'} className="form-control form-control-sm  " />
                             </div>
                         </div>
                     </IonList>
@@ -745,137 +895,137 @@ const IngresarAyudas: React.FC = () => {
                         <div className="row g-3 was-validated ">
                             <div className="col-sm">
                                 <label className="form-label" >Kit Higiene Bebe:</label>
-                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'ocolchonetas')} value={items.ocolchonetas || ''} className="form-control form-control-sm  "  />
+                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'ocolchonetas')} value={items.ocolchonetas || '0'} className="form-control form-control-sm  " />
                             </div>
                             <div className="col-sm">
                                 <label className="form-label" >Kit Gestantes:</label>
-                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'ocobijas')} value={items.ocobijas || ''} className="form-control form-control-sm  "  />
+                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'ocobijas')} value={items.ocobijas || '0'} className="form-control form-control-sm  " />
                             </div>
                             <div className="col-sm">
                                 <label className="form-label" >Kit escolar Primaria:</label>
-                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'osabanas')} value={items.osabanas || ''} className="form-control form-control-sm  "  />
+                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'osabanas')} value={items.osabanas || '0'} className="form-control form-control-sm  " />
                             </div>
                             <div className="col-sm">
                                 <label className="form-label" >Kit Escolar Bachillerato:</label>
-                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'oalmohadas')} value={items.oalmohadas || ''} className="form-control form-control-sm  "  />
+                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'oalmohadas')} value={items.oalmohadas || '0'} className="form-control form-control-sm  " />
                             </div>
                         </div>
-                    </IonList>
+                    </IonList> </> :''}
 
                     <IonList>
-                    <div className="alert alert-primary" role="alert">
-                    <span className="badge badge-secondary text-dark">OTRAS AYUDAS</span>
-                    </div>
+                        <div className="alert alert-primary" role="alert">
+                            <span className="badge badge-secondary text-dark">OTRAS AYUDAS</span>
+                        </div>
                         <div className="row g-3 was-validated ">
                             <div className="col-sm-6">
                                 <label className="form-label">Otras ayudas:</label>
                                 <select onChange={(e) => handleInputChange(e, 'otros')} value={items.otros || ''} className="form-control form-control-sm" id="pregunta2_3" aria-describedby="validationServer04Feedback" required>
-                                <option value=""> SELECCIONE </option><option value="1"> NO </option><option value="2"> SI </option>
+                                    <option value=""> SELECCIONE </option><option value="1"> NO </option><option value="2"> SI </option>
                                 </select>
-                            </div>
+                            </div> {(items.otros == '2') ?
                             <div className="col-sm-6">
                                 <label className="form-label" >Que entidad:</label>
-                                <input type="text" onChange={(e) => handleInputChange(e, 'entidadotros')} value={items.entidadotros || ''} placeholder="" className="form-control form-control-sm  "  />
-                            </div>
+                                <input type="text" onChange={(e) => handleInputChange(e, 'entidadotros')} value={items.entidadotros || ''} placeholder="" className="form-control form-control-sm  " />
+                            </div>:''}{(items.otros == '2') ?
                             <div className="col-sm-6">
                                 <label className="form-label" >Cuales:</label>
-                                <input type="text" onChange={(e) => handleInputChange(e, 'cuales')} value={items.cuales || ''} placeholder="" className="form-control form-control-sm  "  />
-                            </div>
+                                <input type="text" onChange={(e) => handleInputChange(e, 'cuales')} value={items.cuales || ''} placeholder="" className="form-control form-control-sm  " />
+                            </div>:''}{(items.otros == '2') ?
                             <div className="col-sm-6">
                                 <label className="form-label" >Cuantos:</label>
-                                <input type="number"  placeholder=""  onChange={(e) => handleInputChange(e, 'tipoc')} value={items.tipoc || ''} className="form-control form-control-sm  " required />
-                            </div>
+                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'tipoc')} value={items.tipoc || ''} className="form-control form-control-sm  " required />
+                            </div> :''}
                         </div>
                     </IonList>
 
                     <IonList>
-                    <div className="alert alert-primary" role="alert">
-                    <span className="badge badge-secondary text-dark">ENTREGA DE AYUDA</span>
-                    </div>
+                        <div className="alert alert-primary" role="alert">
+                            <span className="badge badge-secondary text-dark">ENTREGA DE AYUDA</span>
+                        </div>
                         <div className="row g-3 was-validated ">
                             <div className="col-sm-6">
                                 <label className="form-label">Quien recibe la ayuda:</label>
                                 <select onChange={(e) => handleInputChange(e, 'redentrega')} value={items.redentrega || ''} className="form-control form-control-sm" id="pregunta2_3" aria-describedby="validationServer04Feedback" required>
-                                <option value=""> SELECCIONE </option><option value="1"> INTEGRANTE DEL HOGAR </option><option value="2"> RED FAMILIAR O RED SOCIAL </option>
+                                    <option value=""> SELECCIONE </option><option value="1"> INTEGRANTE DEL HOGAR </option><option value="2"> RED FAMILIAR O RED SOCIAL </option>
                                 </select>
                             </div>
                             <div className="col-sm-6">
                                 <label className="form-label">Integrante que recibe o autotiza:</label>
                                 <select onChange={(e) => handleInputChange(e, 'idintegrante')} value={items.idintegrante || ''} className="form-control form-control-sm" id="pregunta2_3" aria-describedby="validationServer04Feedback" required>
-                                <option value=""> SELECCIONE </option>
-                                {integrantes.map((integrante) => (
-                                    <option key={integrante.idintegrante} value={integrante.idintegrante}>
-                                    {`${integrante.nombre1} ${integrante.nombre2} ${integrante.apellido1} ${integrante.apellido2}`}
-                                    </option>
-                                ))}
+                                    <option value=""> SELECCIONE </option>
+                                    {integrantes.map((integrante) => (
+                                        <option key={integrante.idintegrante} value={integrante.idintegrante}>
+                                            {`${integrante.nombre1} ${integrante.nombre2} ${integrante.apellido1} ${integrante.apellido2}`}
+                                        </option>
+                                    ))}
                                 </select>
                             </div>
                             <div className="col-sm-6">
                                 <label className="form-label" >Nombre de quién recibe ayuda</label>
-                                <input type="text" onChange={(e) => handleInputChange(e, 'nombrerecibeayuda')} value={items.nombrerecibeayuda || ''} placeholder="" className="form-control form-control-sm  "  />
+                                <input type="text" onChange={(e) => handleInputChange(e, 'nombrerecibeayuda')} value={items.nombrerecibeayuda || ''} disabled={(items.redentrega == '2' )?false:true} placeholder="" className="form-control form-control-sm  " />
                             </div>
                             <div className="col-sm-6">
                                 <label className="form-label" >Documento de identidad de quién recibe ayuda</label>
-                                <input type="number"  placeholder="" onChange={(e) => handleInputChange(e, 'documentorecibeayuda')} value={items.documentorecibeayuda || ''} className="form-control form-control-sm  " required />
+                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'documentorecibeayuda')} value={items.documentorecibeayuda || ''} disabled={(items.redentrega == '2' )?false:true} className="form-control form-control-sm  " required />
                             </div>
                         </div>
                     </IonList>
 
-                    
+
                     <IonList>
                         <div className="row g-3 was-validated ">
-                        <div className="col-sm">
+                            <div className="col-sm">
                                 <label className="form-label" >Fecha de entrega:</label>
-                                <input type="date" onChange={(e) => handleInputChange(e, 'fechadeentrega')} value={items.fechadeentrega || ''} placeholder="" className="form-control form-control-sm  "  />
+                                <input type="date" onChange={(e) => handleInputChange(e, 'fechadeentrega')} value={items.fechadeentrega || ''} placeholder="" className="form-control form-control-sm  " />
                             </div>
                             <div className="col-sm">
                                 <label className="form-label">La ayuda fue entregada:</label>
                                 <select onChange={(e) => handleInputChange(e, 'entregado')} value={items.entregado || ''} className="form-control form-control-sm" id="pregunta2_3" aria-describedby="validationServer04Feedback" required>
-                                <option value=""> SELECCIONE </option><option value="1"> NO </option><option value="2"> SI </option> 
+                                    <option value=""> SELECCIONE </option><option value="1"> NO </option><option value="2"> SI </option>
                                 </select>
                             </div>
                             <div className="col-sm">
                                 <label className="form-label">Tipo de entrega:</label>
                                 <select onChange={(e) => handleInputChange(e, 'tipoentraga')} value={items.tipoentraga || ''} className="form-control form-control-sm" id="pregunta2_3" aria-describedby="validationServer04Feedback" required>
-                                <option value=""> SELECCIONE </option><option value="1"> PRIMERA ENTREGA </option><option value="2"> SEGUIMIENTO </option>
+                                    <option value=""> SELECCIONE </option><option value="1"> PRIMERA ENTREGA </option><option value="2"> SEGUIMIENTO </option>
                                 </select>
                             </div>
                         </div>
                     </IonList>
 
                     <IonList>
-                    <div className="alert alert-primary" role="alert">
-                    <span className="badge badge-secondary text-dark">OBSERVACIONES</span>
-                    </div>
+                        <div className="alert alert-primary" role="alert">
+                            <span className="badge badge-secondary text-dark">OBSERVACIONES</span>
+                        </div>
                         <div className="row g-3 was-validated ">
                             <div className="col-sm">
-                                <textarea type="text" rows="5" onChange={(e) => handleInputChange(e, 'observacion')} value={items.observacion || ''} placeholder="" className="form-control form-control-sm  "  />
+                                <textarea type="text" rows="5" onChange={(e) => handleInputChange(e, 'observacion')} value={items.observacion || ''} placeholder="" className="form-control form-control-sm  " />
                             </div>
                         </div>
+                    </IonList>{(items.redentrega == '2' )?<>
+                    <IonList> 
+                        <div className="alert alert-primary" role="alert">
+                            <span className="badge badge-secondary text-dark">FIRMA DEL USUARIO QUIÉN RECIBE LA AYUDA:</span>
+                            <span className='badge text-dark'>En este módulo puedes pedir al usuario que realice su firma a mano alzada, esta informacion se visualizara en el PDF. En el siguiente cuadro realiza la firma y cuando este fimado oprime el boton</span>
+
+
+                            <br /> <span className="badge badge-secondary text-dark">Cargar Firma</span>
+                        </div>
+                        <div className='container text-center'>
+                            <img src={items.draw_dataUrl} alt="" />
+                        </div><hr />
                     </IonList>
-                    <IonList>
-                    <div className="alert alert-primary" role="alert">
-                    <span className="badge badge-secondary text-dark">FIRMA DEL USUARIO QUIÉN RECIBE LA AYUDA:</span>
-                    <span className='badge text-dark'>En este módulo puedes pedir al usuario que realice su firma a mano alzada, esta informacion se visualizara en el PDF. En el siguiente cuadro realiza la firma y cuando este fimado oprime el boton</span>
-                  
-                  
-                   <br /> <span className="badge badge-secondary text-dark">Cargar Firma</span>
-                    </div>
-                    <div className='container text-center'>
-                        <img src={items.draw_dataUrl} alt="" />
-                    </div><hr />
-                    </IonList>
-                                    
+
                     <TouchPad onSave={handleSave}></TouchPad>
-                    
-                    <br />
+
+                    <br />  </>:''}
 
                 </div>
 
                 <br />
 
                 <div><button className="btn btn-success" onClick={enviar}>Guardar</button>&nbsp;
-                <button className="btn btn-primary" onClick={() => window.location.href = `/tabs/tab12/${params.ficha}`}>Volver</button>
+                    <button className="btn btn-primary" onClick={() => window.location.href = `/tabs/tab12/${params.ficha}`}>Volver</button>
 
                 </div>
 
