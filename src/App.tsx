@@ -53,6 +53,7 @@ import './theme/variables.css';
 import Cobertura from './pages/Cobertura';
 import MenuLat from './components/MenuLat';
 import IngresarAyudas from './pages/ingresarayudas';
+import EditarUbi from './pages/ubicacionposterioreditar';
 
 setupIonicReact();
 
@@ -94,6 +95,9 @@ const App: React.FC = () => {
                 </Route>
                 <Route exact path="/tabs/tabintegrantes/:ficha">
                   <IngresarIntegrantes /> 
+                </Route>
+                <Route exact path="/tabs/tabeditarubicaciones/:ficha">
+                  <EditarUbi /> 
                 </Route>
                 <Route exact path="/tabs/tabayudas/:ficha">
                   <IngresarAyudas /> 

@@ -214,10 +214,24 @@ useEffect(() => {
     // Aquí puedes realizar cualquier acción que dependa de que `items` esté actualizado
   }, [items]);
 
+  const validarCampos = () => {
+    const camposObligatorios = ['motivovisita', 'tipovisita', 'tipo', 'horaatencion', 'fechavisita'];
+    for (let campo of camposObligatorios) {
+      if (!items[campo]) {
+        return false;
+      }
+    }
+    return true;
+  };
 
 
-  const enviar = async (database = db) => {
-    console.log(items)
+  const enviar = async (database = db,event: React.MouseEvent<HTMLButtonElement>) => {
+  // event.preventDefault();
+   if (!validarCampos()) {
+   // alert('Por favor, completa todos los campos obligatorios.');
+    return;
+  }
+  event.preventDefault();
     try {
             await db.exec(`INSERT OR REPLACE INTO c0_informaciondelevento (fichasocial,fichatecnia, motivovisita,tipovisita,horaactivacion
                           ,horaatencion,fechavisita,fecharegistro,usuario,estado,tabla,tipo,declaradafallida,ficharecuperda,horallegadaalevento,
@@ -248,7 +262,7 @@ useEffect(() => {
           <IonTitle slot="end">FICHA SOCIAL: <label style={{ color: '#17a2b8' }}>{params.ficha}</label> </IonTitle>
         </IonToolbar></div>
       </IonHeader>
-      <IonContent fullscreen>
+      <IonContent fullscreen><form>
         
         <div className="social-card">
           <span className="label">Ficha social:</span>
@@ -351,10 +365,10 @@ useEffect(() => {
         </IonList> */}
 
     <br />
-
-        <div><IonButton color="success" onClick={enviar}>Guardar</IonButton><IonButton disabled={buttonDisabled} routerLink={`/tabs/tab2/${params.ficha}`}>Siguiente</IonButton></div>
-
-       
+       <div><button className='btn btn-success' type="submit" onClick={(e)=>(enviar(db,e))}>Guardar</button>&nbsp;
+       <div className={`btn btn-primary ${buttonDisabled ? 'disabled' : ''}`} onClick={() => { if (!buttonDisabled) {  window.location.href = `/tabs/tab2/${params.ficha}`;} }}> Siguiente</div>
+       </div> 
+           </form>
       </IonContent>
     </IonPage>
 

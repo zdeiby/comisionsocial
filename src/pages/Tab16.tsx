@@ -76,7 +76,7 @@ const Tab16: React.FC = () => {
           acepto: '',
           fecharegistro: getCurrentDateTime(),
           usuario: parseInt(localStorage.getItem('cedula') || '0', 10),
-          estado: 1,
+          estado: 2,
           tabla: 'c17_autorizacion',
           nameFile: '',
           apoyosocial: '',

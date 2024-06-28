@@ -3,7 +3,7 @@ import {
   IonContent, IonHeader, IonPage, IonTitle, IonToolbar,
   IonList, IonButton
 } from '@ionic/react';
-import { useHistory, useParams } from 'react-router-dom';
+import { useHistory, useParams, useLocation } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import CustomDataTable from '../components/DataTable';
 import loadSQL from '../models/database';
@@ -17,6 +17,41 @@ interface Integrante {
   estado: number | null;
   tabla: string | null;
 }
+interface UbicacionPosteriorAtencionSocial {
+    fichasocial: string;
+    ubicacionposterior: string;
+    cualtemporal: string;
+    dondeauxilio: string;
+    nombreauto: string;
+    parentesco: string;
+    prestada: string;
+    cuallugardistinto: string;
+    direccion: string;
+    comuna: string;
+    barrio: string;
+    ruralurbano: string;
+    sector: string;
+    telefono1: string;
+    telefono2: string;
+    dirCampo1: string;
+    dirCampo2: string;
+    dirCampo3: string;
+    dirCampo4: string;
+    dirCampo5: string;
+    dirCampo6: string;
+    dirCampo7: string;
+    dirCampo8: string;
+    dirCampo9: string;
+    ubicacion: string;
+    pais: string;
+    departamento: string;
+    municipio: string;
+    fecharegistro: string;
+    usuario: string;
+    estado: string;
+    tabla: string;
+  }
+  
 
 const getCurrentDateTime = () => {
   const date = new Date();
@@ -29,7 +64,7 @@ const getCurrentDateTime = () => {
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 };
 
-const Tab14: React.FC = () => {
+const EditarUbi: React.FC = () => {
   const params = useParams<any>();
   const [integrantes, setIntegrantes] = useState<Integrante[]>([]);
   const [comunas, setComunas] = useState<any[]>([]);
@@ -40,11 +75,15 @@ const Tab14: React.FC = () => {
   const [numUbicaciones, setNumUbicaciones] = useState(0);
   const [buttonDisabled, setButtonDisabled] = useState(true);
 
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const idubicacion = queryParams.get('idintegrante');
   const history = useHistory();
+  
 
   const [items, setItems] = useState({
     fichasocial: params.ficha,
-    ubicacionposterior: '',
+    ubicacionposterior: 7,
     cualtemporal: 'NO APLICA',
     dondeauxilio: 'NO APLICA',
     nombreauto: 'NO APLICA',
@@ -77,6 +116,9 @@ const Tab14: React.FC = () => {
     tabla: 'c15_ubicacionposterioratencionsocial',
   });
 
+
+  const [people, setPeople] = useState<UbicacionPosteriorAtencionSocial[]>([]);
+
   const [showModal, setShowModal] = useState(false);
   const [newIntegrantes, setNewIntegrantes] = useState([]);
   const [allIntegrantes, setAllIntegrantes] = useState([]);
@@ -88,11 +130,64 @@ const Tab14: React.FC = () => {
     setShowModal(true);
   };
   
+  const fetchUbicacionPosterior = async (database = db) => {
+    if (db) {
+      const res = await database.exec(`SELECT * FROM c15_ubicacionposterioratencionsocial WHERE fichasocial=${params.ficha} and ubicacionposterior=${idubicacion}`);
+      if (res[0]?.values && res[0]?.columns) {
+        const transformedUbicacion: UbicacionPosteriorAtencionSocial[] = res[0].values.map((row: any[]) => {
+          return res[0].columns.reduce((obj, col, index) => {
+            obj[col] = row[index];
+            return obj;
+          }, {} as UbicacionPosteriorAtencionSocial);
+        });
+        setPeople(transformedUbicacion);
+        console.log(transformedUbicacion)
+      } else {
+        setItems({
+            fichasocial: params.ficha,
+            ubicacionposterior: null,
+            cualtemporal: 'NO APLICA',
+            dondeauxilio: 'NO APLICA',
+            nombreauto: 'NO APLICA',
+            parentesco: '',
+            prestada: '',
+            cuallugardistinto: 'NO APLICA',
+            direccion: '',
+            comuna: '',
+            barrio: '',
+            ruralurbano: '',
+            sector: '',
+            telefono1: '',
+            telefono2: '',
+            dirCampo1: '',
+            dirCampo2: '',
+            dirCampo3: '',
+            dirCampo4: '',
+            dirCampo5: '',
+            dirCampo6: '',
+            dirCampo7: '',
+            dirCampo8: '',
+            dirCampo9: '',
+            ubicacion: '',
+            pais: '',
+            departamento: '',
+            municipio: '',
+            fecharegistro: getCurrentDateTime(),
+            usuario: localStorage.getItem('cedula') || '',
+            estado: 1,
+            tabla: 'c15_ubicacionposterioratencionsocial',
+        });
+      }
+    }
+  };
+
 
   useEffect(() => {
     async function initDbAndFetchData() {
-      await loadSQL(setDb,fetchIntegrantes);
+      await loadSQL(setDb,fetchUbicacionPosterior);
+      fetchIntegrantes();
       fetchSelectedIntegrantes(1); 
+      
     }
   
     initDbAndFetchData();
@@ -105,6 +200,7 @@ const Tab14: React.FC = () => {
       fetchComunas();
       fetchAllIntegrantes(); // Fetch all integrantes
       fetchSelectedIntegrantes(1);
+      fetchUbicacionPosterior();
     }
   }, [db, params.ficha]);
 
@@ -117,9 +213,50 @@ const Tab14: React.FC = () => {
           ubicacionposterior: row[1]
         }));
         setSelectedIntegrantes(selected);
+        
       }
     }
   };
+
+  useEffect(() => {
+    if (people.length > 0) {
+      let data = people[0] || {};
+      setItems({
+        fichasocial: data.fichasocial || params.ficha,
+        ubicacionposterior: data.ubicacionposterior || '',
+        cualtemporal: data.cualtemporal || '',
+        dondeauxilio: data.dondeauxilio || '',
+        nombreauto: data.nombreauto || '',
+        parentesco: data.parentesco || '',
+        prestada: data.prestada || '',
+        cuallugardistinto: data.cuallugardistinto || '',
+        direccion: data.direccion || '',
+        comuna: data.comuna || '',
+        barrio: data.barrio || '',
+        ruralurbano: data.ruralurbano || '',
+        sector: data.sector || '',
+        telefono1: data.telefono1 || '',
+        telefono2: data.telefono2 || '',
+        dirCampo1: data.dirCampo1 || '',
+        dirCampo2: data.dirCampo2 || '',
+        dirCampo3: data.dirCampo3 || '',
+        dirCampo4: data.dirCampo4 || '',
+        dirCampo5: data.dirCampo5 || '',
+        dirCampo6: data.dirCampo6 || '',
+        dirCampo7: data.dirCampo7 || '',
+        dirCampo8: data.dirCampo8 || '',
+        dirCampo9: data.dirCampo9 || '',
+        ubicacion: data.ubicacion || '',
+        pais: data.pais || '',
+        departamento: data.departamento || '',
+        municipio: data.municipio || '',
+        fecharegistro: data.fecharegistro || '',
+        usuario: data.usuario || '',
+        estado: data.estado || '',
+        tabla: data.tabla || 'c15_ubicacionposterioratencionsocial',
+      });
+    }
+  }, [people]);
   
 
   const saveDatabase = () => {
@@ -327,7 +464,7 @@ const Tab14: React.FC = () => {
         sector, telefono1, telefono2, dirCampo1, dirCampo2, dirCampo3, dirCampo4, dirCampo5, 
         dirCampo6, dirCampo7, dirCampo8, dirCampo9, ubicacion, pais, departamento, municipio, 
         fecharegistro, usuario, estado, tabla
-      ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+      ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) `,
         [
           items.fichasocial, items.ubicacionposterior, items.cualtemporal, items.dondeauxilio, items.nombreauto, 
           items.parentesco, items.prestada, items.cuallugardistinto, items.direccion, items.comuna, 
@@ -340,47 +477,15 @@ const Tab14: React.FC = () => {
         ]);
 
       // Inserta los nuevos integrantes
-      for (const integrante of newIntegrantes) {
-        const existingIntegrantes = await db.exec(`SELECT * FROM c151_integrantesubicaciopos WHERE fichasocial = ? AND idintegrante = ?`, [params.ficha, integrante]);
-        if (existingIntegrantes[0]?.values.length === 0) {
-          await db.exec(`INSERT INTO c151_integrantesubicaciopos (fichasocial, idintegrante) VALUES (?, ?)`, [params.ficha, integrante]);
-        }
-      }
+       for (const integrante of newIntegrantes) {
+         const existingIntegrantes = await db.exec(`SELECT * FROM c151_integrantesubicaciopos WHERE fichasocial = ? AND idintegrante = ?`, [params.ficha, integrante]);
+         if (existingIntegrantes[0]?.values.length === 0) {
+           await db.exec(`INSERT INTO c151_integrantesubicaciopos (fichasocial, idintegrante) VALUES (?, ?)`, [params.ficha, integrante]);
+         }
+       }
 
       saveDatabase();
       alert('Datos Guardados con éxito');
-      setItems({fichasocial: params.ficha,
-        ubicacionposterior: '',
-        cualtemporal: 'NO APLICA',
-        dondeauxilio: 'NO APLICA',
-        nombreauto: 'NO APLICA',
-        parentesco: '',
-        prestada: '',
-        cuallugardistinto: 'NO APLICA',
-        direccion: '',
-        comuna: '',
-        barrio: '',
-        ruralurbano: '',
-        sector: '',
-        telefono1: '',
-        telefono2: '',
-        dirCampo1: '',
-        dirCampo2: '',
-        dirCampo3: '',
-        dirCampo4: '',
-        dirCampo5: '',
-        dirCampo6: '',
-        dirCampo7: '',
-        dirCampo8: '',
-        dirCampo9: '',
-        ubicacion: '',
-        pais: '',
-        departamento: '',
-        municipio: '',
-        fecharegistro: getCurrentDateTime(),
-        usuario: localStorage.getItem('cedula') || '',
-        estado: 1,
-        tabla: 'c15_ubicacionposterioratencionsocial',})
       fetchIntegrantes(); // Asegúrate de que esta línea esté aquí para actualizar la lista de integrantes después de guardar
     } catch (err) {
       console.error('Error al guardar los datos:', err);
@@ -424,7 +529,8 @@ const Tab14: React.FC = () => {
     }
   };
   
-  
+  <button className='btn btn-info btn-sm text-light' onClick={() =>  window.location.href =`/tabs/tabeditarubicaciones/${params.ficha}?idintegrante=${`${row.ubicacionposterior}`}`}>Editar</button>
+
 
   const columns = [
     {
@@ -435,23 +541,24 @@ const Tab14: React.FC = () => {
       sortable: true,
       minWidth: '250px'
     }, {
-      name: 'Ver editar',
-      selector: (row: Integrante) =>   <button className='btn btn-info btn-sm text-light' onClick={() =>  window.location.href =`/tabs/tabeditarubicaciones/${params.ficha}?idintegrante=${`${row.ubicacionposterior}`}`}>Editar</button>        
-      ,
-      sortable: true,
-  
-    },
+        name: 'Ver editar',
+        selector: (row: Integrante) =>   <button className='btn btn-info btn-sm text-light' onClick={() =>  window.location.href =`/tabs/tabeditarubicaciones/${params.ficha}?idintegrante=${`${row.ubicacionposterior}`}`}>Editar</button>        
+        ,
+        sortable: true,
+    
+      },
     {
       name: 'Ubicación Posterior',
       selector: (row: any) => row.ubicacion_descripcion,
       sortable: true,
-           minWidth: '650px'
+      minWidth: '650px'
+
     },
     {
       name: 'Número de Integrantes',
       selector: (row: any) => row.numero_integrantes,
       sortable: true,
-       minWidth: '180px'
+    minWidth: '180px'
     }
   ];
 
@@ -1012,7 +1119,7 @@ const Tab14: React.FC = () => {
   );
 };
 
-export default Tab14;
+export default EditarUbi;
 
 
 

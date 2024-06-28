@@ -192,21 +192,39 @@ const Tab9: React.FC = () => {
       name: 'Nombre',
       selector: row => `${row.nombre1} ${row.nombre2} ${row.apellido1} ${row.apellido2}`,
       sortable: true,
+        minWidth: '230px'
     },
     {
       name: 'Documento',
       selector: row => `${row.numerodedocumento}`,
       sortable: true,
+         minWidth: '150px'
     },
     {
       name: 'Fecha de Nacimiento',
       selector: row => `${row.fechadenacimiento}`,
       sortable: true,
+          minWidth: '180px'
     },
     {
       name: 'Sexo',
-      selector: row => `${row.sexo}`,
+      selector: row => {
+        switch (row.sexo) {
+          case 1:
+            return 'HOMBRE';
+          case 2:
+            return 'MUJER';
+          case 3:
+            return 'INTERSEXUAL';
+          case 4:
+            return 'INDEFINIDO';
+          case 5:
+            return 'SIN DATO';
+          
+        }
+      },
       sortable: true,
+        minWidth: '180px'
     }
   ];
 

@@ -73,6 +73,7 @@ const Tab10: React.FC = () => {
   const [programas, setProgramas] = useState<Programa[]>([]);
   const [db, setDb] = useState<any>(null);
   const [numRemisiones, setNumRemisiones] = useState(0);
+  const [selectedIntegrante, setSelectedIntegrante] = useState(null);
  // const [buttonDisabled, setButtonDisabled] = useState(true);
 
   const [items, setItems] = useState({
@@ -315,7 +316,10 @@ const Tab10: React.FC = () => {
           <button
             className="btn btn-info btn-sm text-light"
             type="button"
-            onClick={() => setShowModal(true)}
+            onClick={() => {
+              setSelectedIntegrante(row);
+              setShowModal(true);
+            }}
           >
             Ver
           </button>
@@ -462,7 +466,7 @@ const Tab10: React.FC = () => {
 
 
 
-        {showModal && (
+        {showModal &&  selectedIntegrante &&(
           <>
             {/* Bootstrap Modal */}
             <div className={`modal ${showModal ? "d-block" : "d-none"} modalnew modal-backdropnew `} tabIndex="-1" role="dialog">
@@ -474,7 +478,7 @@ const Tab10: React.FC = () => {
                     </button>
                   </div>
                   <div className="modal-body text-center">
-                    {items.observacion}
+                  {selectedIntegrante.observacion}
                   </div>
                 </div>
               </div>

@@ -272,6 +272,42 @@ const IngresarIntegrantes: React.FC = () => {
       setButtonDisabled(false);
       saveDatabase();
       alert('Datos Guardados con éxito');
+      setItems({
+        idintegrante: null,
+        fichasocial: params.ficha,
+        codigosibis: '',
+        tipodedocumento: '',
+        nacionalidad: '',
+        numerodedocumento: '',
+        nombre1: '',
+        nombre2: '',
+        apellido1: '',
+        apellido2: '',
+        fechadenacimiento: '',
+        sexo: '',
+        orientacionsexual: '',
+        identidaddegenero: '',
+        etnia: '7',
+        estadocivil: '',
+        gestantelactante: '',
+        escolaridad: '',
+        parentesco: '',
+        discapacidad: '1',
+        regimendesalud: '',
+        enfermedades: '6',
+        actividad: '',
+        ocupacion: '',
+        estadousuario: '3',
+        campesino: '',
+        desplazado: '',
+        sisbenizado: '',
+        victima: '',
+        fecharegistro: getCurrentDateTime(),
+        usuario: localStorage.getItem('cedula'),
+        estado: '1',
+        tabla: 'c131_integrante',
+        origen: '',
+      });
     } catch (err) {
       console.error('Error al exportar los datos JSON:', err);
     }

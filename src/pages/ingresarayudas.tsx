@@ -17,7 +17,7 @@ interface Ayudas {
     tipob: number | null;
     tipoc: number | null;
     noalimentarias: number | null;
-    quienoa: string | null;
+    quiendoa: string | null;
     factura: string | null;
     dcocina: number | null;
     daseohogar: number | null;
@@ -110,7 +110,7 @@ const IngresarAyudas: React.FC = () => {
         tipob: null,
         tipoc: null,
         noalimentarias: null,
-        quienoa: '',
+        quiendoa: '',
         factura: '',
         dcocina: null,
         daseohogar: null,
@@ -236,7 +236,7 @@ const IngresarAyudas: React.FC = () => {
                     tipob: 0,
                     tipoc: 0,
                     noalimentarias: null,
-                    quienoa: '',
+                    quiendoa: '',
                     factura: '',
                     dcocina: 0,
                     daseohogar: 0,
@@ -339,7 +339,7 @@ const IngresarAyudas: React.FC = () => {
                 tipob: data.tipob || null,
                 tipoc: data.tipoc || null,
                 noalimentarias: data.noalimentarias || null,
-                quienoa: data.quienoa || '',
+                quiendoa: data.quiendoa || '',
                 factura: data.factura || '',
                 dcocina: data.dcocina || null,
                 daseohogar: data.daseohogar || null,
@@ -442,7 +442,7 @@ const IngresarAyudas: React.FC = () => {
               }
 
 
-              if (field === 'quienoa') {
+              if (field === 'quiendoa') {
 
                 //ACNUR
                 newState.acocina = value =='1'|| value =='2'? '0' : '';
@@ -492,7 +492,7 @@ const IngresarAyudas: React.FC = () => {
               if (field === 'noalimentarias') {
 
                 //AGNUR
-                newState.quienoa = value ? '' : '';
+                newState.quiendoa = value ? '' : '';
                 newState.acocina = value ? '0' : '';
                 newState.aaseohogar = value ? '0' : '';
                 newState.aaseofamiliar = value ? '0' : '';
@@ -570,10 +570,10 @@ const IngresarAyudas: React.FC = () => {
     const enviar = async (database = db) => {
         console.log(items);
         try {
-            await db.exec(`INSERT OR REPLACE INTO c12_ayudasentregadas (idayudas, fichasocial, paquetealimentario, tipoa, tipob, tipoc, noalimentarias, quienoa, factura, dcocina, daseohogar, daseofamiliar, dasehombre, daseomujer, daseonna, daseoinfantil, daseoespecial, dcolchonetas, dcobijas, dsabanas, dalmohadas, enitdad, otros, cuales, entidadotros, fechadeentrega, idintegrante, fecharegistro, usuario, estado, tabla, tipoentraga, ococina, acocina, oaseohogar, aaseohogar, oaseofamiliar, aaseofamiliar, oasehombre, aasehombre, oaseomujer, aaseomujer, oaseonna, aaseonna, oaseoinfantil, aaseoinfantil, oaseoespecial, aaseoespecial, ocolchonetas, acolchonetas, ocobijas, acobijas, osabanas, asabanas, oalmohadas, aalmohadas, quienpaq, cualpaq, quienasis, cualasis, asistencialiamentaria, redentrega, entregado, observacion, paquete1, paquete2, paquete3, paquete4, documentorecibeayuda, nombrerecibeayuda, nameFirma, draw_dataUrl)
+            await db.exec(`INSERT OR REPLACE INTO c12_ayudasentregadas (idayudas, fichasocial, paquetealimentario, tipoa, tipob, tipoc, noalimentarias, quiendoa, factura, dcocina, daseohogar, daseofamiliar, dasehombre, daseomujer, daseonna, daseoinfantil, daseoespecial, dcolchonetas, dcobijas, dsabanas, dalmohadas, enitdad, otros, cuales, entidadotros, fechadeentrega, idintegrante, fecharegistro, usuario, estado, tabla, tipoentraga, ococina, acocina, oaseohogar, aaseohogar, oaseofamiliar, aaseofamiliar, oasehombre, aasehombre, oaseomujer, aaseomujer, oaseonna, aaseonna, oaseoinfantil, aaseoinfantil, oaseoespecial, aaseoespecial, ocolchonetas, acolchonetas, ocobijas, acobijas, osabanas, asabanas, oalmohadas, aalmohadas, quienpaq, cualpaq, quienasis, cualasis, asistencialiamentaria, redentrega, entregado, observacion, paquete1, paquete2, paquete3, paquete4, documentorecibeayuda, nombrerecibeayuda, nameFirma, draw_dataUrl)
             VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
                 [
-                    items.idayudas, items.fichasocial, items.paquetealimentario, items.tipoa, items.tipob, items.tipoc, items.noalimentarias, items.quienoa, items.factura, items.dcocina, items.daseohogar, items.daseofamiliar, items.dasehombre, items.daseomujer, items.daseonna, items.daseoinfantil, items.daseoespecial, items.dcolchonetas, items.dcobijas, items.dsabanas, items.dalmohadas, items.enitdad, items.otros, items.cuales, items.entidadotros, items.fechadeentrega, items.idintegrante, items.fecharegistro, items.usuario, items.estado, items.tabla, items.tipoentraga, items.ococina, items.acocina, items.oaseohogar, items.aaseohogar, items.oaseofamiliar, items.aaseofamiliar, items.oasehombre, items.aasehombre, items.oaseomujer, items.aaseomujer, items.oaseonna, items.aaseonna, items.oaseoinfantil, items.aaseoinfantil, items.oaseoespecial, items.aaseoespecial, items.ocolchonetas, items.acolchonetas, items.ocobijas, items.acobijas, items.osabanas, items.asabanas, items.oalmohadas, items.aalmohadas, items.quienpaq, items.cualpaq, items.quienasis, items.cualasis, items.asistencialiamentaria, items.redentrega, items.entregado, items.observacion, items.paquete1, items.paquete2, items.paquete3, items.paquete4, items.documentorecibeayuda, items.nombrerecibeayuda, items.nameFirma, items.draw_dataUrl
+                    items.idayudas, items.fichasocial, items.paquetealimentario, items.tipoa, items.tipob, items.tipoc, items.noalimentarias, items.quiendoa, items.factura, items.dcocina, items.daseohogar, items.daseofamiliar, items.dasehombre, items.daseomujer, items.daseonna, items.daseoinfantil, items.daseoespecial, items.dcolchonetas, items.dcobijas, items.dsabanas, items.dalmohadas, items.enitdad, items.otros, items.cuales, items.entidadotros, items.fechadeentrega, items.idintegrante, items.fecharegistro, items.usuario, items.estado, items.tabla, items.tipoentraga, items.ococina, items.acocina, items.oaseohogar, items.aaseohogar, items.oaseofamiliar, items.aaseofamiliar, items.oasehombre, items.aasehombre, items.oaseomujer, items.aaseomujer, items.oaseonna, items.aaseonna, items.oaseoinfantil, items.aaseoinfantil, items.oaseoespecial, items.aaseoespecial, items.ocolchonetas, items.acolchonetas, items.ocobijas, items.acobijas, items.osabanas, items.asabanas, items.oalmohadas, items.aalmohadas, items.quienpaq, items.cualpaq, items.quienasis, items.cualasis, items.asistencialiamentaria, items.redentrega, items.entregado, items.observacion, items.paquete1, items.paquete2, items.paquete3, items.paquete4, items.documentorecibeayuda, items.nombrerecibeayuda, items.nameFirma, items.draw_dataUrl
                 ]);
 
             saveDatabase();
@@ -715,14 +715,14 @@ const IngresarAyudas: React.FC = () => {
                             {(items.noalimentarias == '2') ? 
                             <div className="col-sm-6">
                                 <label className="form-label">Quien entrega (DAGRD - OIM - ACNUR):</label>
-                                <select onChange={(e) => handleInputChange(e, 'quienoa')} value={items.quienoa || ''} className="form-control form-control-sm" id="pregunta2_3" aria-describedby="validationServer04Feedback" required>
+                                <select onChange={(e) => handleInputChange(e, 'quiendoa')} value={items.quiendoa || ''} className="form-control form-control-sm" id="pregunta2_3" aria-describedby="validationServer04Feedback" required>
                                     <option value=""> SELECCIONE </option><option value="3"> ACNUR </option><option value="1"> DAGRD </option><option value="2"> OIM </option>
                                 </select>
                             </div>:''}
                         </div>
                     </IonList>
                     {/*ACNUR */}
-                    {(items.quienoa == '3' && items.noalimentarias == '2') ? <> 
+                    {(items.quiendoa == '3' && items.noalimentarias == '2') ? <> 
                      <IonList>
                         <div className="row g-3 was-validated ">
                             <div className="col-sm">
@@ -785,7 +785,7 @@ const IngresarAyudas: React.FC = () => {
                     </IonList> </> :''}
 
                     {/*DAGRD */}
-                    {(items.quienoa == '1' && items.noalimentarias == '2') ? <> 
+                    {(items.quiendoa == '1' && items.noalimentarias == '2') ? <> 
 
                     <IonList>
                         <div className="row g-3 was-validated ">
@@ -850,7 +850,7 @@ const IngresarAyudas: React.FC = () => {
 
                     {/*OIM */}
 
-                    {(items.quienoa == '2' && items.noalimentarias == '2') ? <> 
+                    {(items.quiendoa == '2' && items.noalimentarias == '2') ? <> 
                     <IonList>
                         <div className="row g-3 was-validated ">
                             <div className="col-sm">

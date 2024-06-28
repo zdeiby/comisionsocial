@@ -180,9 +180,22 @@ useEffect(() => {
     // Aquí puedes realizar cualquier acción que dependa de que `items` esté actualizado
   }, [items]);
 
+  const validarCampos = () => {
+    const camposObligatorios = ['visitadagrd', 'tipoevento', 'quebrada', 'otro', 'inquilinato'];
+    for (let campo of camposObligatorios) {
+      if (!items[campo]) {
+        return false;
+      }
+    }
+    return true;
+  };
 
-
-  const enviar = async (database = db) => {
+  const enviar = async (database = db,event: React.MouseEvent<HTMLButtonElement>) => {
+    if (!validarCampos()) {
+      // alert('Por favor, completa todos los campos obligatorios.');
+       return;
+     }
+     event.preventDefault();
     console.log(items)
     try {
         await db.exec(`INSERT OR REPLACE INTO c1_identificacionevento (fichasocial, visitadagrd, tipoevento, fecharegistro, usuario, estado, tabla, otro, quebrada, inquilinato)
@@ -215,6 +228,7 @@ useEffect(() => {
       </IonToolbar>
     </IonHeader>
     <IonContent fullscreen>
+      <form>
 
     <div className="social-card">
       <span className="label">Ficha social:</span>
@@ -281,9 +295,11 @@ useEffect(() => {
   
   </div>
    <br /><br />
-    <div><IonButton color="success" onClick={enviar}>Guardar</IonButton><IonButton disabled={buttonDisabled} routerLink={`/tabs/tab3/${params.ficha}`}>Siguiente</IonButton></div>
-       
-    
+    {/* <div><IonButton color="success" onClick={enviar}>Guardar</IonButton><IonButton disabled={buttonDisabled} routerLink={`/tabs/tab3/${params.ficha}`}>Siguiente</IonButton></div> */}
+    <div><button className='btn btn-success' type="submit" onClick={(e)=>(enviar(db,e))}>Guardar</button>&nbsp;
+       <div className={`btn btn-primary ${buttonDisabled ? 'disabled' : ''}`} onClick={() => { if (!buttonDisabled) {  window.location.href = `/tabs/tab3/${params.ficha}`;} }}> Siguiente</div>
+       </div>
+       </form>
     </IonContent>
   </IonPage>
   );

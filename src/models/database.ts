@@ -265,16 +265,16 @@ const loadSQL = async (setDb, fetchUsers) => {
           );
           `); database.run(`
            CREATE TABLE IF NOT EXISTS c10_datosgeneralesremisiones (
-            idremision INTEGER PRIMARY KEY AUTOINCREMENT,
-            idintegrante INTEGER NOT NULL,
-            fichasocial INTEGER NOT NULL,
-            programa INTEGER NOT NULL,
-            fecharegistro TEXT DEFAULT NULL,
-            usuario INTEGER DEFAULT NULL,
-            estado INTEGER DEFAULT NULL,
-            tabla TEXT DEFAULT NULL,
-            observacion TEXT DEFAULT NULL,
-            motivo TEXT DEFAULT NULL
+             idintegrante INTEGER NOT NULL,
+              fichasocial INTEGER NOT NULL,
+              programa INTEGER NOT NULL,
+              fecharegistro DATETIME DEFAULT NULL,
+              usuario INTEGER DEFAULT NULL,
+              estado INTEGER DEFAULT NULL,
+              tabla VARCHAR(100) DEFAULT NULL,
+              observacion TEXT DEFAULT NULL,
+              motivo VARCHAR(25) DEFAULT NULL,
+              PRIMARY KEY (idintegrante, fichasocial, programa)
         );
           `); database.run(`
             CREATE TABLE IF NOT EXISTS c11_reddeapoyo (
@@ -316,7 +316,7 @@ const loadSQL = async (setDb, fetchUsers) => {
             tipob INTEGER DEFAULT NULL,
             tipoc INTEGER DEFAULT NULL,
             noalimentarias INTEGER DEFAULT NULL,
-            quienoa VARCHAR(25) DEFAULT NULL,
+            quiendoa VARCHAR(25) DEFAULT NULL,
             factura VARCHAR(25) DEFAULT NULL,
             dcocina INTEGER DEFAULT NULL,
             daseohogar INTEGER DEFAULT NULL,
