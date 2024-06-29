@@ -256,8 +256,46 @@ const IngresarIntegrantes: React.FC = () => {
     console.log("Items updated:", items);
   }, [items]);
 
-  const enviar = async (database = db) => {
-    console.log(items);
+  const validarCampos = () => {
+    const camposObligatorios = [
+      'nacionalidad'
+      ,'tipodedocumento'
+      ,'numerodedocumento'
+      ,'nombre1'
+      ,'apellido1'
+      ,'fechadenacimiento'
+      ,'sexo'
+      ,'orientacionsexual'
+      ,'identidaddegenero'
+      ,'estadocivil'
+      ,'escolaridad'
+      ,'parentesco'
+      ,'regimendesalud'
+      ,'actividad'
+      ,'ocupacion'
+      ,'desplazado'
+      ,'sisbenizado'
+     
+    ];
+    if (items.desplazado === '1') {
+      camposObligatorios.push('victima');
+    }
+    for (let campo of camposObligatorios) {
+      if (!items[campo]) {
+        return false;
+      }
+    }
+    return true;
+  };
+
+
+  const enviar = async (database = db,event: React.MouseEvent<HTMLButtonElement>) => {
+    if (!validarCampos()) {
+      // alert('Por favor, completa todos los campos obligatorios.');
+       return;
+     }
+     event.preventDefault();
+    console.log(items)
     try {
       await db.exec(`INSERT OR REPLACE INTO c131_integrante (idintegrante, fichasocial, codigosibis, tipodedocumento, nacionalidad, numerodedocumento, nombre1, nombre2, apellido1, apellido2, fechadenacimiento, sexo, orientacionsexual, identidaddegenero, etnia, estadocivil, gestantelactante, escolaridad, parentesco, discapacidad, regimendesalud, enfermedades, actividad, ocupacion, estadousuario, campesino, desplazado, sisbenizado, victima, fecharegistro, usuario, estado, tabla, origen)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
@@ -272,42 +310,45 @@ const IngresarIntegrantes: React.FC = () => {
       setButtonDisabled(false);
       saveDatabase();
       alert('Datos Guardados con éxito');
-      setItems({
-        idintegrante: null,
-        fichasocial: params.ficha,
-        codigosibis: '',
-        tipodedocumento: '',
-        nacionalidad: '',
-        numerodedocumento: '',
-        nombre1: '',
-        nombre2: '',
-        apellido1: '',
-        apellido2: '',
-        fechadenacimiento: '',
-        sexo: '',
-        orientacionsexual: '',
-        identidaddegenero: '',
-        etnia: '7',
-        estadocivil: '',
-        gestantelactante: '',
-        escolaridad: '',
-        parentesco: '',
-        discapacidad: '1',
-        regimendesalud: '',
-        enfermedades: '6',
-        actividad: '',
-        ocupacion: '',
-        estadousuario: '3',
-        campesino: '',
-        desplazado: '',
-        sisbenizado: '',
-        victima: '',
-        fecharegistro: getCurrentDateTime(),
-        usuario: localStorage.getItem('cedula'),
-        estado: '1',
-        tabla: 'c131_integrante',
-        origen: '',
-      });
+      if(idintegrante ==''){
+        setItems({
+          idintegrante: null,
+          fichasocial: params.ficha,
+          codigosibis: '',
+          tipodedocumento: '',
+          nacionalidad: '',
+          numerodedocumento: '',
+          nombre1: '',
+          nombre2: '',
+          apellido1: '',
+          apellido2: '',
+          fechadenacimiento: '',
+          sexo: '',
+          orientacionsexual: '',
+          identidaddegenero: '',
+          etnia: '7',
+          estadocivil: '',
+          gestantelactante: '',
+          escolaridad: '',
+          parentesco: '',
+          discapacidad: '1',
+          regimendesalud: '',
+          enfermedades: '6',
+          actividad: '',
+          ocupacion: '',
+          estadousuario: '3',
+          campesino: '',
+          desplazado: '',
+          sisbenizado: '',
+          victima: '',
+          fecharegistro: getCurrentDateTime(),
+          usuario: localStorage.getItem('cedula'),
+          estado: '1',
+          tabla: 'c131_integrante',
+          origen: '',
+        });
+      }
+      
     } catch (err) {
       console.error('Error al exportar los datos JSON:', err);
     }
@@ -336,7 +377,7 @@ const IngresarIntegrantes: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-
+<form> 
         <div className="social-card">
           <span className="label">Ficha social: {params.ficha}</span>
           <span className="value">Idintegrante: {idintegrante}</span>
@@ -591,10 +632,10 @@ const IngresarIntegrantes: React.FC = () => {
 
         <br />
 
-        <div><button className="btn btn-success" onClick={enviar}>Guardar</button>&nbsp;
+        <div><button className='btn btn-success' type="submit" onClick={(e)=>(enviar(db,e))}>Guardar</button>&nbsp;
           <button className="btn btn-primary" onClick={() => window.location.href = `/tabs/tab9/${params.ficha}`}>Volver</button>
         </div>
-
+         </form> 
 
       </IonContent>
     </IonPage>

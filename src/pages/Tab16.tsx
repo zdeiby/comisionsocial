@@ -225,10 +225,23 @@ const Tab16: React.FC = () => {
         ]);
 
       saveDatabase();
-      alert('Datos Guardados con éxito');
+     //alert('Datos Guardados con éxito');
       fetchAutorizacion(); // Actualizar los datos después de guardar
     } catch (err) {
       console.error('Error al exportar los datos JSON:', err);
+    } try {
+      await db.exec(`UPDATE c0_informaciondelevento 
+        SET estado = 2 
+        WHERE fichasocial = ?;`,
+        [
+          autorizacion.fichasocial
+        ]);
+  
+      saveDatabase();
+      alert('Estado actualizado con éxito');
+      fetchAutorizacion(); // Actualizar los datos después de guardar
+    } catch (err) {
+      console.error('Error al actualizar el estado:', err);
     }
   };
 

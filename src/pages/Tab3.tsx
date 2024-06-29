@@ -278,9 +278,24 @@ console.log(items)
     // Aquí puedes realizar cualquier acción que dependa de que `items` esté actualizado
   }, [items]);
 
+  const validarCampos = () => {
+    const camposObligatorios = ['dirCampo1', 'dirCampo2', 'dirCampo5', 
+      'dirCampo8', 'ruralurbano',
+    'comuna', 'barrio','telefono1','estrato'];
+    for (let campo of camposObligatorios) {
+      if (!items[campo]) {
+        return false;
+      }
+    }
+    return true;
+  };
 
-
-  const enviar = async (database = db) => {
+  const enviar = async (database = db,event: React.MouseEvent<HTMLButtonElement>) => {
+    if (!validarCampos()) {
+      // alert('Por favor, completa todos los campos obligatorios.');
+       return;
+     }
+     event.preventDefault();
     console.log(items)
     try {
       await db.exec(`INSERT OR REPLACE INTO c2_localizaciondelevento (fichasocial, direccion, comuna, barrio, ruralurbano, sector, telefono1, telefono2, correo, estrato, fecharegistro, usuario, estado, tabla, dirCampo1, dirCampo2, dirCampo3, dirCampo4, dirCampo5, dirCampo6, dirCampo7, dirCampo8, dirCampo9, longitud, latitud)
@@ -356,6 +371,7 @@ console.log(items)
       </IonToolbar>
     </IonHeader>
     <IonContent fullscreen>
+    <form>
 
     <div className="social-card">
       <span className="label">Ficha social:</span>
@@ -455,7 +471,7 @@ console.log(items)
               <label  className="form-label" >Via secundaria:</label>
               <input type="number" onChange={(e) => 
                         handleInputChange(e, 'dirCampo5')
-                      }  value={items.dirCampo5} placeholder="" className="form-control form-control-sm  "  />
+                      }  value={items.dirCampo5} placeholder="" className="form-control form-control-sm  "  required/>
             </div>
 
             
@@ -494,7 +510,7 @@ console.log(items)
               <label  className="form-label" style={{color: 'white'}}>.</label>
               <input type="number" onChange={(e) => 
                         handleInputChange(e, 'dirCampo8')
-                      }  value={items.dirCampo8} placeholder="" className="form-control form-control-sm  "  />
+                      }  value={items.dirCampo8} placeholder="" className="form-control form-control-sm  " aria-describedby="validationServer04Feedback" required/>
             </div>
             
           </div>
@@ -623,9 +639,11 @@ console.log(items)
 
         <br />
 
-    <div><IonButton color="success" onClick={enviar}>Guardar</IonButton><IonButton disabled={buttonDisabled} routerLink={`/tabs/tab4/${params.ficha}`}>Siguiente</IonButton></div>
-       
-    
+    {/* <div><IonButton color="success" onClick={enviar}>Guardar</IonButton><IonButton disabled={buttonDisabled} routerLink={`/tabs/tab4/${params.ficha}`}>Siguiente</IonButton></div> */}
+    <div><button className='btn btn-success' type="submit" onClick={(e)=>(enviar(db,e))}>Guardar</button>&nbsp;
+       <div className={`btn btn-primary ${buttonDisabled ? 'disabled' : ''}`} onClick={() => { if (!buttonDisabled) {  window.location.href = `/tabs/tab4/${params.ficha}`;} }}> Siguiente</div>
+       </div>    
+       </form>
     </IonContent>
   </IonPage>
   );

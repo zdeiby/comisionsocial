@@ -213,26 +213,63 @@ const Tab7: React.FC = () => {
     setItems((prevItems) => {
       const newState = { ...prevItems, [field]: value };
       if (field === 'dondeviviaantes') {
-        newState.otrodepartamento = value === '5' ? '' : '';
-      } if (field === 'dondeviviaantes') {
-        newState.otropais = value === '6' ? '' : '';
-      }if (field === 'dondeviviaantes') {
-        newState.otromunicipio = value === '4' ? '' : '';
-      }if (field === 'dondeviviaantes') {
-        newState.otrobarrio = value === '2' ? '' : '';
-      }if (field === 'dondeviviaantes') {
-        newState.otracomuna = value === '1' ? '' : '';
+        newState.otrodepartamento = value === '5' ? '' : newState.otrodepartamento;
+        newState.otropais = value === '6' ? '' : newState.otropais;
+        newState.otromunicipio = value === '4' ? '' : newState.otromunicipio;
+        newState.otrobarrio = value === '2' ? '' : newState.otrobarrio;
+        newState.otracomuna = value === '2' ? '' : newState.otracomuna;
       }
       return newState;
     });
   };
+  
 
   useEffect(() => {
     console.log("Items updated:", items);
   }, [items]);
+  
+  const validarCampos = () => {
+    const camposObligatorios = [
+      'tiempovivienda', 'tiempoviviendaunidad', 
+      'tiempomedellin', 'tiempomedellinunidad', 
+      'dondeviviaantes'
+    ];
+  
+    const camposCondicionales = {
+      '5': 'otrodepartamento',
+      '6': 'otropais',
+      '4': 'otromunicipio',
+      '2': ['otracomuna', 'otrobarrio']
+    };
+  
+    // Verificar campos obligatorios
+    for (let campo of camposObligatorios) {
+      if (!items[campo]) {
+        return false;
+      }
+    }
+  
+    // Verificar campos condicionales
+    const valorDondeViviaAntes = items.dondeviviaantes;
+    if (camposCondicionales[valorDondeViviaAntes]) {
+      const campos = Array.isArray(camposCondicionales[valorDondeViviaAntes]) ? camposCondicionales[valorDondeViviaAntes] : [camposCondicionales[valorDondeViviaAntes]];
+      for (let campo of campos) {
+        if (!items[campo]) {
+          return false;
+        }
+      }
+    }
+  
+    return true;
+  };
 
-  const enviar = async (database = db) => {
-    console.log(items);
+  const enviar = async (database = db,event: React.MouseEvent<HTMLButtonElement>) => {
+   if (!validarCampos()) {
+      // alert('Por favor, completa todos los campos obligatorios.');
+       return;
+     }
+     event.preventDefault(); 
+    console.log(items)
     try {
       await db.exec(`INSERT OR REPLACE INTO c6_tiempoenlavivienda (fichasocial, tiempovivienda, tiempoviviendaunidad, tiempomedellin, tiempomedellinunidad, dondeviviaantes, otrodepartamento, otropais, otromunicipio, otracomuna, otrobarrio, fecharegistro, usuario, estado, tabla)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
@@ -260,7 +297,7 @@ const Tab7: React.FC = () => {
       </IonToolbar>
     </IonHeader>
     <IonContent fullscreen>
-
+<form>
     <div className="social-card">
       <span className="label">Ficha social:</span>
       <span className="value">{params.ficha}</span>
@@ -371,9 +408,11 @@ const Tab7: React.FC = () => {
 
         <br />
 
-    <div><IonButton color="success" onClick={enviar}>Guardar</IonButton><IonButton disabled={buttonDisabled} routerLink={`/tabs/tab8/${params.ficha}`} >Siguiente</IonButton></div>
-       
-    
+    {/* <div><IonButton color="success" onClick={enviar}>Guardar</IonButton><IonButton disabled={buttonDisabled} routerLink={`/tabs/tab8/${params.ficha}`} >Siguiente</IonButton></div> */}
+    <div><button className='btn btn-success' type="submit" onClick={(e)=>(enviar(db,e))}>Guardar</button>&nbsp;
+       <div className={`btn btn-primary ${buttonDisabled ? 'disabled' : ''}`} onClick={() => { if (!buttonDisabled) {  window.location.href = `/tabs/tab8/${params.ficha}`;} }}> Siguiente</div>
+       </div>
+    </form>
     </IonContent>
   </IonPage>
   );
