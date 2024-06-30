@@ -583,23 +583,23 @@ const IngresarAyudas: React.FC = () => {
         ];
     
         // Añadir campos adicionales según las condiciones
-        if (items.paquetealimentario === '2') {
-            camposObligatorios.push('tipoa', 'quienpaq');
-            if (items.quienpaq === '2') {
+        if (items.paquetealimentario == '2') {
+            camposObligatorios.push( 'quienpaq');
+            if (items.quienpaq == '2') {
                 camposObligatorios.push('cualpaq');
             }
         }
-        if (items.asistencialiamentaria === '2') {
-            camposObligatorios.push('tipob', 'quienasis');
-            if (items.quienasis === '2') {
+        if (items.asistencialiamentaria == '2') {
+            camposObligatorios.push( 'quienasis');
+            if (items.quienasis == '2') {
                 camposObligatorios.push('cualasis');
             }
         }
-        if (items.noalimentarias === '2') {
-            camposObligatorios.push('factura', 'quiendoa');
+        if (items.noalimentarias == '2') {
+            camposObligatorios.push( 'quiendoa');
         }
-        if (items.otros === '2') {
-            camposObligatorios.push('entidadotros', 'cuales', 'tipoc');
+        if (items.otros == '2') {
+           // camposObligatorios.push('entidadotros', 'cuales', 'tipoc');
         }
 
     
@@ -1061,7 +1061,7 @@ const IngresarAyudas: React.FC = () => {
 
                             <br /> <span className="badge badge-secondary text-dark">Cargar Firma</span>
                         </div>
-                        <div className='container text-center'>
+                        <div className=' text-center'>
                             <img src={items.draw_dataUrl} alt="" />
                         </div><hr />
                     </IonList>
