@@ -54,6 +54,7 @@ import Cobertura from './pages/Cobertura';
 import MenuLat from './components/MenuLat';
 import IngresarAyudas from './pages/ingresarayudas';
 import EditarUbi from './pages/ubicacionposterioreditar';
+import DownloadDatabase from './pages/descargarbd';
 
 setupIonicReact();
 
@@ -72,6 +73,9 @@ const App: React.FC = () => {
         </Route>
         <Route exact path="/login">
           <Login />
+        </Route> 
+        <Route exact path="/descargardb">
+          <DownloadDatabase />
         </Route>
         <Route path="/tabs" >
           <IonPage id="main">

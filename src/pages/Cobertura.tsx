@@ -6,6 +6,8 @@ import loadSQL from '../models/database';
 import './ProgressBar.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
+import { isPlatform } from '@ionic/react';
+import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 
 
 interface Person {
@@ -419,7 +421,48 @@ interface RedApoyoIntegrantes {
   tabla: string | null;
 }
 
-// Luego, define tu estado usando esta interfaz
+async function getFromIndexedDB() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open('myDatabase', 1);
+
+    request.onupgradeneeded = (event) => {
+      const db = event.target.result;
+      if (!db.objectStoreNames.contains('sqliteStore')) {
+        db.createObjectStore('sqliteStore');
+      }
+    };
+
+    request.onsuccess = (event) => {
+      const db = event.target.result;
+
+      if (!db.objectStoreNames.contains('sqliteStore')) {
+        resolve(null);
+        return;
+      }
+
+      const transaction = db.transaction(['sqliteStore'], 'readonly');
+      const store = transaction.objectStore('sqliteStore');
+      const getRequest = store.get('sqliteDb');
+
+      getRequest.onsuccess = (event) => {
+        const data = event.target.result;
+        if (data) {
+          resolve(data);
+        } else {
+          resolve(null);
+        }
+      };
+
+      getRequest.onerror = (event) => {
+        reject(event.target.error);
+      };
+    };
+
+    request.onerror = (event) => {
+      reject(event.target.error);
+    };
+  });
+}
 
 
 const Cobertura: React.FC = () => {
@@ -450,7 +493,75 @@ const Cobertura: React.FC = () => {
   const [sincro, setSincro] = useState<any>(false);
   const [porcentaje, setPorcentaje] = useState<any>(1);
   const [showModal, setShowModal] = useState(false);
+  const [dbContent, setDbContent] = useState<Uint8Array | null>(null);
 
+  useEffect(() => {
+    const fetchDatabaseContent = async () => {
+      const savedDb = await getFromIndexedDB();
+      if (savedDb) {
+        setDbContent(new Uint8Array(savedDb));
+      } else {
+        console.error('No database found in IndexedDB');
+      }
+    };
+
+    fetchDatabaseContent();
+  }, []);
+
+  const getCurrentDateTime = () => {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+    return `${year}${month}${day}_${hours}${minutes}${seconds}`;
+  };
+
+  const downloadFile = async () => {
+    if (!dbContent) {
+      console.error('No database content to download');
+      return;
+    }
+
+    const fileName = `${localStorage.getItem('cedula')}_${getCurrentDateTime()}.sqlite`;
+    const blob = new Blob([dbContent], { type: 'application/octet-stream' });
+
+    if (isPlatform('hybrid')) {
+      try {
+        const base64Data = await convertBlobToBase64(blob);
+        await Filesystem.writeFile({
+          path: fileName,
+          data: base64Data as string,
+          directory: Directory.Documents,
+        });
+
+        alert('Archivo descargado exitosamente, busque el archivo en almacenamiento Documents');
+      } catch (error) {
+        console.error('Error al guardar el archivo:', error);
+        alert('Error al guardar el archivo');
+      }
+    } else {
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
+
+  const convertBlobToBase64 = (blob: Blob) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onerror = reject;
+      reader.onload = () => {
+        resolve(reader.result);
+      };
+      reader.readAsDataURL(blob);
+    });
+  };
 
 
   // hook for sqlite db
@@ -1323,7 +1434,7 @@ const Cobertura: React.FC = () => {
             </div>
             <div className="d-flex pt-2 pb-2 p-2 text-right d-flex justify-content-end">
               {/* <button type="button" className="btn btn-light" style={{ display: `${displaymodal}` }} onClick={aceptar}>Cancelar</button>&nbsp;  */}
-              <button type="button" className="btn btn-primary"  onClick={closeModal}>Continuar</button>
+              <button type="button" className={`btn btn-${color}`}  onClick={closeModal}>Continuar</button>
             </div>
           </div>
         </div>
@@ -1343,6 +1454,7 @@ const Cobertura: React.FC = () => {
                     //localStorage.removeItem('cedula');
                     window.location.href = `/tabs/tab1/${Math.random().toString().substr(2, 5)}${cedula}`;
                   }}>Crear Ficha</IonButton>
+                  <IonButton slot="end" color="success" onClick={downloadFile}>Descargar bd</IonButton>
                   <IonButton slot="end" onClick={() => {
                     localStorage.removeItem('cedula');
                     history.push('/login'); // Redirigir a login después de borrar 'cedula'
