@@ -165,8 +165,46 @@ const Tab13: React.FC = () => {
     console.log("Items updated:", items);
   }, [items]);
 
-  const enviar = async (database = db) => {
-    console.log(items);
+  const validarCampos = () => {
+    // Campos obligatorios generales
+    const camposObligatorios = ['tienemascotas'];
+  
+    // Si tiene mascotas
+    if (items.tienemascotas == '2') {
+      camposObligatorios.push('cuantos', 'cuales', 'albergalos');
+      
+      // Validar según el valor de albergalos
+      if (items.albergalos == '2') {
+        camposObligatorios.push('dondelista');
+        // Validar si la opción seleccionada en dondelista es "OTRO"
+        if (items.dondelista == '3') {
+          camposObligatorios.push('donde');
+        }
+      } else if (items.albergalos == '1') {
+        camposObligatorios.push('requierealbergue');
+      }
+    }
+  
+    // Verificar que todos los campos obligatorios estén llenos
+    for (let campo of camposObligatorios) {
+      if (!items[campo]) {
+        return false;
+      }
+    }
+    return true;
+  };
+  
+  
+  
+  
+
+  const enviar = async (database = db,event: React.MouseEvent<HTMLButtonElement>) => {
+    if (!validarCampos()) {
+      // alert('Por favor, completa todos los campos obligatorios.');
+       return;
+     }
+     event.preventDefault();
+    console.log(items)
     try {
       await db.exec(`INSERT OR REPLACE INTO c14_mascotas (fichasocial, tienemascotas, cuantos, cuales, albergalos, dondelista, donde, requierealbergue, fecharegistro, usuario, estado, tabla)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
@@ -192,6 +230,7 @@ const Tab13: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
+        <form>
         <div className="social-card">
           <span className="label">Ficha social:</span>
           <span className="value">{params.ficha}</span>
@@ -263,10 +302,10 @@ const Tab13: React.FC = () => {
 
         <br />
 
-        <div>
-          <IonButton color="success" onClick={enviar}>Guardar</IonButton>
-          <IonButton routerLink={`/tabs/tab14/${params.ficha}`} disabled={buttonDisabled}>Siguiente</IonButton>
-        </div>
+        <div><button className='btn btn-success' type="submit" onClick={(e)=>(enviar(db,e))}>Guardar</button>&nbsp;
+       <div className={`btn btn-primary ${buttonDisabled ? 'disabled' : ''}`} onClick={() => { if (!buttonDisabled) {  window.location.href = `/tabs/tab14/${params.ficha}`;} }}> Siguiente</div>
+       </div>
+       </form>
       </IonContent>
     </IonPage>
   );

@@ -521,7 +521,7 @@ console.log(items)
             <div className="col-sm">
               <label  className="form-label" >Complemento</label>
               <input type="text" onChange={(e) => 
-                        handleInputChange(e, 'dirCampo9')}  value={items.dirCampo9} placeholder="" className="form-control form-control-sm  "  required/>
+                        handleInputChange(e, 'dirCampo9')}  value={items.dirCampo9} placeholder="" className="form-control form-control-sm  "  />
             </div>
           </div>
   </IonList>

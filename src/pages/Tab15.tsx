@@ -98,7 +98,23 @@ const Tab15: React.FC = () => {
     }));
   };
 
-  const enviar = async (database = db) => {
+  const validarCampos = () => {
+    const camposObligatorios = ['observacion'];
+    for (let campo of camposObligatorios) {
+      if (!items[campo]) {
+        return false;
+      }
+    }
+    return true;
+  };
+
+  const enviar = async (database = db,event: React.MouseEvent<HTMLButtonElement>) => {
+    if (!validarCampos()) {
+      // alert('Por favor, completa todos los campos obligatorios.');
+       return;
+     }
+     event.preventDefault();
+    console.log(items)
     try {
       await db.exec(`INSERT OR REPLACE INTO c16_observaciones (
         fichasocial, observacion, fecharegistro, usuario, estado, tabla
@@ -123,6 +139,7 @@ const Tab15: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
+        <form>
         <div className="social-card">
           <span className="label">Ficha social:</span>
           <span className="value">{params.ficha}</span>
@@ -146,10 +163,14 @@ const Tab15: React.FC = () => {
             </div>
           </IonList>
         </div>
-        <div>
+        {/* <div>
           <IonButton color="success" onClick={enviar}>Guardar</IonButton>
           <IonButton routerLink={`/tabs/tab16/${params.ficha}`} disabled={buttonDisabled}>Siguiente</IonButton>
-        </div>
+        </div> */}
+        <div><button className='btn btn-success' type="submit" onClick={(e)=>(enviar(db,e))}>Guardar</button>&nbsp;
+       <div className={`btn btn-primary ${buttonDisabled ? 'disabled' : ''}`} onClick={() => { if (!buttonDisabled) {  window.location.href = `/tabs/tab16/${params.ficha}`;} }}> Siguiente</div>
+       </div>
+       </form>
       </IonContent>
     </IonPage>
   );

@@ -319,7 +319,58 @@ const Tab14: React.FC = () => {
     setItems((prevItems) => ({ ...prevItems, direccion: newDireccion }));
   }, [items.dirCampo1, items.dirCampo2, items.dirCampo3, items.dirCampo4, items.dirCampo5, items.dirCampo6, items.dirCampo7, items.dirCampo8, items.dirCampo9]);
 
-  const enviar = async () => {
+  const validarCampos = () => {
+    // Campos obligatorios generales
+    const camposObligatorios = ['ubicacionposterior'];
+  
+    // Agregar campos obligatorios según el valor de ubicacionposterior
+    if (items.ubicacionposterior == '1') {
+      camposObligatorios.push('cualtemporal');
+    } else if (items.ubicacionposterior == '2') {
+      camposObligatorios.push('dondeauxilio');
+    } else if (items.ubicacionposterior == '3') {
+      camposObligatorios.push('nombreauto', 'parentesco');
+    } else if (items.ubicacionposterior == '6') {
+      camposObligatorios.push('cuallugardistinto');
+    }
+  
+    // Verificar campos según la ubicación
+    if (['4', '5', '6'].includes(items.ubicacionposterior)) {
+      camposObligatorios.push('ubicacion');
+    }
+  
+    if (items.ubicacion == '3') {
+      camposObligatorios.push('departamento');
+    } else if (items.ubicacion == '2') {
+      camposObligatorios.push('municipio');
+    } else if (items.ubicacion == '4') {
+      camposObligatorios.push('pais');
+    } else if (items.ubicacion == '1') {
+      camposObligatorios.push('dirCampo1','dirCampo2','dirCampo5','ruralurbano', 'dirCampo8',
+        'comuna', 'barrio', 'telefono1');
+    }
+  
+    // Verificar que todos los campos obligatorios estén llenos
+    for (let campo of camposObligatorios) {
+      if (!items[campo]) {
+        return false;
+      }
+    }
+    return true;
+  };
+  
+
+
+
+
+
+  const enviar = async (database = db,event: React.MouseEvent<HTMLButtonElement>) => {
+    if (!validarCampos()) {
+      // alert('Por favor, completa todos los campos obligatorios.');
+       return;
+     }
+     event.preventDefault();
+    console.log(items)
     try {
       await db.exec(`INSERT OR REPLACE INTO c15_ubicacionposterioratencionsocial (
         fichasocial, ubicacionposterior, cualtemporal, dondeauxilio, nombreauto, 
@@ -485,6 +536,7 @@ const Tab14: React.FC = () => {
         </div>
   
         <div className='shadow p-3 mb-5 bg-white rounded'>
+          <form>
           <IonList>
             <div className="alert alert-primary" role="alert">
               <span className="badge badge-secondary text-dark">15 - UBICACION DE LA FAMILIA POSTERIOR A LA ATENCION SOCIAL</span>
@@ -838,7 +890,7 @@ const Tab14: React.FC = () => {
               <div className="row g-3 was-validated">
                 <div className="col-sm">
                   <label className="form-label">Via secundaria:</label>
-                  <input type="number" onChange={(e) => handleInputChange(e, 'dirCampo5')} value={items.dirCampo5} placeholder="" className="form-control form-control-sm" />
+                  <input type="number" onChange={(e) => handleInputChange(e, 'dirCampo5')} value={items.dirCampo5} placeholder="" className="form-control form-control-sm" required/>
                 </div>
                 <div className="col-sm">
                   <label className="form-label" style={{color: 'white'}}>.</label>
@@ -861,7 +913,7 @@ const Tab14: React.FC = () => {
                 </div>
                 <div className="col-sm">
                   <label className="form-label" style={{color: 'white'}}>.</label>
-                  <input type="number" onChange={(e) => handleInputChange(e, 'dirCampo8')} value={items.dirCampo8} placeholder="" className="form-control form-control-sm" />
+                  <input type="number" onChange={(e) => handleInputChange(e, 'dirCampo8')} value={items.dirCampo8} placeholder="" className="form-control form-control-sm" required/>
                 </div>
               </div>
             </IonList>
@@ -870,7 +922,7 @@ const Tab14: React.FC = () => {
               <div className="row g-3 was-validated">
                 <div className="col-sm">
                   <label className="form-label">Complemento</label>
-                  <input type="text" onChange={(e) => handleInputChange(e, 'dirCampo9')} value={items.dirCampo9} placeholder="" className="form-control form-control-sm" required />
+                  <input type="text" onChange={(e) => handleInputChange(e, 'dirCampo9')} value={items.dirCampo9} placeholder="" className="form-control form-control-sm"  />
                 </div>
               </div>
             </IonList>
@@ -923,7 +975,7 @@ const Tab14: React.FC = () => {
                 </div>
                 <div className="col-sm-6">
                   <label className="form-label">Telefono1:</label>
-                  <input onChange={(e) => handleInputChange(e, 'telefono1')} value={items.telefono1 || ''} type="number" placeholder="" className="form-control form-control-sm" />
+                  <input onChange={(e) => handleInputChange(e, 'telefono1')} value={items.telefono1 || ''} type="number" placeholder="" className="form-control form-control-sm" required/>
                 </div>
                 <div className="col-sm-6">
                   <label className="form-label">Telefono2:</label>
@@ -952,11 +1004,14 @@ const Tab14: React.FC = () => {
 
           <br />
 
-          <div>
+          {/* <div>
             <IonButton color="success" onClick={enviar}>Guardar</IonButton>
             <IonButton routerLink={`/tabs/tab15/${params.ficha}` } disabled={buttonDisabled}>Siguiente</IonButton>
+          </div> */}
+          <div><button className='btn btn-success' type="submit" onClick={(e)=>(enviar(db,e))}>Guardar</button>&nbsp;
+            <div className={`btn btn-primary ${buttonDisabled ? 'disabled' : ''}`} onClick={() => { if (!buttonDisabled) {  window.location.href = `/tabs/tab15/${params.ficha}`;} }}> Siguiente</div>
           </div>
-
+       </form>
 
           {showModal && (
           <>

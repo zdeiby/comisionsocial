@@ -394,8 +394,41 @@ const Tab11: React.FC = () => {
 
 
 
-  const enviar = async () => {
-    console.log(items);
+  const validarCampos = () => {
+    // Campos obligatorios generales
+    const camposObligatorios = ['tipodefamilia'];
+  
+    // Si tipodefamilia es '2', agregar campos adicionales
+    if (items.tipodefamilia === '2') {
+      camposObligatorios.push('nombreauto', 'parentesco', 'dondeseubica');
+  
+      // Validar según el valor de dondeseubica
+      if (items.dondeseubica === '3') {
+        camposObligatorios.push('departamento');
+      } else if (items.dondeseubica === '2') {
+        camposObligatorios.push('municipio');
+      } else if (items.dondeseubica === '4') {
+        camposObligatorios.push('pais');
+      } else if (items.dondeseubica === '1') {
+        camposObligatorios.push('dirCampo1', 'dirCampo2', 'dirCampo5', 'dirCampo8', 'ruralurbano', 'comuna', 'barrio');
+      }
+    }
+  
+    for (let campo of camposObligatorios) {
+      if (!items[campo]) {
+        return false;
+      }
+    }
+    return true;
+  };
+
+  const enviar = async (database = db,event: React.MouseEvent<HTMLButtonElement>) => {
+    if (!validarCampos()) {
+      // alert('Por favor, completa todos los campos obligatorios.');
+       return;
+     }
+     event.preventDefault();
+    console.log(items)
     try {
       if (items.tipodefamilia == '2') {
         await db.exec(`INSERT OR REPLACE INTO c11_reddeapoyo ( fichasocial, ubicacion, nombreauto, parentesco, direccion, comuna, barrio, ruralurbano, sector, telefono1, telefono2, dirCampo1, dirCampo2, dirCampo3, dirCampo4, dirCampo5, dirCampo6, dirCampo7, dirCampo8, dirCampo9, pais, departamento, municipio, fecharegistro, usuario, estado, tabla)
@@ -586,7 +619,8 @@ const Tab11: React.FC = () => {
           <IonTitle slot="end">FICHA SOCIAL: <label style={{ color: '#17a2b8' }}>{params.ficha}</label> </IonTitle>
         </IonToolbar>
       </IonHeader>
-      <IonContent fullscreen>
+      
+      <IonContent fullscreen><form>
         <div className="social-card">
           <span className="label">Ficha social:</span>
           <span className="value">{params.ficha}</span>
@@ -633,7 +667,7 @@ const Tab11: React.FC = () => {
                 </div>
                 <div className="col-sm-6">
                   <label className="form-label">Telefono1:</label>
-                  <input className="form-label" onChange={(e) => handleInputChange(e, 'telefono1')} value={items.telefono1 || ''} type="number" placeholder="" className="form-control form-control-sm  " />
+                  <input onChange={(e) => handleInputChange(e, 'telefono1')} value={items.telefono1 || ''} type="number" placeholder="" className="form-control form-control-sm  " />
                 </div> <div className="col-sm-6">
                   <label className="form-label" >Telefono2:</label>
                   <input onChange={(e) => handleInputChange(e, 'telefono2')} value={items.telefono2 || ''} type="number" placeholder="" className="form-control form-control-sm  " />
@@ -782,7 +816,7 @@ const Tab11: React.FC = () => {
                 <label className="form-label" >Via secundaria:</label>
                 <input type="number" onChange={(e) =>
                   handleInputChange(e, 'dirCampo5')
-                } value={items.dirCampo5} placeholder="" className="form-control form-control-sm  " />
+                } value={items.dirCampo5} placeholder="" className="form-control form-control-sm  " required/>
               </div>
 
 
@@ -821,7 +855,7 @@ const Tab11: React.FC = () => {
                 <label className="form-label" style={{ color: 'white' }}>.</label>
                 <input type="number" onChange={(e) =>
                   handleInputChange(e, 'dirCampo8')
-                } value={items.dirCampo8} placeholder="" className="form-control form-control-sm  " />
+                } value={items.dirCampo8} placeholder="" className="form-control form-control-sm  " required/>
               </div>
 
             </div>
@@ -832,7 +866,7 @@ const Tab11: React.FC = () => {
               <div className="col-sm">
                 <label className="form-label" >Complemento</label>
                 <input type="text" onChange={(e) =>
-                  handleInputChange(e, 'dirCampo9')} value={items.dirCampo9} placeholder="" className="form-control form-control-sm  " required />
+                  handleInputChange(e, 'dirCampo9')} value={items.dirCampo9} placeholder="" className="form-control form-control-sm  "  />
               </div>
             </div>
           </IonList>
@@ -947,8 +981,11 @@ const Tab11: React.FC = () => {
 )}
 
 
-        <div><IonButton color="success" onClick={enviar}>Guardar</IonButton><IonButton routerLink={`/tabs/tab12/${params.ficha}`}>Siguiente</IonButton></div>
-
+        {/* <div><IonButton color="success" onClick={enviar}>Guardar</IonButton><IonButton routerLink={`/tabs/tab12/${params.ficha}`}>Siguiente</IonButton></div> */}
+        <div><button className='btn btn-success' type="submit" onClick={(e)=>(enviar(db,e))}>Guardar</button>&nbsp;
+       <div className={`btn btn-primary `} onClick={() => {  window.location.href = `/tabs/tab12/${params.ficha}`; }}> Siguiente</div>
+       </div>
+       </form>
 
       </IonContent>
     </IonPage>

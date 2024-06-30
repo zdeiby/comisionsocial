@@ -52,8 +52,8 @@ function TouchPad({ onSave }) {
 
         <div className='text-center shadow  bg-white rounded'>
             <div style={{ marginBottom: '10px' }}>
-                <button className='btn btn-success btn-sm' onClick={saveSignature}>Cargar Firma</button>
-                <button className='btn btn-danger btn-sm' onClick={clearCanvas} style={{ marginLeft: '5px' }}>Limpiar Firma</button>
+                <div className='btn btn-success btn-sm' onClick={saveSignature}>Cargar Firma</div>
+                <div className='btn btn-danger btn-sm' onClick={clearCanvas} style={{ marginLeft: '5px' }}>Limpiar Firma</div>
                 <label style={{ marginLeft: '10px', }}>
                     COLOR:
                     <input 

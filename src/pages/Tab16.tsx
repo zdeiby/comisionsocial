@@ -40,7 +40,7 @@ const Tab16: React.FC = () => {
   const [preview, setPreview] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [integrantes, setIntegrantes] = useState<Integrante[]>([]);
-
+  const [buttonDisabled, setButtonDisabled] = useState(true);
 
   useEffect(() => {
     loadSQL(setDb, fetchAutorizacion);
@@ -62,6 +62,7 @@ const Tab16: React.FC = () => {
           }, {} as Autorizacion);
         });
         setAutorizacion(transformedData[0] || null);
+        setButtonDisabled((transformedData[0].idintegrante)?false:true);  
         if (transformedData[0]?.draw_dataUrlImage) {
           setPreview(transformedData[0].draw_dataUrlImage);
         }
@@ -211,7 +212,32 @@ const Tab16: React.FC = () => {
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
   };
 
-  const enviar = async () => {
+  const validarCampos = () => {
+    const camposObligatorios = ['idintegrante', 'entidad', 'diligenciadopor', 'apoyosocial', 'requerieseguimiento', 'autorizofirma'];
+  
+    if (autorizacion?.requerieseguimiento === '2') {
+      camposObligatorios.push('fechaprobable');
+    }
+    if (autorizacion?.autorizofirma === '2') {
+      camposObligatorios.push('firmatitular');
+    }
+  
+    for (let campo of camposObligatorios) {
+      if (!autorizacion[campo]) {
+        return false;
+      }
+    }
+    return true;
+  };
+  
+
+  const enviar = async (database = db,event: React.MouseEvent<HTMLButtonElement>) => {
+    if (!validarCampos()) {
+      // alert('Por favor, completa todos los campos obligatorios.');
+       return;
+     }
+     event.preventDefault();
+
     if (!autorizacion) return;
     try {
       await db.exec(`INSERT OR REPLACE INTO c17_autorizacion 
@@ -258,14 +284,14 @@ const Tab16: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
-
+ <form>
         <div className="social-card">
           <span className="label">Ficha social: {params.ficha}</span>
           <span className="value"></span>
         </div>
 
         <br />
-
+       
         <div className='shadow p-3 mb-5 bg-white rounded'>
           <IonList>
             <div className="row g-3 was-validated ">
@@ -376,18 +402,21 @@ const Tab16: React.FC = () => {
               <strong>FIRMA DEL USUARIO:</strong> En este módulo puedes pedir al usuario que realice su firma a mano alzada, esta informacion se visualizará en el PDF. En el siguiente cuadro realiza la firma y cuando esté firmado oprime el botón <strong>Cargar Firma</strong>
             </div>
           </div>
-          <div className='container text-center pb-4 pt-4'>
+          <div className=' text-center pb-4 pt-4'>
           <img src={autorizacion?.draw_dataUrl}  alt="" />
           </div>
 
           <TouchPad onSave={handleSave} />
         </div> :''}
 
-        <div>
+        {/* <div>
           <IonButton color="success" onClick={enviar}>Guardar</IonButton>
           <IonButton routerLink={'/cobertura'}>Siguiente</IonButton>
-        </div>
-
+        </div> */}
+         <div><button className='btn btn-success' type="submit" onClick={(e)=>(enviar(db,e))}>Guardar</button>&nbsp;
+       <div className={`btn btn-primary ${buttonDisabled ? 'disabled' : ''}`} onClick={() => { if (!buttonDisabled) {  window.location.href = `/cobertura`;} }}> Siguiente</div> 
+       </div>
+       </form>
         {preview && (
           <>
             <div className={`modal ${showModal ? "d-block" : "d-none"} modalnew modal-backdropnew`} tabIndex="-1" role="dialog">

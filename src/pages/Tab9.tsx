@@ -144,6 +144,7 @@ const Tab9: React.FC = () => {
 
   useEffect(() => {
     fetchUsers();
+   
   }, [db]);
 
   const handleInputChange = (event, field) => {
@@ -153,7 +154,9 @@ const Tab9: React.FC = () => {
       [field]: value,
     }));
     console.log(items);
+    
   };
+  
 
   useEffect(() => {
     console.log("Items updated:", items);
@@ -264,7 +267,7 @@ const Tab9: React.FC = () => {
             <div className="row g-3 was-validated ">
               <div className="col-sm">
                 <label className="form-label">Tipo de Familia</label>
-                <select onChange={(e) => handleInputChange(e, 'tipodefamilia')} value={items.tipodefamilia} className="form-control form-control-sm" id="pregunta2_3" aria-describedby="validationServer04Feedback" required>
+                <select onChange={(e) => {handleInputChange(e, 'tipodefamilia')}} value={items.tipodefamilia} className="form-control form-control-sm" id="pregunta2_3" aria-describedby="validationServer04Feedback" required>
                   <option value=""> SELECCIONE </option>
                   <option value="9"> AMPLIADA (FAMILIA CON UN MIEMBRO NO CONSANGUÍNEO) </option>
                   <option value="4"> DÍADA CONYUGAL (PAREJA SIN HIJOS) </option>

@@ -3,6 +3,9 @@ import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButton, IonLis
 import { useHistory } from 'react-router-dom';
 import axios from "axios";
 import loadSQL from '../models/database';
+import './ProgressBar.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min';
 
 
 interface Person {
@@ -444,6 +447,9 @@ const Cobertura: React.FC = () => {
   const [autorizacion, setAutorizacion] = useState<Autorizacion[]>([]);
   const [remisiones, setRemisiones] = useState<Remisiones[]>([]);
   const [redApoyoIntegrantes, setRedApoyoIntegrantes] = useState<RedApoyoIntegrantes[]>([]);
+  const [sincro, setSincro] = useState<any>(false);
+  const [porcentaje, setPorcentaje] = useState<any>(1);
+  const [showModal, setShowModal] = useState(false);
 
 
 
@@ -452,53 +458,53 @@ const Cobertura: React.FC = () => {
 
   useEffect(() => {
     const syncData = async () => {
-   await loadSQL(setDb, fetchUsers);
-   await fetchIdentificacionEvento();
-   await fetchLocalizacionEvento();
-   await fetchEvacuacionYDanios();
-   await fetchDatosDeLaVivienda();
-   await fetchServiciosPublicos();
-   await fetchTiempoEnLaVivienda();
-   await fetchTenenciaYDocumentosVivienda();
-   await fetchConformacionFamiliar();
-   await fetchDatosGeneralesRemisiones();
-   await fetchRedDeApoyo();
-   await fetchAyudasEntregadas()
-   await fetchIntegrante();
-   await fetchMascotas();
-   await fetchUbicacionPosterior();
-   await fetchIntegrantesUbicacionPos();
-   await fetchObservaciones();
-   await fetchAutorizacion();
-   await fetchRemisiones();
-   await fetchRedApoyoIntegrantes();
-  };
-  syncData();
+      await loadSQL(setDb, fetchUsers);
+      await fetchIdentificacionEvento();
+      await fetchLocalizacionEvento();
+      await fetchEvacuacionYDanios();
+      await fetchDatosDeLaVivienda();
+      await fetchServiciosPublicos();
+      await fetchTiempoEnLaVivienda();
+      await fetchTenenciaYDocumentosVivienda();
+      await fetchConformacionFamiliar();
+      await fetchDatosGeneralesRemisiones();
+      await fetchRedDeApoyo();
+      await fetchAyudasEntregadas()
+      await fetchIntegrante();
+      await fetchMascotas();
+      await fetchUbicacionPosterior();
+      await fetchIntegrantesUbicacionPos();
+      await fetchObservaciones();
+      await fetchAutorizacion();
+      await fetchRemisiones();
+      await fetchRedApoyoIntegrantes();
+    };
+    syncData();
   }, []);
 
   useEffect(() => {
     const syncData = async () => {
-   await fetchIdentificacionEvento();
-   await fetchLocalizacionEvento();
-   await fetchEvacuacionYDanios();
-   await fetchDatosDeLaVivienda();
-   await fetchServiciosPublicos();
-   await fetchTiempoEnLaVivienda();
-   await fetchTenenciaYDocumentosVivienda();
-   await fetchConformacionFamiliar();
-   await fetchDatosGeneralesRemisiones();
-   await fetchRedDeApoyo();
-   await fetchAyudasEntregadas()
-   await fetchIntegrante();
-   await fetchMascotas();
-   await fetchUbicacionPosterior();
-   await fetchIntegrantesUbicacionPos();
-   await fetchObservaciones();
-   await fetchAutorizacion();
-   await fetchRemisiones();
-   await fetchRedApoyoIntegrantes();
-  };
-  syncData();
+      await fetchIdentificacionEvento();
+      await fetchLocalizacionEvento();
+      await fetchEvacuacionYDanios();
+      await fetchDatosDeLaVivienda();
+      await fetchServiciosPublicos();
+      await fetchTiempoEnLaVivienda();
+      await fetchTenenciaYDocumentosVivienda();
+      await fetchConformacionFamiliar();
+      await fetchDatosGeneralesRemisiones();
+      await fetchRedDeApoyo();
+      await fetchAyudasEntregadas()
+      await fetchIntegrante();
+      await fetchMascotas();
+      await fetchUbicacionPosterior();
+      await fetchIntegrantesUbicacionPos();
+      await fetchObservaciones();
+      await fetchAutorizacion();
+      await fetchRemisiones();
+      await fetchRedApoyoIntegrantes();
+    };
+    syncData();
   }, [db]);
 
 
@@ -508,29 +514,29 @@ const Cobertura: React.FC = () => {
       const data = db.export();
       localStorage.setItem('sqliteDb', JSON.stringify(Array.from(data)));
       const request = indexedDB.open('myDatabase', 1); // Asegúrate de usar el mismo nombre de base de datos
-  
+
       request.onupgradeneeded = (event) => {
         const db = event.target.result;
         if (!db.objectStoreNames.contains('sqliteStore')) {
           db.createObjectStore('sqliteStore');
         }
       };
-  
+
       request.onsuccess = (event) => {
         const db = event.target.result;
         const transaction = db.transaction(['sqliteStore'], 'readwrite');
         const store = transaction.objectStore('sqliteStore');
         const putRequest = store.put(data, 'sqliteDb');
-  
+
         putRequest.onsuccess = () => {
           console.log('Data saved to IndexedDB');
         };
-  
+
         putRequest.onerror = (event) => {
           console.error('Error saving data to IndexedDB:', event.target.error);
         };
       };
-  
+
       request.onerror = (event) => {
         console.error('Failed to open IndexedDB:', event.target.error);
       };
@@ -549,13 +555,13 @@ const Cobertura: React.FC = () => {
           }, {} as Person);
         });
         setPeoplec0(transformedPeople);
-       
+
       }
     }
 
   };
 
-  const fetchIdentificacionEvento = async (database=db) => {
+  const fetchIdentificacionEvento = async (database = db) => {
     if (database) {
       const res = await database.exec('SELECT * FROM "c1_identificacionevento";');
       if (res[0]?.values && res[0]?.columns) {
@@ -835,41 +841,45 @@ const Cobertura: React.FC = () => {
 
 
 
-  
-  const sincronizacion = async () => {
-  await  fetchUsers();
-  await  fetchIdentificacionEvento();
-  await  saveDatabase();
-  await  fetchLocalizacionEvento();
-  await  fetchEvacuacionYDanios();
-  await  fetchDatosDeLaVivienda();
-  await  fetchServiciosPublicos();
-  await  fetchTiempoEnLaVivienda();
-  await  fetchTenenciaYDocumentosVivienda();
-  await  fetchConformacionFamiliar();
-  await fetchDatosGeneralesRemisiones();
-  
-  await fetchRedDeApoyo();
-  await fetchAyudasEntregadas();
-  await fetchIntegrante();
-  await fetchMascotas();
-  await fetchUbicacionPosterior();
-  await fetchIntegrantesUbicacionPos();
-  await fetchObservaciones();
-  await fetchAutorizacion();
-  await fetchRemisiones();
-  await fetchRedApoyoIntegrantes();
 
+  const sincronizacion = async () => {
+    //await  fetchUsers();
+    await fetchIdentificacionEvento();
+    await saveDatabase();
+    await fetchLocalizacionEvento();
+    await fetchEvacuacionYDanios();
+    await fetchDatosDeLaVivienda();
+    await fetchServiciosPublicos();
+    await fetchTiempoEnLaVivienda();
+    await fetchTenenciaYDocumentosVivienda();
+    await fetchConformacionFamiliar();
+    await fetchDatosGeneralesRemisiones();
+
+    await fetchRedDeApoyo();
+    await fetchAyudasEntregadas();
+    await fetchIntegrante();
+    await fetchMascotas();
+    await fetchUbicacionPosterior();
+    await fetchIntegrantesUbicacionPos();
+    await fetchObservaciones();
+    await fetchAutorizacion();
+    await fetchRemisiones();
+    await fetchRedApoyoIntegrantes();
+    setSincro(true);
+    setPorcentaje(0);
+    closeModal();
     try {
       const response = await axios.post('https://zdeiby.castelancarpinteyro.com/apicomision/index.php/Welcome/fc_guardarcap0', people, {
         headers: {
           'Content-Type': 'application/json'
         }
       });
-      
+      setPorcentaje(5)
+     // await openModal('Error al guardar', 'danger','ligth');
       console.log(response.data);
     } catch (error) {
       console.error('Error al guardar los datos', error);
+      await openModal('Error al guardar', 'danger','ligth');
       alert('Error al guardar los datos');
     }
 
@@ -879,10 +889,12 @@ const Cobertura: React.FC = () => {
           'Content-Type': 'application/json'
         }
       });
-      
+
       console.log(response.data);
+      setPorcentaje(10)
     } catch (error) {
       console.error('Error al guardar los datos', error);
+      await openModal('Error al guardar', 'danger','ligth');
       alert('Error al guardar los datos');
     }
 
@@ -892,10 +904,12 @@ const Cobertura: React.FC = () => {
           'Content-Type': 'application/json'
         }
       });
-      
+
       console.log(response.data);
+      setPorcentaje(15)
     } catch (error) {
       console.error('Error al guardar los datos', error);
+      await openModal('Error al guardar', 'danger','ligth');
       alert('Error al guardar los datos');
     }
 
@@ -905,65 +919,72 @@ const Cobertura: React.FC = () => {
           'Content-Type': 'application/json'
         }
       });
-      
+
       console.log(response.data);
+      setPorcentaje(20)
     } catch (error) {
       console.error('Error al guardar los datos', error);
+      await openModal('Error al guardar', 'danger','ligth');
       alert('Error al guardar los datos');
-    }  try {
+    } try {
       const response = await axios.post('https://zdeiby.castelancarpinteyro.com/apicomision/index.php/Welcome/fc_guardarcap4', datosDeLaVivienda, {
         headers: {
           'Content-Type': 'application/json'
         }
       });
-      
+      setPorcentaje(25)
       console.log(response.data);
     } catch (error) {
       console.error('Error al guardar los datos', error);
+      await openModal('Error al guardar', 'danger','ligth');
       alert('Error al guardar los datos');
-    }  try {
+    } try {
       const response = await axios.post('https://zdeiby.castelancarpinteyro.com/apicomision/index.php/Welcome/fc_guardarcap5', serviciosPublicos, {
         headers: {
           'Content-Type': 'application/json'
         }
       });
-      
+      setPorcentaje(30)
       console.log(response.data);
     } catch (error) {
       console.error('Error al guardar los datos', error);
+      await openModal('Error al guardar', 'danger','ligth');
       alert('Error al guardar los datos');
-    }  try {
+    } try {
       const response = await axios.post('https://zdeiby.castelancarpinteyro.com/apicomision/index.php/Welcome/fc_guardarcap6', tiempoEnLaVivienda, {
         headers: {
           'Content-Type': 'application/json'
         }
       });
-      
+      setPorcentaje(35)
       console.log(response.data);
     } catch (error) {
       console.error('Error al guardar los datos', error);
+      await openModal('Error al guardar', 'danger','ligth');
       alert('Error al guardar los datos');
-    }  try {
+    } try {
       const response = await axios.post('https://zdeiby.castelancarpinteyro.com/apicomision/index.php/Welcome/fc_guardarcap78', tenenciaYDocumentosVivienda, {
         headers: {
           'Content-Type': 'application/json'
         }
       });
-      
+      setPorcentaje(40)
       console.log(response.data);
     } catch (error) {
       console.error('Error al guardar los datos', error);
+      await openModal('Error al guardar', 'danger','ligth');
       alert('Error al guardar los datos');
-    }  try {
+    } try {
       const response = await axios.post('https://zdeiby.castelancarpinteyro.com/apicomision/index.php/Welcome/fc_guardarcap9', conformacionFamiliar, {
         headers: {
           'Content-Type': 'application/json'
         }
       });
-      
+      setPorcentaje(45)
       console.log(response.data);
     } catch (error) {
       console.error('Error al guardar los datos', error);
+      await openModal('Error al guardar', 'danger','ligth');
       alert('Error al guardar los datos');
     }
 
@@ -975,109 +996,119 @@ const Cobertura: React.FC = () => {
           'Content-Type': 'application/json'
         }
       });
-      
+      setPorcentaje(50)
       console.log(response.data);
     } catch (error) {
       console.error('Error al guardar los datos', error);
+      await openModal('Error al guardar', 'danger','ligth');
       alert('Error al guardar los datos');
-    }try {
+    } try {
       const response = await axios.post('https://zdeiby.castelancarpinteyro.com/apicomision/index.php/Welcome/fc_guardarcap11', redDeApoyo, {
         headers: {
           'Content-Type': 'application/json'
         }
       });
-      
+      setPorcentaje(55)
       console.log(response.data);
     } catch (error) {
       console.error('Error al guardar los datos', error);
+      await openModal('Error al guardar', 'danger','ligth');
       alert('Error al guardar los datos');
-    }try {
+    } try {
       const response = await axios.post('https://zdeiby.castelancarpinteyro.com/apicomision/index.php/Welcome/fc_guardarcap12', ayudasEntregadas, {
         headers: {
           'Content-Type': 'application/json'
         }
       });
-      
+      setPorcentaje(60)
       console.log(response.data);
     } catch (error) {
       console.error('Error al guardar los datos', error);
+      await openModal('Error al guardar', 'danger','ligth');
       alert('Error al guardar los datos');
-    }try {
+    } try {
       const response = await axios.post('https://zdeiby.castelancarpinteyro.com/apicomision/index.php/Welcome/fc_guardarcap131', integrante, {
         headers: {
           'Content-Type': 'application/json'
         }
       });
-      
+      setPorcentaje(65)
       console.log(response.data);
     } catch (error) {
       console.error('Error al guardar los datos', error);
+      await openModal('Error al guardar', 'danger','ligth');
       alert('Error al guardar los datos');
-    }try {
+    } try {
       const response = await axios.post('https://zdeiby.castelancarpinteyro.com/apicomision/index.php/Welcome/fc_guardarcap14', mascotas, {
         headers: {
           'Content-Type': 'application/json'
         }
       });
-      
+      setPorcentaje(70)
       console.log(response.data);
     } catch (error) {
       console.error('Error al guardar los datos', error);
+      await openModal('Error al guardar', 'danger','ligth');
       alert('Error al guardar los datos');
-    }try {
+    } try {
       const response = await axios.post('https://zdeiby.castelancarpinteyro.com/apicomision/index.php/Welcome/fc_guardarcap15', ubicacionPosterior, {
         headers: {
           'Content-Type': 'application/json'
         }
       });
-      
+      setPorcentaje(75)
       console.log(response.data);
     } catch (error) {
       console.error('Error al guardar los datos', error);
+      await openModal('Error al guardar', 'danger','ligth');
       alert('Error al guardar los datos');
-    }try {
+    } try {
       const response = await axios.post('https://zdeiby.castelancarpinteyro.com/apicomision/index.php/Welcome/fc_guardarcap151', integrantesUbicacionPos, {
         headers: {
           'Content-Type': 'application/json'
         }
       });
-      
+      setPorcentaje(80)
       console.log(response.data);
     } catch (error) {
       console.error('Error al guardar los datos', error);
+      await openModal('Error al guardar', 'danger','ligth');
       alert('Error al guardar los datos');
-    }try {
+    } try {
       const response = await axios.post('https://zdeiby.castelancarpinteyro.com/apicomision/index.php/Welcome/fc_guardarcap16', observaciones, {
         headers: {
           'Content-Type': 'application/json'
         }
       });
-      
+      setPorcentaje(85)
       console.log(response.data);
     } catch (error) {
       console.error('Error al guardar los datos', error);
+      await openModal('Error al guardar', 'danger','ligth');
       alert('Error al guardar los datos');
-    }try {
+    } try {
       const response = await axios.post('https://zdeiby.castelancarpinteyro.com/apicomision/index.php/Welcome/fc_guardarcap17', autorizacion, {
         headers: {
           'Content-Type': 'application/json'
         }
       });
-      
+      setPorcentaje(90)
       console.log(response.data);
     } catch (error) {
       console.error('Error al guardar los datos', error);
+      await openModal('Error al guardar', 'danger','ligth');
       alert('Error al guardar los datos');
-    }try {
+    } try {
       const response = await axios.post('https://zdeiby.castelancarpinteyro.com/apicomision/index.php/Welcome/fc_guardarcap101', remisiones, {
         headers: {
           'Content-Type': 'application/json'
         }
       });
-      
+      setPorcentaje(95)
       console.log(response.data);
     } catch (error) {
       console.error('Error al guardar los datos', error);
+      await openModal('Error al guardar', 'danger','ligth');
       alert('Error al guardar los datos');
     }
 
@@ -1087,128 +1118,110 @@ const Cobertura: React.FC = () => {
           'Content-Type': 'application/json'
         }
       });
-      
+      //await openModal('Error al guardar', 'danger','ligth');
+      setPorcentaje(100)
       console.log(response.data);
+      await openModal('Sincronización efectiva', 'success','light','none');
     } catch (error) {
       console.error('Error al guardar los datos', error);
+      await openModal('Error al guardar', 'danger','ligth');
       alert('Error al guardar los datos');
     }
 
+    setSincro(false);
+
+    // try {
+    //   const response = await axios.get('/jsonstablas/t1_programas.json');
+    //   const jsonData = response.data;
+    //  // setProgramas(jsonData);
+
+    //   for (const item of jsonData) {
+    //     await db.run(`INSERT OR REPLACE INTO t1_programas (id, descripcion, estado, tipo, usuario, tabla, fecharegistro) VALUES (?, ?, ?, ?, ?, ?, ?);`, [
+    //       item.id, item.descripcion, item.estado, item.tipo, item.usuario, item.tabla, item.fecharegistro
+    //     ]);
+    //   }
+
+    //   saveDatabase();
+    //   fetchUsers();
+    // } catch (err) {
+    //   console.error('Error al exportar los datos JSON: t1_programas', err);
+    // }
+
+    // try {
+    //   const response = await axios.get('/jsonstablas/t1_parentesco.json');
+    //   const jsonData = response.data;
+    //  // setProgramas(jsonData);
+
+    //   for (const item of jsonData) {
+    //     await db.run(`INSERT OR REPLACE INTO t1_parentesco  (id, descripcion, estado) VALUES (?, ?, ?);`, [
+    //       item.id, item.descripcion, item.estado
+    //     ]);
+    //   }
+
+    //   saveDatabase();
+    //   fetchUsers();
+    // } catch (err) {
+    //   console.error('Error al exportar los datos JSON: t1_parentesco ', err);
+    // }
+
+    // try {
+    //   const response = await axios.get('/jsonstablas/t1_comunas.json');
+    //   const jsonData = response.data;
+    //  // setProgramas(jsonData);
+
+    //   for (const item of jsonData) {
+    //     await db.run(`INSERT OR REPLACE INTO t1_comunas  (id, descripcion, estado) VALUES (?, ?, ?);`, [
+    //       item.id, item.descripcion, item.estado
+    //     ]);
+    //   }
+
+    //   saveDatabase();
+    //   fetchUsers();
+    // } catch (err) {
+    //   console.error('Error al exportar los datos JSON: t1_comunas ', err);
+    // }
 
 
+    // try {
+    //   const response = await axios.get('/jsonstablas/t1_barrios.json');
+    //   const jsonData = response.data;
+    //  // setProgramas(jsonData);
+
+    //   for (const item of jsonData) {
+    //     await db.run(`INSERT OR REPLACE INTO t1_barrios   (id, descripcion, comuna, estado) VALUES (?, ?, ?, ?);`, [
+    //       item.id, item.descripcion, item.comuna, item.estado, 
+    //     ]);
+    //   }
+
+    //   saveDatabase();
+    //   fetchUsers();
+    // } catch (err) {
+    //   console.error('Error al exportar los datos JSON: t1_barrios  ', err);
+    // }
 
 
+    // try {
+    //   const response = await axios.get('/jsonstablas/t1_ubicacionposterior.json');
+    //   const jsonData = response.data;
+    //  // setProgramas(jsonData);
 
+    //   for (const item of jsonData) {
+    //     await db.run(`INSERT OR REPLACE INTO t1_ubicacionposterior (id, descripcion, estado) VALUES (?, ?, ?);`, [
+    //       item.id, item.descripcion, item.estado, 
+    //     ]);
+    //   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    try {
-      const response = await axios.get('/jsonstablas/t1_programas.json');
-      const jsonData = response.data;
-     // setProgramas(jsonData);
-
-      for (const item of jsonData) {
-        await db.run(`INSERT OR REPLACE INTO t1_programas (id, descripcion, estado, tipo, usuario, tabla, fecharegistro) VALUES (?, ?, ?, ?, ?, ?, ?);`, [
-          item.id, item.descripcion, item.estado, item.tipo, item.usuario, item.tabla, item.fecharegistro
-        ]);
-      }
-
-      saveDatabase();
-      fetchUsers();
-    } catch (err) {
-      console.error('Error al exportar los datos JSON: t1_programas', err);
-    }
-
-    try {
-      const response = await axios.get('/jsonstablas/t1_parentesco.json');
-      const jsonData = response.data;
-     // setProgramas(jsonData);
-
-      for (const item of jsonData) {
-        await db.run(`INSERT OR REPLACE INTO t1_parentesco  (id, descripcion, estado) VALUES (?, ?, ?);`, [
-          item.id, item.descripcion, item.estado
-        ]);
-      }
-
-      saveDatabase();
-      fetchUsers();
-    } catch (err) {
-      console.error('Error al exportar los datos JSON: t1_parentesco ', err);
-    }
-
-    try {
-      const response = await axios.get('/jsonstablas/t1_comunas.json');
-      const jsonData = response.data;
-     // setProgramas(jsonData);
-
-      for (const item of jsonData) {
-        await db.run(`INSERT OR REPLACE INTO t1_comunas  (id, descripcion, estado) VALUES (?, ?, ?);`, [
-          item.id, item.descripcion, item.estado
-        ]);
-      }
-
-      saveDatabase();
-      fetchUsers();
-    } catch (err) {
-      console.error('Error al exportar los datos JSON: t1_comunas ', err);
-    }
-    
-    
-    try {
-      const response = await axios.get('/jsonstablas/t1_barrios.json');
-      const jsonData = response.data;
-     // setProgramas(jsonData);
-
-      for (const item of jsonData) {
-        await db.run(`INSERT OR REPLACE INTO t1_barrios   (id, descripcion, comuna, estado) VALUES (?, ?, ?, ?);`, [
-          item.id, item.descripcion, item.comuna, item.estado, 
-        ]);
-      }
-
-      saveDatabase();
-      fetchUsers();
-    } catch (err) {
-      console.error('Error al exportar los datos JSON: t1_barrios  ', err);
-    }
-
-
-    try {
-      const response = await axios.get('/jsonstablas/t1_ubicacionposterior.json');
-      const jsonData = response.data;
-     // setProgramas(jsonData);
-
-      for (const item of jsonData) {
-        await db.run(`INSERT OR REPLACE INTO t1_ubicacionposterior (id, descripcion, estado) VALUES (?, ?, ?);`, [
-          item.id, item.descripcion, item.estado, 
-        ]);
-      }
-
-      saveDatabase();
-      fetchUsers();
-      window.alert('sincronizacion exitosa')
-    } catch (err) {
-      console.error('Error al exportar los datos JSON: t1_ubicacionposterior  ', err);
-    }
-
-
-
+    //   saveDatabase();
+    //   fetchUsers();
+    //   window.alert('sincronizacion exitosa')
+    // } catch (err) {
+    //   console.error('Error al exportar los datos JSON: t1_ubicacionposterior  ', err);
+    // }
 
 
   }
 
-  
+
 
 
   const history = useHistory();
@@ -1244,169 +1257,231 @@ const Cobertura: React.FC = () => {
   const [searchText, setSearchText] = useState('');
 
 
- const filteredPeople = people.filter((person) => {
-   return (
-     (person.estado || '').toString().toLowerCase().includes(searchText.toLowerCase()) ||
-     (person.fichasocial || '').toString().toLowerCase().includes(searchText.toLowerCase()) ||
-     (person.fichatecnia || '').toString().toLowerCase().includes(searchText.toLowerCase()) ||
-     (person.name || '').toString().toLowerCase().includes(searchText.toLowerCase()) ||
-     (person.motivovisita || '').toString().toLowerCase().includes(searchText.toLowerCase()) ||
-     (person.fechavisita || '').toString().toLowerCase().includes(searchText.toLowerCase()) ||
-     (person.tipo || '').toString().toLowerCase().includes(searchText.toLowerCase()) ||
-     (person.usuario || '').toString().toLowerCase().includes(searchText.toLowerCase())
-   );
- });
+  const filteredPeople = people.filter((person) => {
+    return (
+      (person.estado || '').toString().toLowerCase().includes(searchText.toLowerCase()) ||
+      (person.fichasocial || '').toString().toLowerCase().includes(searchText.toLowerCase()) ||
+      (person.fichatecnia || '').toString().toLowerCase().includes(searchText.toLowerCase()) ||
+      (person.name || '').toString().toLowerCase().includes(searchText.toLowerCase()) ||
+      (person.motivovisita || '').toString().toLowerCase().includes(searchText.toLowerCase()) ||
+      (person.fechavisita || '').toString().toLowerCase().includes(searchText.toLowerCase()) ||
+      (person.tipo || '').toString().toLowerCase().includes(searchText.toLowerCase()) ||
+      (person.usuario || '').toString().toLowerCase().includes(searchText.toLowerCase())
+    );
+  });
 
+  const [modalResolve, setModalResolve] = useState<null | (() => void)>(null);
+  const [texto, setTextoModal] = useState<null | (() => void)>(null);
+  const [color, setColorModal] = useState<null | (() => void)>(null);
+  const [mensaje, setMensaje] = useState<null | (() => void)>(null);
+  const [displaymodal, setDisplaymodal] = useState<null | (() => void)>(null);
 
-  return (
-    <IonPage>
-     {cedula ? (
-        <>
-          <IonHeader>
-            <IonToolbar>
-              <IonTitle slot="start">Cobertura</IonTitle>
-              <IonButton color="danger" slot="end" onClick={() => {
-                //localStorage.removeItem('cedula');
-                window.location.href = `/tabs/tab1/${Math.random().toString().substr(2, 5)}${cedula}`;
-              }}>Crear Ficha</IonButton>
-              <IonButton slot="end" onClick={() => {
-                localStorage.removeItem('cedula');
-                history.push('/login'); // Redirigir a login después de borrar 'cedula'
-              }}>Cerrar Sesión</IonButton>
-            </IonToolbar>
-          </IonHeader>
-          <IonContent fullscreen>
-            <IonList>
-              <IonItem lines="none">
-                <div className="ion-align-items-center" style={{ width: '100%', display: 'flex', justifyContent: 'space-between' }}>
-                  <IonLabel style={{ width: '20%' }}>Opciones</IonLabel>
-                  <IonLabel style={{ width: '25%' }}>Estado ficha</IonLabel>
-                  <IonLabel style={{ width: '25%' }}>Ficha social</IonLabel>
-                  <IonLabel style={{ width: '25%' }}>Ficha tecnica</IonLabel>
-                </div>
-              </IonItem>
-            </IonList>
+  const openModal = (mensaje,color,texto,displaymodal='') => {
+    setTextoModal(texto);
+    setColorModal(color);
+    setMensaje(mensaje);
+    setDisplaymodal(displaymodal);
+    return new Promise<void>((resolve) => {
+      setModalResolve(() => resolve);
+      setShowModal(true);
+    });
+  };
 
-            <IonList>
-            {filteredPeople.map((person, idx) => 
-                  <IonAccordionGroup key={idx}>
-                    <IonAccordion value="first">
-                      <IonItem slot="header" color="light">
-                        <IonLabel>
-                          <IonButton onClick={()=>handleEditClick(person.fichasocial)}>
-                            Editar
-                          </IonButton>
-                        </IonLabel>
-                        <IonLabel>
-                          <h2>{(person.estado=='1')?'Abierta':'Cerrada'}</h2>
-                        </IonLabel>
-                        <IonLabel>
-                          <h2>{person.fichasocial}</h2>
-                        </IonLabel>
-                        <IonLabel>
-                          <h2>{person.fichatecnia}</h2>
-                        </IonLabel>
+  const closeModal = () => {
+    setShowModal(false);
+    
+    if (modalResolve) {
+      modalResolve();
+    }
+  };
 
+  const aceptar = () => {
+   setSincro(false)
+  };
 
-                      </IonItem>
-
-                      <div className="ion-padding" slot="content">
-                        <IonList>
-
-                          <IonItem>
-                            <IonLabel>
-                              <p>Recupera Fallida</p>
-                              <h2>{person.name}</h2>
-                            </IonLabel>
-                          </IonItem>
-                          <IonItem>
-                            <IonLabel>
-                              <p>Inquilinato</p>
-                              <h2>{person.name}</h2>
-                            </IonLabel>
-                          </IonItem>
-                          <IonItem>
-                            <IonLabel>
-                              <p>Remisión aprobada</p>
-                              <h2>{person.name}</h2>
-                            </IonLabel>
-                          </IonItem>
-                          <IonItem>
-                            <IonLabel>
-                              <p>Motivo visita</p>
-                              <h2>{person.motivovisita}</h2>
-                            </IonLabel>
-                          </IonItem>
-                          <IonItem>
-                            <IonLabel>
-                              <p>Fecha visita</p>
-                              <h2>{person.fechavisita}</h2>
-                            </IonLabel>
-                          </IonItem>
-                          <IonItem>
-                            <IonLabel>
-                              <p>Tipo de evento</p>
-                              <h2>{person.tipo}</h2>
-                            </IonLabel>
-                          </IonItem>
-                          <IonItem>
-                            <IonLabel>
-                              <p>Comuna</p>
-                              <h2>{person.name}</h2>
-                            </IonLabel>
-                          </IonItem>
-                          <IonItem>
-                            <IonLabel>
-                              <p>Barrio</p>
-                              <h2>{person.name}</h2>
-                            </IonLabel>
-                          </IonItem>
-                          <IonItem>
-                            <IonLabel>
-                              <p>Sector</p>
-                              <h2>{person.name}</h2>
-                            </IonLabel>
-                          </IonItem>
-                          <IonItem>
-                            <IonLabel>
-                              <p>Dirección</p>
-                              <h2>{person.name}</h2>
-                            </IonLabel>
-                          </IonItem>
-                          <IonItem>
-                            <IonLabel>
-                              <p>Profesional</p>
-                              <h2>{person.usuario}</h2>
-                            </IonLabel>
-                          </IonItem>
-                          <IonItem>
-                            <IonLabel>
-                              <p>Digitador</p>
-                              <h2>{person.name}</h2>
-                            </IonLabel>
-                          </IonItem>
-                        </IonList>
-                      </div>
-                    </IonAccordion>
-
-                  </IonAccordionGroup>
-
-
-              )}
-            </IonList>
-          </IonContent>
-          <IonSearchbar
-        value={searchText}
-        onIonInput={(e) => setSearchText(e.detail.value)}
-        placeholder="Buscar por estado, ficha, nombre, etc."
-      />
-      <IonButton onClick={sincronizacion}>Sincronización subida de información</IonButton>
-
-        </>
-      ) : ''}
  
+  return (
+
+    <IonPage>
+      {(sincro) ? <>
+        <div className="container">
+          <div className="progress-container">
+            <label htmlFor="">Sincronizando</label>
+            <div className="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">
+              <div className="progress-bar progress-bar-striped progress-bar-animated" style={{ width: `${porcentaje}%` }}></div>
+            </div>
+          </div>
+        </div>
+        <div className={`modal fade ${showModal ? 'show d-block' : 'd-none'} `} id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div className="modal-dialog ">
+          <div className={`modal-content bg-${color} text-light`}>
+          
+              <h1 className="modal-title fs-5" id="staticBackdropLabel"></h1>
+            
+            <div className="modal-body">
+              {mensaje}
+            </div>
+            <div className="d-flex pt-2 pb-2 p-2 text-right d-flex justify-content-end">
+              {/* <button type="button" className="btn btn-light" style={{ display: `${displaymodal}` }} onClick={aceptar}>Cancelar</button>&nbsp;  */}
+              <button type="button" className="btn btn-primary"  onClick={closeModal}>Continuar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+        </>
 
 
+        : <>
+          {cedula ? (
+
+            <>
+              <IonHeader>
+                <IonToolbar>
+                  <IonTitle slot="start">Cobertura</IonTitle>
+                  <IonButton color="danger" slot="end" onClick={() => {
+                    //localStorage.removeItem('cedula');
+                    window.location.href = `/tabs/tab1/${Math.random().toString().substr(2, 5)}${cedula}`;
+                  }}>Crear Ficha</IonButton>
+                  <IonButton slot="end" onClick={() => {
+                    localStorage.removeItem('cedula');
+                    history.push('/login'); // Redirigir a login después de borrar 'cedula'
+                  }}>Cerrar Sesión</IonButton>
+                </IonToolbar>
+              </IonHeader>
+              <IonContent fullscreen>
+
+                <IonList>
+                  <IonItem lines="none">
+                    <div className="ion-align-items-center" style={{ width: '100%', display: 'flex', justifyContent: 'space-between' }}>
+                      <IonLabel style={{ width: '20%' }}>Opciones</IonLabel>
+                      <IonLabel style={{ width: '25%' }}>Estado ficha</IonLabel>
+                      <IonLabel style={{ width: '25%' }}>Ficha social</IonLabel>
+                      <IonLabel style={{ width: '25%' }}>Ficha tecnica</IonLabel>
+                    </div>
+                  </IonItem>
+                </IonList>
+
+                <IonList>
+                  {filteredPeople.map((person, idx) =>
+                    <IonAccordionGroup key={idx}>
+                      <IonAccordion value="first">
+                        <IonItem slot="header" color="light">
+                          <IonLabel>
+                            <IonButton onClick={() => handleEditClick(person.fichasocial)}>
+                              Editar
+                            </IonButton>
+                          </IonLabel>
+                          <IonLabel>
+                            <h2>{(person.estado == '1') ? 'Abierta' : 'Cerrada'}</h2>
+                          </IonLabel>
+                          <IonLabel>
+                            <h2>{person.fichasocial}</h2>
+                          </IonLabel>
+                          <IonLabel>
+                            <h2>{person.fichatecnia}</h2>
+                          </IonLabel>
+
+
+                        </IonItem>
+
+                        <div className="ion-padding" slot="content">
+                          <IonList>
+
+                            <IonItem>
+                              <IonLabel>
+                                <p>Recupera Fallida</p>
+                                <h2>{person.name}</h2>
+                              </IonLabel>
+                            </IonItem>
+                            <IonItem>
+                              <IonLabel>
+                                <p>Inquilinato</p>
+                                <h2>{person.name}</h2>
+                              </IonLabel>
+                            </IonItem>
+                            <IonItem>
+                              <IonLabel>
+                                <p>Remisión aprobada</p>
+                                <h2>{person.name}</h2>
+                              </IonLabel>
+                            </IonItem>
+                            <IonItem>
+                              <IonLabel>
+                                <p>Motivo visita</p>
+                                <h2>{person.motivovisita}</h2>
+                              </IonLabel>
+                            </IonItem>
+                            <IonItem>
+                              <IonLabel>
+                                <p>Fecha visita</p>
+                                <h2>{person.fechavisita}</h2>
+                              </IonLabel>
+                            </IonItem>
+                            <IonItem>
+                              <IonLabel>
+                                <p>Tipo de evento</p>
+                                <h2>{person.tipo}</h2>
+                              </IonLabel>
+                            </IonItem>
+                            <IonItem>
+                              <IonLabel>
+                                <p>Comuna</p>
+                                <h2>{person.name}</h2>
+                              </IonLabel>
+                            </IonItem>
+                            <IonItem>
+                              <IonLabel>
+                                <p>Barrio</p>
+                                <h2>{person.name}</h2>
+                              </IonLabel>
+                            </IonItem>
+                            <IonItem>
+                              <IonLabel>
+                                <p>Sector</p>
+                                <h2>{person.name}</h2>
+                              </IonLabel>
+                            </IonItem>
+                            <IonItem>
+                              <IonLabel>
+                                <p>Dirección</p>
+                                <h2>{person.name}</h2>
+                              </IonLabel>
+                            </IonItem>
+                            <IonItem>
+                              <IonLabel>
+                                <p>Profesional</p>
+                                <h2>{person.usuario}</h2>
+                              </IonLabel>
+                            </IonItem>
+                            <IonItem>
+                              <IonLabel>
+                                <p>Digitador</p>
+                                <h2>{person.name}</h2>
+                              </IonLabel>
+                            </IonItem>
+                          </IonList>
+                        </div>
+                      </IonAccordion>
+
+                    </IonAccordionGroup>
+
+
+                  )}
+                </IonList>
+
+              </IonContent>
+              <IonSearchbar
+                value={searchText}
+                onIonInput={(e) => setSearchText(e.detail.value)}
+                placeholder="Buscar por estado, ficha, nombre, etc."
+              />
+              <IonButton onClick={sincronizacion}>Sincronización subida de información</IonButton>
+
+            </>
+          ) : ''}
+
+        </>}
     </IonPage>
   );
 };

@@ -97,7 +97,7 @@ const IngresarIntegrantes: React.FC = () => {
   useEffect(() => {
     loadSQL(setDb, fetchUsers);
   }, []);
-
+console.log(idintegrante, 'idintegrante')
   const saveDatabase = () => {
     if (db) {
       const data = db.export();
@@ -310,7 +310,7 @@ const IngresarIntegrantes: React.FC = () => {
       setButtonDisabled(false);
       saveDatabase();
       alert('Datos Guardados con éxito');
-      if(idintegrante ==''){
+      if(idintegrante ==null){
         setItems({
           idintegrante: null,
           fichasocial: params.ficha,
@@ -633,7 +633,7 @@ const IngresarIntegrantes: React.FC = () => {
         <br />
 
         <div><button className='btn btn-success' type="submit" onClick={(e)=>(enviar(db,e))}>Guardar</button>&nbsp;
-          <button className="btn btn-primary" onClick={() => window.location.href = `/tabs/tab9/${params.ficha}`}>Volver</button>
+          <div className="btn btn-primary" onClick={() => window.location.href = `/tabs/tab9/${params.ficha}`}>Volver</div>
         </div>
          </form> 
 

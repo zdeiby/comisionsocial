@@ -567,8 +567,58 @@ const IngresarAyudas: React.FC = () => {
         console.log("Items updated:", items);
     }, [items]);
 
-    const enviar = async (database = db) => {
-        console.log(items);
+    const validarCampos = () => {
+        // Lista de campos obligatorios dependiendo de las condiciones
+        const camposObligatorios = [
+            'paquetealimentario',
+            'asistencialiamentaria',
+            'noalimentarias',
+            'otros',
+            'redentrega',
+            'idintegrante',
+            'fechadeentrega',
+            'entregado',
+            'tipoentraga',
+            'observacion'
+        ];
+    
+        // Añadir campos adicionales según las condiciones
+        if (items.paquetealimentario === '2') {
+            camposObligatorios.push('tipoa', 'quienpaq');
+            if (items.quienpaq === '2') {
+                camposObligatorios.push('cualpaq');
+            }
+        }
+        if (items.asistencialiamentaria === '2') {
+            camposObligatorios.push('tipob', 'quienasis');
+            if (items.quienasis === '2') {
+                camposObligatorios.push('cualasis');
+            }
+        }
+        if (items.noalimentarias === '2') {
+            camposObligatorios.push('factura', 'quiendoa');
+        }
+        if (items.otros === '2') {
+            camposObligatorios.push('entidadotros', 'cuales', 'tipoc');
+        }
+
+    
+        for (let campo of camposObligatorios) {
+            if (!items[campo]) {
+                return false;
+            }
+        }
+        return true;
+    };
+    
+    
+      const enviar = async (database = db,event: React.MouseEvent<HTMLButtonElement>) => {
+        if (!validarCampos()) {
+          // alert('Por favor, completa todos los campos obligatorios.');
+           return;
+         }
+         event.preventDefault();
+        console.log(items)
         try {
             await db.exec(`INSERT OR REPLACE INTO c12_ayudasentregadas (idayudas, fichasocial, paquetealimentario, tipoa, tipob, tipoc, noalimentarias, quiendoa, factura, dcocina, daseohogar, daseofamiliar, dasehombre, daseomujer, daseonna, daseoinfantil, daseoespecial, dcolchonetas, dcobijas, dsabanas, dalmohadas, enitdad, otros, cuales, entidadotros, fechadeentrega, idintegrante, fecharegistro, usuario, estado, tabla, tipoentraga, ococina, acocina, oaseohogar, aaseohogar, oaseofamiliar, aaseofamiliar, oasehombre, aasehombre, oaseomujer, aaseomujer, oaseonna, aaseonna, oaseoinfantil, aaseoinfantil, oaseoespecial, aaseoespecial, ocolchonetas, acolchonetas, ocobijas, acobijas, osabanas, asabanas, oalmohadas, aalmohadas, quienpaq, cualpaq, quienasis, cualasis, asistencialiamentaria, redentrega, entregado, observacion, paquete1, paquete2, paquete3, paquete4, documentorecibeayuda, nombrerecibeayuda, nameFirma, draw_dataUrl)
             VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
@@ -602,7 +652,7 @@ const IngresarAyudas: React.FC = () => {
                 </IonToolbar>
             </IonHeader>
             <IonContent fullscreen>
-
+            <form>
                 <div className="social-card">
                     <span className="label">Ficha social: {params.ficha}</span>
                     <span className="value">ID Ayuda: {idayudas}</span>
@@ -623,7 +673,7 @@ const IngresarAyudas: React.FC = () => {
                             {(items.paquetealimentario == '2') ?
                                 <div className="col-sm-6">
                                     <label className="form-label" >Cantidad:</label>
-                                    <input type="number" min={0} max={4} onChange={(e) => handleInputChange(e, 'tipoa')} value={items.tipoa || ''} placeholder="" className="form-control form-control-sm  " required />
+                                    <input type="number" min={0} max={4} onChange={(e) => handleInputChange(e, 'tipoa')} value={items.tipoa || ''} placeholder="" className="form-control form-control-sm  "  />
                                 </div> : ''}
                         </div>
                     </IonList>
@@ -678,7 +728,7 @@ const IngresarAyudas: React.FC = () => {
                             </div>
                             {(items.asistencialiamentaria == '2') ?  <div className="col-sm-6">
                                 <label className="form-label" >Cuantos:</label>
-                                <input type="number" onChange={(e) => handleInputChange(e, 'tipob')} value={items.tipob || ''} placeholder="" className="form-control form-control-sm  " required />
+                                <input type="number" onChange={(e) => handleInputChange(e, 'tipob')} value={items.tipob || ''} placeholder="" className="form-control form-control-sm  "  />
                             </div> :''} {(items.asistencialiamentaria == '2') ?
                             <div className="col-sm-6">
                                 <label className="form-label">Que entidad:</label>
@@ -966,7 +1016,7 @@ const IngresarAyudas: React.FC = () => {
                             </div>
                             <div className="col-sm-6">
                                 <label className="form-label" >Documento de identidad de quién recibe ayuda</label>
-                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'documentorecibeayuda')} value={items.documentorecibeayuda || ''} disabled={(items.redentrega == '2' )?false:true} className="form-control form-control-sm  " required />
+                                <input type="number" placeholder="" onChange={(e) => handleInputChange(e, 'documentorecibeayuda')} value={items.documentorecibeayuda || ''} disabled={(items.redentrega == '2' )?false:true} className="form-control form-control-sm  "  />
                             </div>
                         </div>
                     </IonList>
@@ -976,7 +1026,7 @@ const IngresarAyudas: React.FC = () => {
                         <div className="row g-3 was-validated ">
                             <div className="col-sm">
                                 <label className="form-label" >Fecha de entrega:</label>
-                                <input type="date" onChange={(e) => handleInputChange(e, 'fechadeentrega')} value={items.fechadeentrega || ''} placeholder="" className="form-control form-control-sm  " />
+                                <input type="date" onChange={(e) => handleInputChange(e, 'fechadeentrega')} value={items.fechadeentrega || ''} placeholder="" className="form-control form-control-sm  " required/>
                             </div>
                             <div className="col-sm">
                                 <label className="form-label">La ayuda fue entregada:</label>
@@ -999,7 +1049,7 @@ const IngresarAyudas: React.FC = () => {
                         </div>
                         <div className="row g-3 was-validated ">
                             <div className="col-sm">
-                                <textarea type="text" rows="5" onChange={(e) => handleInputChange(e, 'observacion')} value={items.observacion || ''} placeholder="" className="form-control form-control-sm  " />
+                                <textarea type="text" rows="5" onChange={(e) => handleInputChange(e, 'observacion')} value={items.observacion || ''} placeholder="" className="form-control form-control-sm  " required/>
                             </div>
                         </div>
                     </IonList>{(items.redentrega == '2' )?<>
@@ -1024,13 +1074,11 @@ const IngresarAyudas: React.FC = () => {
 
                 <br />
 
-                <div><button className="btn btn-success" onClick={enviar}>Guardar</button>&nbsp;
-                    <button className="btn btn-primary" onClick={() => window.location.href = `/tabs/tab12/${params.ficha}`}>Volver</button>
-
+                <div><button className='btn btn-success' type="submit" onClick={(e)=>(enviar(db,e))}>Guardar</button>&nbsp;
+                <div className="btn btn-primary" onClick={() => window.location.href = `/tabs/tab12/${params.ficha}`}>Volver</div>
                 </div>
-
-
-            </IonContent>
+                 </form>
+            </IonContent> 
         </IonPage>
     );
 };
