@@ -386,8 +386,8 @@ const Tab11: React.FC = () => {
   }, [items]);
 
   useEffect(() => {
-    const newDireccion = items2.dirCampo1 + items.dirCampo2 + ' ' + items.dirCampo3
-      + items2.dirCampo4 + items.dirCampo5 + ' ' + items.dirCampo6 + items2.dirCampo7 + items.dirCampo8
+    const newDireccion = ((items2.dirCampo1 == ' SELECCIONE ')?'':items2.dirCampo1) + items.dirCampo2 + ' ' + items.dirCampo3
+      + ((items2.dirCampo4 == ' SELECCIONE ')?'':items2.dirCampo4) + items.dirCampo5 + ' ' + items.dirCampo6 + ((items2.dirCampo7 == ' SELECCIONE ')?'':items2.dirCampo7) + items.dirCampo8
       + ' || ' + items.dirCampo9;
     setItems(prevItems => ({ ...prevItems, direccion: newDireccion }));
   }, [items.dirCampo1, items.dirCampo2, items.dirCampo3, items.dirCampo4, items.dirCampo5, items.dirCampo6, items.dirCampo7, items.dirCampo8, items.dirCampo9]);

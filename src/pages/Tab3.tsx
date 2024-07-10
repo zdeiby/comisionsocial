@@ -226,6 +226,7 @@ const Tab3: React.FC = () => {
  useEffect(() => {
   if (people.length > 0) {
     let data = people[0] || {};
+    console.log('Loaded data:', data); // Verificar datos cargados
     setItems({
       fichasocial: data.fichasocial || params.ficha,
       direccion: data.direccion || '',
@@ -264,19 +265,20 @@ useEffect(() => {
   fetchComunas();
 }, [db]); // Ejecuta este efecto cuando `db` cambia
 
-  const handleInputChange = (event, field) => {
-    const { value } = event.target;
-    setItems((prevItems) => ({
-      ...prevItems,
-      [field]: value,
-    }));
-console.log(items)
-  };
+//   const handleInputChange = (event, field) => {
+//     const { value } = event.target;
+//     setItems((prevItems) => ({
+//       ...prevItems,
+//       [field]: value,
+//     }));
+// //console.log(items)
+//   };
 
  useEffect(() => {
     console.log("Items updated:", items);
     // Aquí puedes realizar cualquier acción que dependa de que `items` esté actualizado
   }, [items]);
+  
 
   const validarCampos = () => {
     const camposObligatorios = ['dirCampo1', 'dirCampo2', 'dirCampo5', 
@@ -317,22 +319,133 @@ console.log(items)
     }
   }
 
-  const handleInputChange2 = (e, fieldName) => {
-    const selectedOption = e.target.options[e.target.selectedIndex];
-    const selectedText = selectedOption.innerHTML;
-    setItems2((items2) => ({
-      ...items2,
-      [fieldName]: selectedText,
+  //  const handleInputChange2 = (e, fieldName) => {
+  //    const selectedOption = e.target.options[e.target.selectedIndex];
+  //    const selectedText = selectedOption.innerHTML;
+
+  //    if(selectedOption)
+
+  //    setItems2((items2) => ({
+  //      ...items2,
+  //      [fieldName]: selectedText,
+  //    }));
+  //  };
+
+
+  const valueToDescriptionMap = {
+    dirCampo1: {
+      '1': 'AUTOPISTA',
+      '2': 'AVENIDA',
+      '3': 'AVENIDA CALLE',
+      '4': 'AVENIDA CARRERA',
+      '5': 'BULEVAR',
+      '6': 'CALLE',
+      '7': 'CARRERA',
+      '8': 'CIRCULAR',
+      '10': 'CIRCUNVALAR',
+      '11': 'CTAS CORRIDAS',
+      '12': 'DIAGONAL',
+      '9': 'KILOMETRO',
+      '20': 'OTRA',
+      '13': 'PASAJE',
+      '14': 'PASEO',
+      '15': 'PEATONAL',
+      '16': 'TRANSVERSAL',
+      '17': 'TRONCAL',
+      '18': 'VARIANTE',
+      '19': 'VIA'
+    },
+    dirCampo4: {
+      '1': 'SUR',
+      '2': 'NORTE',
+      '3': 'ESTE',
+      '4': 'OESTE',
+      '5': 'BIS'
+    },
+    dirCampo7: {
+      '1': 'SUR',
+      '2': 'NORTE',
+      '3': 'ESTE',
+      '4': 'OESTE',
+      '5': 'BIS'
+    },
+    // Agrega más campos si es necesario
+  };
+  
+
+  const handleInputChange = (e, fieldName) => {
+    const { value, options, selectedIndex, tagName } = e.target;
+    let newValue = value;
+    let newText = value;
+  
+    if (tagName === 'SELECT') {
+      newValue = options[selectedIndex].value; // Valor numérico para lógica interna
+      newText = options[selectedIndex].text; // Texto descriptivo para UI
+  
+      // No actualizar si el valor es el por defecto
+      if (newValue === "") {
+        newValue = "";
+        newText = "";
+      }
+    }
+  
+    // Actualizar `items` con el valor numérico
+    setItems(prevItems => ({
+      ...prevItems,
+      [fieldName]: newValue
+    }));
+  
+    // Actualizar `items2` con el texto descriptivo
+    setItems2(prevItems2 => ({
+      ...prevItems2,
+      [fieldName]: newText
     }));
   };
-
+  
+  
   useEffect(() => {
-    const newDireccion =items2.dirCampo1+items.dirCampo2+' '+items.dirCampo3
-    +items2.dirCampo4+items.dirCampo5+' '+items.dirCampo6+items2.dirCampo7+items.dirCampo8
-    +' || '+items.dirCampo9;
-    setItems(prevItems => ({ ...prevItems, direccion: newDireccion }));
-  }, [items.dirCampo1, items.dirCampo2, items.dirCampo3, items.dirCampo4, items.dirCampo5, items.dirCampo6, items.dirCampo7, items.dirCampo8, items.dirCampo9]);
+    const newDireccion = [
+      items2.dirCampo1 || valueToDescriptionMap.dirCampo1[items.dirCampo1],
+      items.dirCampo2,
+      items.dirCampo3,
+      items2.dirCampo4 || valueToDescriptionMap.dirCampo4[items.dirCampo4],
+      items.dirCampo5,
+      items.dirCampo6,
+      items2.dirCampo7 || valueToDescriptionMap.dirCampo7[items.dirCampo7],
+      items.dirCampo8,
+      '||',
+      items.dirCampo9
+    ].filter(Boolean).join(' ');
+  
+    setItems(prevItems => ({
+      ...prevItems,
+      direccion: newDireccion
+    }));
+  }, [
+    items.dirCampo1, items.dirCampo2, items.dirCampo3, 
+    items.dirCampo4, items.dirCampo5, items.dirCampo6, 
+    items.dirCampo7, items.dirCampo8, items.dirCampo9,
+  ]);
+  
+  
+  
+  
 
+  //  useEffect(() => {
+  //    const newDireccion =((items2.dirCampo1 == '')?'':items2.dirCampo1)+items.dirCampo2+''+items.dirCampo3
+  //    +((items2.dirCampo4 == '')?'':items2.dirCampo4)+items.dirCampo5+' '+items.dirCampo6+((items2.dirCampo7 == '')?'':items2.dirCampo7)+items.dirCampo8
+  //    +' || '+items.dirCampo9;
+  //          setItems(prevItems => ({ ...prevItems, direccion: newDireccion }));
+
+    
+  //  }, [items2.dirCampo1, items2.dirCampo2, items2.dirCampo3, items2.dirCampo4, items2.dirCampo5, items2.dirCampo6, items2.dirCampo7, items2.dirCampo8, items2.dirCampo9]);
+
+  //  useEffect(()=>{
+  //   const newDireccion =((items2.dirCampo1 == ' SELECCIONE ')?'':items2.dirCampo1)+items.dirCampo2+' '+items.dirCampo3
+  //   +((items2.dirCampo4 == ' SELECCIONE ')?'':items2.dirCampo4)+items.dirCampo5+' '+items.dirCampo6+((items2.dirCampo7 == ' SELECCIONE ')?'':items2.dirCampo7)+items.dirCampo8
+  //   +' || '+items.dirCampo9;
+  //   setItems(prevItems => ({ ...prevItems, direccion: newDireccion }));
+  //  },[items2.dirCampo1, items.dirCampo2, items.dirCampo3, items2.dirCampo4, items.dirCampo5, items.dirCampo6, items2.dirCampo7, items.dirCampo8, items.dirCampo9])
 
   const fetchBarrios = async () => {
     if (db) {
@@ -362,6 +475,9 @@ console.log(items)
       }
     }
   };
+  function handleInputChange2(){
+    
+  }
   return (
     <IonPage>
     <IonHeader>
@@ -405,7 +521,7 @@ console.log(items)
                     <select  onChange={(e) => {
                         handleInputChange(e, 'dirCampo1');
                         handleInputChange2(e,'dirCampo1'); // Llama a otra función si es necesario
-                      }} value={items.dirCampo1} className="form-control form-control-sm" id="vprincipal" aria-describedby="validationServer04Feedback" required>
+                      }} value={items.dirCampo1 || items2.dirCampo1} className="form-control form-control-sm" id="vprincipal" aria-describedby="validationServer04Feedback" required>
                         <option value=""> SELECCIONE </option>
                         <option value="1"> AUTOPISTA </option>
                         <option value="2"> AVENIDA </option>
@@ -432,14 +548,16 @@ console.log(items)
           
             <div className="col-sm">
               <label  className="form-label" style={{color: 'white'}}>.</label>
-              <input type="text" placeholder="" onChange={(e) =>
+              <input type="text" placeholder="" onChange={(e) =>{
                         handleInputChange(e, 'dirCampo2')
+                        handleInputChange2(e, 'dirCampo2')}
                        } value={items.dirCampo2} className="form-control form-control-sm  "  required/>
             </div>
             <div className="col-sm">
               <label  className="form-label" style={{color: 'white'}}>.</label>
-              <input type="text" onChange={(e) => 
-                        handleInputChange(e, 'dirCampo3')}  value={items.dirCampo3} placeholder="" className="form-control form-control-sm  "  />
+              <input type="text" onChange={(e) => {
+                        handleInputChange(e, 'dirCampo3')
+                        handleInputChange2(e, 'dirCampo3')}}  value={items.dirCampo3} placeholder="" className="form-control form-control-sm  "  />
             </div>
             <div className="col-sm">
                     <label  className="form-label" style={{color: 'white'}}>.</label>
@@ -470,7 +588,8 @@ console.log(items)
   <div className="col-sm">
               <label  className="form-label" >Via secundaria:</label>
               <input type="number" onChange={(e) => 
-                        handleInputChange(e, 'dirCampo5')
+                  {      handleInputChange(e, 'dirCampo5') 
+                     handleInputChange2(e, 'dirCampo5')}
                       }  value={items.dirCampo5} placeholder="" className="form-control form-control-sm  "  required/>
             </div>
 
@@ -479,7 +598,9 @@ console.log(items)
             <div className="col-sm">
               <label  className="form-label" style={{color: 'white'}}>.</label>
               <input type="text" onChange={(e) => 
-                        handleInputChange(e, 'dirCampo6')
+                        {handleInputChange(e, 'dirCampo6')
+                          handleInputChange2(e, 'dirCampo6')
+                        }
                    // Llama a otra función si es necesario
                       }  value={items.dirCampo6} placeholder="" className="form-control form-control-sm  "  />
             </div>
@@ -509,7 +630,9 @@ console.log(items)
             <div className="col-sm">
               <label  className="form-label" style={{color: 'white'}}>.</label>
               <input type="number" onChange={(e) => 
-                        handleInputChange(e, 'dirCampo8')
+                       { handleInputChange(e, 'dirCampo8')
+                        handleInputChange2(e, 'dirCampo8')
+                       }
                       }  value={items.dirCampo8} placeholder="" className="form-control form-control-sm  " aria-describedby="validationServer04Feedback" required/>
             </div>
             
@@ -521,7 +644,9 @@ console.log(items)
             <div className="col-sm">
               <label  className="form-label" >Complemento</label>
               <input type="text" onChange={(e) => 
-                        handleInputChange(e, 'dirCampo9')}  value={items.dirCampo9} placeholder="" className="form-control form-control-sm  "  />
+                        {handleInputChange(e, 'dirCampo9')
+                          handleInputChange2(e, 'dirCampo9')
+                        }}  value={items.dirCampo9} placeholder="" className="form-control form-control-sm  "  />
             </div>
           </div>
   </IonList>
@@ -530,7 +655,7 @@ console.log(items)
   <div className="row g-3 was-validated ">
             <div className="col-sm">
               <label  className="form-label" >Direccion:</label>
-              <input disabled type="text"  value={items.direccion}   placeholder="" className="form-control form-control-sm  "  required/>
+              <input disabled type="text"  value={items.direccion}   placeholder="" className="form-control form-control-sm  " />
             </div>
           </div>
   </IonList>

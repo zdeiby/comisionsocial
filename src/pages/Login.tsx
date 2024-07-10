@@ -6,7 +6,7 @@ import './Login.css';
 import LogoCAH from '../imagenes/logocah.png';
 
 interface Person {
-    usuario: string;
+    cedula: string;
     contrasena: string;
   }
 
@@ -75,7 +75,7 @@ const Login = () => {
 
   const fetchUsers = async (database = db) => {
     if (database) {
-      const res = await database.exec('SELECT * FROM "t1_comision";');
+      const res = await database.exec('SELECT * FROM t1_comision where estado=1;');
       if (res[0]?.values && res[0]?.columns) {
         const transformedPeople: Person[] = res[0].values.map((row: any[]) => {
           return res[0].columns.reduce((obj, col, index) => {
@@ -84,7 +84,6 @@ const Login = () => {
           }, {} as Person);
         });
         setPeople(transformedPeople);
-       
       }
     }
 
@@ -130,13 +129,13 @@ const Login = () => {
     // }
 
     try {
-        const response = await axios.get('/jsonstablas/t1_comision.json');
+        const response = await axios.get('https://aws.cah.org.co/comision/cah/index.php/app_comisionsocial/welcome/fc_info');
         const jsonData = response.data;
        // setProgramas(jsonData);
-  
+       console.log(jsonData)
         for (const item of jsonData) {
-          await db.run(`INSERT OR REPLACE INTO t1_comision ( usuario, contrasena) VALUES (?, ?);`, [
-            item.usuario, item.contrasena
+          await db.run(`INSERT OR REPLACE INTO t1_comision ( cedula, contrasena, estado) VALUES (?, ?, ?);`, [
+            item.CEDULA, item.CONTRASENA,item.ESTADO
           ]);
         }
   
@@ -242,7 +241,7 @@ const Login = () => {
 
 
         const handleLogin = () => {
-            const user = people.find(person => person.usuario === username && person.contrasena === password);
+            const user = people.find(person => person.cedula === username && person.contrasena === password);
             
             if (user) {
             localStorage.setItem('cedula', username);
@@ -267,7 +266,7 @@ const Login = () => {
                     </IonCol>
                     <IonRow>
                         <IonCol>
-                        {(people[0]?.usuario)?    <IonItem >
+                        {(people[0]?.cedula)?    <IonItem >
                                 <IonInput label="Usuario" labelPlacement="floating" fill="outline" placeholder="Ingrese Usuario"
                                     value={username}
                                     onIonInput={(e) => setUsername(e.detail.value)}
@@ -278,7 +277,7 @@ const Login = () => {
                     </IonRow>  
                     <IonRow>
                         <IonCol>
-                           {(people[0]?.usuario)? <IonItem>
+                           {(people[0]?.cedula)? <IonItem>
                                 <IonInput type="password" label="Contraseña" labelPlacement="floating" fill="outline" placeholder="Ingrese Contraseña"
                                     value={password}
                                     onIonInput={(e) => setPassword(e.detail.value)}
@@ -286,8 +285,8 @@ const Login = () => {
                             </IonItem> :''}
                         </IonCol>
                     </IonRow>  <hr></hr>
-                    {(people[0]?.usuario)?  <IonButton expand="full" color="secondary" onClick={handleLogin}>Iniciar Sesión</IonButton>:''}
-                    {(people[0]?.usuario)?'':  <IonButton expand="full" onClick={sincronizacion}>Sincronización bajada de información</IonButton> }
+                    {(people[0]?.cedula)?  <IonButton expand="full" color="secondary" onClick={handleLogin}>Iniciar Sesión</IonButton>:''}
+                    {(people[0]?.cedula)?'':  <IonButton expand="full" onClick={sincronizacion}>Sincronización bajada de información</IonButton> }
 
                 </IonGrid>
             </IonContent>

@@ -83,7 +83,7 @@ const Tab16: React.FC = () => {
           apoyosocial: '',
           draw_dataUrl: null,
           draw_dataUrlImage:null,
-          nameFirma: '',
+          nameFirma: `17_autorizacion_${params.ficha}`,
           autorizofirma: '',
           idseguimiento: null,
           firmatitular: '',
@@ -311,9 +311,9 @@ const Tab16: React.FC = () => {
                 <label>Adjuntar archivo:</label>
                 <div className="input-group mb-3">
                   <div className="input-group-prepend">
-                    <button onClick={() => fileInputRef.current?.click()} className="btn btn-info btn-sm text-light">
+                    <div onClick={() => fileInputRef.current?.click()} className="btn btn-info btn-sm text-light">
                       Cargar Imagen
-                    </button>
+                    </div>
                     <input
                       ref={fileInputRef}
                       type="file"
@@ -321,9 +321,9 @@ const Tab16: React.FC = () => {
                       onChange={handleImageChange}
                       style={{ display: "none" }}
                     />
-                    <button className="btn btn-info btn-sm text-light" type="button" onClick={() => (preview ? setShowModal(true) : alert('Cargar un archivo'))}>
+                    <div className="btn btn-info btn-sm text-light" type="button" onClick={() => (preview ? setShowModal(true) : alert('Cargar un archivo'))}>
                       Ver
-                    </button>
+                    </div>
                   </div>
                   <input type="text" id="nameFile" className="form-control form-control-sm" placeholder="" value={autorizacion?.nameFile || ''} disabled />
                 </div>

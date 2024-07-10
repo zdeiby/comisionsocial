@@ -290,12 +290,12 @@ useEffect(() => {
           <div className="col-sm-4">
           <label  className="form-label">Tipo visita</label>
           <select onChange={(e) => handleInputChange(e, 'tipovisita')}  value={items.tipovisita} className="form-control form-control-sm" id="pregunta2_3" aria-describedby="validationServer04Feedback" required>
-            <option value=""> SELECCIONE </option>
-            <option value="2"> FALLIDA </option>
-            <option value="5"> FALLIDA - INICIAL EN ACCESS (SOLO SI LA FALLIDA INICIAL ESTA EN ACCES) </option>
+           <option value=""> SELECCIONE </option>
+           {/*  <option value="2"> FALLIDA </option>
+            <option value="5"> FALLIDA - INICIAL EN ACCESS (SOLO SI LA FALLIDA INICIAL ESTA EN ACCES) </option>*/}
             <option value="1"> FICHA SOCIAL </option>
-            <option value="4"> LOCAL COMERCIAL </option>
-            <option value="3"> NO APLICA FICHA SOCIAL </option>
+           {/* <option value="4"> LOCAL COMERCIAL </option>
+            <option value="3"> NO APLICA FICHA SOCIAL </option>*/}
             </select>
           </div>
           <div className="col-sm-4">
