@@ -980,7 +980,7 @@ const Cobertura: React.FC = () => {
     setPorcentaje(0);
     closeModal();
     try {
-      const response = await axios.post('https://zdeiby.castelancarpinteyro.com/apicomision/index.php/Welcome/fc_guardarcap0', people, {
+      const response = await axios.post('https://aws.cah.org.co/comision/cah/index.php/app_comisionsocial/Welcome/fc_guardarcap0', people, {
         headers: {
           'Content-Type': 'application/json'
         }
@@ -995,7 +995,7 @@ const Cobertura: React.FC = () => {
     }
 
     try {
-      const response = await axios.post('https://zdeiby.castelancarpinteyro.com/apicomision/index.php/Welcome/fc_guardarcap1', eventos, {
+      const response = await axios.post('https://aws.cah.org.co/comision/cah/index.php/app_comisionsocial/Welcome/fc_guardarcap1', eventos, {
         headers: {
           'Content-Type': 'application/json'
         }
@@ -1010,7 +1010,7 @@ const Cobertura: React.FC = () => {
     }
 
     try {
-      const response = await axios.post('https://zdeiby.castelancarpinteyro.com/apicomision/index.php/Welcome/fc_guardarcap2', localizacioneventos, {
+      const response = await axios.post('https://aws.cah.org.co/comision/cah/index.php/app_comisionsocial/Welcome/fc_guardarcap2', localizacioneventos, {
         headers: {
           'Content-Type': 'application/json'
         }
@@ -1025,7 +1025,7 @@ const Cobertura: React.FC = () => {
     }
 
     try {
-      const response = await axios.post('https://zdeiby.castelancarpinteyro.com/apicomision/index.php/Welcome/fc_guardarcap3', evacuacionYDanios, {
+      const response = await axios.post('https://aws.cah.org.co/comision/cah/index.php/app_comisionsocial/Welcome/fc_guardarcap3', evacuacionYDanios, {
         headers: {
           'Content-Type': 'application/json'
         }
@@ -1038,7 +1038,7 @@ const Cobertura: React.FC = () => {
       await openModal('Error al guardar', 'danger','ligth');
       alert('Error al guardar los datos');
     } try {
-      const response = await axios.post('https://zdeiby.castelancarpinteyro.com/apicomision/index.php/Welcome/fc_guardarcap4', datosDeLaVivienda, {
+      const response = await axios.post('https://aws.cah.org.co/comision/cah/index.php/app_comisionsocial/Welcome/fc_guardarcap4', datosDeLaVivienda, {
         headers: {
           'Content-Type': 'application/json'
         }
@@ -1050,7 +1050,7 @@ const Cobertura: React.FC = () => {
       await openModal('Error al guardar', 'danger','ligth');
       alert('Error al guardar los datos');
     } try {
-      const response = await axios.post('https://zdeiby.castelancarpinteyro.com/apicomision/index.php/Welcome/fc_guardarcap5', serviciosPublicos, {
+      const response = await axios.post('https://aws.cah.org.co/comision/cah/index.php/app_comisionsocial/Welcome/fc_guardarcap5', serviciosPublicos, {
         headers: {
           'Content-Type': 'application/json'
         }
@@ -1062,7 +1062,7 @@ const Cobertura: React.FC = () => {
       await openModal('Error al guardar', 'danger','ligth');
       alert('Error al guardar los datos');
     } try {
-      const response = await axios.post('https://zdeiby.castelancarpinteyro.com/apicomision/index.php/Welcome/fc_guardarcap6', tiempoEnLaVivienda, {
+      const response = await axios.post('https://aws.cah.org.co/comision/cah/index.php/app_comisionsocial/Welcome/fc_guardarcap6', tiempoEnLaVivienda, {
         headers: {
           'Content-Type': 'application/json'
         }
@@ -1074,7 +1074,7 @@ const Cobertura: React.FC = () => {
       await openModal('Error al guardar', 'danger','ligth');
       alert('Error al guardar los datos');
     } try {
-      const response = await axios.post('https://zdeiby.castelancarpinteyro.com/apicomision/index.php/Welcome/fc_guardarcap78', tenenciaYDocumentosVivienda, {
+      const response = await axios.post('https://aws.cah.org.co/comision/cah/index.php/app_comisionsocial/Welcome/fc_guardarcap78', tenenciaYDocumentosVivienda, {
         headers: {
           'Content-Type': 'application/json'
         }
@@ -1086,7 +1086,7 @@ const Cobertura: React.FC = () => {
       await openModal('Error al guardar', 'danger','ligth');
       alert('Error al guardar los datos');
     } try {
-      const response = await axios.post('https://zdeiby.castelancarpinteyro.com/apicomision/index.php/Welcome/fc_guardarcap9', conformacionFamiliar, {
+      const response = await axios.post('https://aws.cah.org.co/comision/cah/index.php/app_comisionsocial/Welcome/fc_guardarcap9', conformacionFamiliar, {
         headers: {
           'Content-Type': 'application/json'
         }
@@ -1102,7 +1102,7 @@ const Cobertura: React.FC = () => {
 
 
     try {
-      const response = await axios.post('https://zdeiby.castelancarpinteyro.com/apicomision/index.php/Welcome/fc_guardarcap10', datosGeneralesRemisiones, {
+      const response = await axios.post('https://aws.cah.org.co/comision/cah/index.php/app_comisionsocial/Welcome/fc_guardarcap10', datosGeneralesRemisiones, {
         headers: {
           'Content-Type': 'application/json'
         }
@@ -1114,7 +1114,7 @@ const Cobertura: React.FC = () => {
       await openModal('Error al guardar', 'danger','ligth');
       alert('Error al guardar los datos');
     } try {
-      const response = await axios.post('https://zdeiby.castelancarpinteyro.com/apicomision/index.php/Welcome/fc_guardarcap11', redDeApoyo, {
+      const response = await axios.post('https://aws.cah.org.co/comision/cah/index.php/app_comisionsocial/Welcome/fc_guardarcap11', redDeApoyo, {
         headers: {
           'Content-Type': 'application/json'
         }
@@ -1126,7 +1126,7 @@ const Cobertura: React.FC = () => {
       await openModal('Error al guardar', 'danger','ligth');
       alert('Error al guardar los datos');
     } try {
-      const response = await axios.post('https://zdeiby.castelancarpinteyro.com/apicomision/index.php/Welcome/fc_guardarcap12', ayudasEntregadas, {
+      const response = await axios.post('https://aws.cah.org.co/comision/cah/index.php/app_comisionsocial/Welcome/fc_guardarcap12', ayudasEntregadas, {
         headers: {
           'Content-Type': 'application/json'
         }
@@ -1138,7 +1138,7 @@ const Cobertura: React.FC = () => {
       await openModal('Error al guardar', 'danger','ligth');
       alert('Error al guardar los datos');
     } try {
-      const response = await axios.post('https://zdeiby.castelancarpinteyro.com/apicomision/index.php/Welcome/fc_guardarcap131', integrante, {
+      const response = await axios.post('https://aws.cah.org.co/comision/cah/index.php/app_comisionsocial/Welcome/fc_guardarcap131', integrante, {
         headers: {
           'Content-Type': 'application/json'
         }
@@ -1150,7 +1150,7 @@ const Cobertura: React.FC = () => {
       await openModal('Error al guardar', 'danger','ligth');
       alert('Error al guardar los datos');
     } try {
-      const response = await axios.post('https://zdeiby.castelancarpinteyro.com/apicomision/index.php/Welcome/fc_guardarcap14', mascotas, {
+      const response = await axios.post('https://aws.cah.org.co/comision/cah/index.php/app_comisionsocial/Welcome/fc_guardarcap14', mascotas, {
         headers: {
           'Content-Type': 'application/json'
         }
@@ -1162,7 +1162,7 @@ const Cobertura: React.FC = () => {
       await openModal('Error al guardar', 'danger','ligth');
       alert('Error al guardar los datos');
     } try {
-      const response = await axios.post('https://zdeiby.castelancarpinteyro.com/apicomision/index.php/Welcome/fc_guardarcap15', ubicacionPosterior, {
+      const response = await axios.post('https://aws.cah.org.co/comision/cah/index.php/app_comisionsocial/Welcome/fc_guardarcap15', ubicacionPosterior, {
         headers: {
           'Content-Type': 'application/json'
         }
@@ -1174,7 +1174,7 @@ const Cobertura: React.FC = () => {
       await openModal('Error al guardar', 'danger','ligth');
       alert('Error al guardar los datos');
     } try {
-      const response = await axios.post('https://zdeiby.castelancarpinteyro.com/apicomision/index.php/Welcome/fc_guardarcap151', integrantesUbicacionPos, {
+      const response = await axios.post('https://aws.cah.org.co/comision/cah/index.php/app_comisionsocial/Welcome/fc_guardarcap151', integrantesUbicacionPos, {
         headers: {
           'Content-Type': 'application/json'
         }
@@ -1186,7 +1186,7 @@ const Cobertura: React.FC = () => {
       await openModal('Error al guardar', 'danger','ligth');
       alert('Error al guardar los datos');
     } try {
-      const response = await axios.post('https://zdeiby.castelancarpinteyro.com/apicomision/index.php/Welcome/fc_guardarcap16', observaciones, {
+      const response = await axios.post('https://aws.cah.org.co/comision/cah/index.php/app_comisionsocial/Welcome/fc_guardarcap16', observaciones, {
         headers: {
           'Content-Type': 'application/json'
         }
@@ -1198,7 +1198,7 @@ const Cobertura: React.FC = () => {
       await openModal('Error al guardar', 'danger','ligth');
       alert('Error al guardar los datos');
     } try {
-      const response = await axios.post('https://zdeiby.castelancarpinteyro.com/apicomision/index.php/Welcome/fc_guardarcap17', autorizacion, {
+      const response = await axios.post('https://aws.cah.org.co/comision/cah/index.php/app_comisionsocial/Welcome/fc_guardarcap17', autorizacion, {
         headers: {
           'Content-Type': 'application/json'
         }
@@ -1210,7 +1210,7 @@ const Cobertura: React.FC = () => {
       await openModal('Error al guardar', 'danger','ligth');
       alert('Error al guardar los datos');
     } try {
-      const response = await axios.post('https://zdeiby.castelancarpinteyro.com/apicomision/index.php/Welcome/fc_guardarcap101', remisiones, {
+      const response = await axios.post('https://aws.cah.org.co/comision/cah/index.php/app_comisionsocial/Welcome/fc_guardarcap101', remisiones, {
         headers: {
           'Content-Type': 'application/json'
         }
@@ -1222,9 +1222,31 @@ const Cobertura: React.FC = () => {
       await openModal('Error al guardar', 'danger','ligth');
       alert('Error al guardar los datos');
     }
+// SINCRONIZAR DE BAJADA USUARIOS
+    try {
+      const response = await axios.get('https://aws.cah.org.co/comision/cah/index.php/app_comisionsocial/welcome/fc_info');
+      const jsonData = response.data;
+     // setProgramas(jsonData);
+     console.log(jsonData)
+      for (const item of jsonData) {
+        await db.run(`INSERT OR REPLACE INTO t1_comision (id_usuario, cedula, contrasena, estado) VALUES (?, ?, ?, ?);`, [
+          item.ID_USUARIO, item.CEDULA, item.CONTRASENA,item.ESTADO
+        ]);
+      }
+
+      saveDatabase();
+      fetchUsers();
+    } catch (err) {
+      console.error('Error al exportar los datos JSON: t1_programas', err);
+    }
+
+
+
+
+
 
     try {
-      const response = await axios.post('https://zdeiby.castelancarpinteyro.com/apicomision/index.php/Welcome/fc_guardarcap111', redApoyoIntegrantes, {
+      const response = await axios.post('https://aws.cah.org.co/comision/cah/index.php/app_comisionsocial/Welcome/fc_guardarcap111', redApoyoIntegrantes, {
         headers: {
           'Content-Type': 'application/json'
         }

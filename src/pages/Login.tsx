@@ -134,8 +134,8 @@ const Login = () => {
        // setProgramas(jsonData);
        console.log(jsonData)
         for (const item of jsonData) {
-          await db.run(`INSERT OR REPLACE INTO t1_comision ( cedula, contrasena, estado) VALUES (?, ?, ?);`, [
-            item.CEDULA, item.CONTRASENA,item.ESTADO
+          await db.run(`INSERT OR REPLACE INTO t1_comision (id_usuario, cedula, contrasena, estado) VALUES (?, ?, ?, ?);`, [
+            item.ID_USUARIO, item.CEDULA, item.CONTRASENA,item.ESTADO
           ]);
         }
   

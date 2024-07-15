@@ -102,7 +102,7 @@ const loadSQL = async (setDb, fetchUsers) => {
         `);
         database.run(`
         CREATE TABLE IF NOT EXISTS t1_comision (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id_usuario INTEGER PRIMARY KEY ,
         cedula TEXT NOT NULL,
         contrasena TEXT NOT NULL,
         estado TEXT NOT NULL
