@@ -118,7 +118,7 @@ const Tab1: React.FC = () => {
       }else{
         setItems({
           fichasocial:  params.ficha,
-          fichatecnia: params.ficha,
+          fichatecnia: '',
           motivovisita: '',
           tipovisita:  '',
           tipo: '',
@@ -316,7 +316,7 @@ useEffect(() => {
 <div className="row g-3 was-validated">
           <div className="col-sm-4">
             <label  className="form-label"># Ficha tecnica</label>
-            <input value={params.ficha} onChange={sololectura} type="text" placeholder="" className="form-control form-control-sm  "  required/>
+            <input onChange={(e) => handleInputChange(e, 'fichatecnia')}  value={items.fichatecnia} type="text" placeholder="" className="form-control form-control-sm  "  required/>
           </div>
           <div className="col-sm-4">
             <label  className="form-label">Hora activacion</label>
